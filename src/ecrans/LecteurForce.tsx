@@ -5,7 +5,7 @@ import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
 import type { Slot, Venue } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
 import type { SetLog } from '../lib/db'
-import { modifier, useDonnees } from '../lib/etat'
+import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { prochaineCharge, prochainEchelon, type SerieFaite } from '../lib/progression'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
@@ -16,10 +16,13 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   const d = useDonnees()
   const t = seance(templateId)
 
-  const [slotIndex, setSlotIndex] = useState(0)
-  const [journal, setJournal] = useState<SetLog[]>([])
+  // Une séance interrompue (téléphone verrouillé, appli tuée) est reprise là où elle
+  // s'est arrêtée : on retrouve les séries déjà validées et l'exercice en cours.
+  const reprise = d.enCours?.templateId === templateId && d.enCours.venue === venue ? d.enCours : undefined
+  const [journal, setJournal] = useState<SetLog[]>(reprise?.series ?? [])
+  const [slotIndex, setSlotIndex] = useState(() => slotDeReprise(t?.slots ?? [], reprise?.series ?? []))
   const [repos, setRepos] = useState<number | null>(null)
-  const debut = useRef(Date.now())
+  const debut = useRef(reprise?.debut ?? Date.now())
 
   const slot = t?.slots[slotIndex]
   const ex = slot ? exerciceDuSlot(slot, venue) : undefined
@@ -82,6 +85,11 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
     const suivant = [...journal, entree]
     setJournal(suivant)
     vibrer(d.reglages.vibration)
+    // Enregistré immédiatement : si le téléphone se verrouille ici, rien n'est perdu.
+    modifier((data) => {
+      data.enCours = { id: `${templateId}-${debut.current}`, templateId, venue, debut: debut.current, series: suivant }
+    })
+    viderLaFile()
 
     if (derniereSerie) {
       appliquerProgression(ex.id, slot, suivant, echelle, echelonInitial)
@@ -134,12 +142,20 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       })
       delete data.enCours
     })
+    viderLaFile()
     aller('/')
   }
 
+  // La séance est déjà enregistrée à chaque série validée : quitter la met en pause,
+  // ça ne la perd pas. On propose donc les deux, reprendre plus tard ou clore maintenant.
   const abandonner = () => {
     if (journal.length === 0) return aller('/')
-    if (confirm('Arrêter la séance ? Les séries déjà validées sont enregistrées.')) terminer(journal)
+    if (confirm('Mettre la séance en pause ? Tu la retrouveras sur l\'écran Aujourd\'hui.\n\nAnnuler pour la clore définitivement avec les séries déjà faites.')) {
+      viderLaFile()
+      aller('/')
+    } else {
+      terminer(journal)
+    }
   }
 
   const message = messageProgression(slot, faitesDuSlot, echelle, echelonInitial, d.reglages.pasCharge)
@@ -242,6 +258,16 @@ const ligne = (premier: boolean) => ({
   borderBottom: '1px solid rgba(20,24,26,0.35)',
   fontSize: '15px',
 })
+
+/** Retrouve l'exercice en cours à partir des séries déjà validées. */
+function slotDeReprise(slots: Slot[], series: SetLog[]): number {
+  if (series.length === 0) return 0
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i]!
+    if (series.filter((x) => x.slotId === s.id).length < s.series) return i
+  }
+  return Math.max(0, slots.length - 1)
+}
 
 /** Première fois sur un exercice chargé : on part d'un tiers de l'haltère le plus lourd du club. */
 function chargeDeDepart(enregistree: number | undefined, halteresMax: number, pas: number): number {

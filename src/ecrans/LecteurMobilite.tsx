@@ -5,7 +5,7 @@ import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
 import type { Exercise, Slot } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
 import type { SetLog } from '../lib/db'
-import { modifier, useDonnees } from '../lib/etat'
+import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
 import { useFond } from '../lib/fond'
@@ -69,6 +69,11 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   function etapeSuivante() {
     if (!slot || !ex || !t) return
     journal.current.push({ slotId: slot.id, exerciceId: ex.id, index: serie, secondes: chrono ? dureeDe(slot, d.progression.maintiens[ex.id]) : undefined, at: Date.now() })
+    const copie = [...journal.current]
+    modifier((data) => {
+      data.enCours = { id: `${templateId}-${debut.current}`, templateId, venue: 'tapis', debut: debut.current, series: copie }
+    })
+    viderLaFile()
 
     if (parCote && cote === 'droit') {
       setCote('gauche')
@@ -203,6 +208,7 @@ function FinMobilite({ templateId, debut, journal }: { templateId: string; debut
       }
       delete data.enCours
     })
+    viderLaFile()
     setEnregistre(true)
     setTimeout(() => aller('/'), 400)
   }

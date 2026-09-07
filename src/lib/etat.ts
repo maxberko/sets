@@ -8,9 +8,35 @@ let pret = false
 const ecouteurs = new Set<Ecouteur>()
 
 let enAttente: ReturnType<typeof setTimeout> | undefined
+let aEcrire = false
+
 function persister() {
+  aEcrire = true
   clearTimeout(enAttente)
-  enAttente = setTimeout(() => void sauver(etat), 200)
+  enAttente = setTimeout(ecrire, 200)
+}
+
+function ecrire() {
+  if (!aEcrire) return
+  aEcrire = false
+  clearTimeout(enAttente)
+  void sauver(etat)
+}
+
+/**
+ * Écrit tout de suite ce qui attend. Android peut geler ou tuer une PWA dès qu'elle
+ * passe en arrière-plan : sans ça, une série validée juste avant de verrouiller le
+ * téléphone tiendrait dans un setTimeout qui ne se déclenchera jamais.
+ */
+export function viderLaFile(): void {
+  ecrire()
+}
+
+if (typeof document !== 'undefined') {
+  addEventListener('pagehide', ecrire)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') ecrire()
+  })
 }
 
 function diffuser() {

@@ -52,6 +52,25 @@ export function Aujourdhui() {
           </div>
         )}
 
+        {d.enCours && (
+          <button
+            onClick={() => aller(`/seance/${d.enCours!.templateId}/${d.enCours!.venue}`)}
+            class="bloc-couleur"
+            style={{ background: 'transparent', border: `1.5px solid ${COULEUR_PROGRAMME[seance(d.enCours.templateId)?.programme ?? 'pecs']}`, padding: '16px 18px', gap: '8px' }}
+          >
+            <span class="etiquette discret">Séance interrompue</span>
+            <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px', width: '100%' }}>
+              <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '22px', lineHeight: 1 }}>
+                {seance(d.enCours.templateId)?.nom}
+              </span>
+              <span style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>
+                {d.enCours.series.length} série{d.enCours.series.length > 1 ? 's' : ''} gardée{d.enCours.series.length > 1 ? 's' : ''}
+              </span>
+            </span>
+            <span style={{ fontSize: '14px', fontWeight: 600 }}>Reprendre où tu en étais</span>
+          </button>
+        )}
+
         {restantes.map((id, i) => (
           <CarteSeance key={id} templateId={id} principale={i === 0} mobiliteFaites={mobiliteFaites} mobilitePrevues={mobilitePrevues} />
         ))}
