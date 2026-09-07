@@ -1,0 +1,228 @@
+/* Direction A, « Tide table ». Une couleur par programme, en aplat plein. */
+:root {
+  --papier: #f3f5f2;
+  --encre: #14181a;
+  --sourdine: #5b6367;
+  --filet: #d6dbd8;
+  --pecs: #e0563f;
+  --abdos: #2e9d6b;
+  --mobilite: #2f86be;
+  --sur-couleur: #14181a;
+
+  --r: 2px;
+  --gouttiere: 24px;
+  --cible: 44px;
+
+  --titre: 'Bricolage Grotesque Variable', 'Arial Narrow', system-ui, sans-serif;
+  --texte: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+
+  --barre-haut: env(safe-area-inset-top, 0px);
+  --barre-bas: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--texte);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+body {
+  /* Le clavier et la barre d'état du téléphone se posent par-dessus : on ne les dessine pas. */
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--titre);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+h2 {
+  font-size: 26px;
+}
+h3 {
+  font-size: 17px;
+  font-family: var(--texte);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--encre);
+  outline-offset: 2px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.chiffre {
+  font-family: var(--titre);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.etiquette {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.discret {
+  color: var(--sourdine);
+}
+
+.ecran {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(var(--barre-haut) + 44px);
+}
+
+.contenu {
+  flex: 1;
+  padding: 0 var(--gouttiere);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bloc-couleur {
+  border-radius: var(--r);
+  padding: 18px 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--sur-couleur);
+  text-align: left;
+  width: 100%;
+}
+
+.bloc-pied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1.5px solid var(--encre);
+  padding: 14px 0 16px;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.principal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--encre);
+  color: var(--papier);
+  min-height: 60px;
+  padding: 0 20px;
+  border-radius: var(--r);
+  font-weight: 600;
+  font-size: 17px;
+  width: 100%;
+}
+
+.principal[disabled] {
+  opacity: 0.35;
+}
+
+.secondaire {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1.5px solid var(--encre);
+  min-height: var(--cible);
+  padding: 10px 16px;
+  border-radius: var(--r);
+  font-weight: 600;
+  font-size: 15px;
+  width: 100%;
+}
+
+.rangee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: var(--cible);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--filet);
+  width: 100%;
+  text-align: left;
+}
+
+.pastille {
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  flex: none;
+}
+
+.entete {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: calc(var(--barre-haut) + 44px);
+  padding: var(--barre-haut) var(--gouttiere) 0;
+  background: var(--papier);
+}
+
+.entete.sur-couleur {
+  background: transparent;
+}
+
+.entete.statique {
+  position: static;
+  padding-left: 0;
+  padding-right: 0;
+  height: 44px;
+}

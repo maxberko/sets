@@ -1,0 +1,29 @@
+{
+  "name": "sets",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Programme de force et de mobilite, base sur les preuves. PWA hors ligne.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:links": "node scripts/check-links.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.5",
+    "@fontsource/instrument-sans": "^5.2.5",
+    "idb-keyval": "^6.2.1",
+    "preact": "^10.26.4"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.1",
+    "@types/node": "^26.4.1",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^3.0.8"
+  }
+}
