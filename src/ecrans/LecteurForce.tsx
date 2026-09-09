@@ -7,20 +7,28 @@ import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
 import type { SetLog } from '../lib/db'
 import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { prochaineCharge, prochainEchelon, type SerieFaite } from '../lib/progression'
+import { creneauDeReprise, type CreneauReprise } from '../lib/reprise'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
 import { useFond } from '../lib/fond'
 import { Introuvable } from './ChoixLieu'
 
+/** Le lecteur de force enregistre une entrée par série, jamais par côté. */
+function creneaux(slots: Slot[]): CreneauReprise[] {
+  return slots.map((s) => ({ id: s.id, series: s.series, etapesParSerie: 1 }))
+}
+
 export function LecteurForce({ templateId, venue }: { templateId: string; venue: Venue }) {
   const d = useDonnees()
   const t = seance(templateId)
 
-  // Une séance interrompue (téléphone verrouillé, appli tuée) est reprise là où elle
-  // s'est arrêtée : on retrouve les séries déjà validées et l'exercice en cours.
+  // Une séance interrompue est reprise là où elle s'est arrêtée : téléphone verrouillé,
+  // appli tuée, ou simple aller-retour vers une fiche d'exercice, qui démonte ce composant.
   const reprise = d.enCours?.templateId === templateId && d.enCours.venue === venue ? d.enCours : undefined
   const [journal, setJournal] = useState<SetLog[]>(reprise?.series ?? [])
-  const [slotIndex, setSlotIndex] = useState(() => slotDeReprise(t?.slots ?? [], reprise?.series ?? []))
+  const [slotIndex, setSlotIndex] = useState(() =>
+    creneauDeReprise(creneaux(t?.slots ?? []), reprise?.series ?? []),
+  )
   const [repos, setRepos] = useState<number | null>(null)
   const debut = useRef(reprise?.debut ?? Date.now())
 
@@ -260,15 +268,6 @@ const ligne = (premier: boolean) => ({
 })
 
 /** Retrouve l'exercice en cours à partir des séries déjà validées. */
-function slotDeReprise(slots: Slot[], series: SetLog[]): number {
-  if (series.length === 0) return 0
-  for (let i = 0; i < slots.length; i++) {
-    const s = slots[i]!
-    if (series.filter((x) => x.slotId === s.id).length < s.series) return i
-  }
-  return Math.max(0, slots.length - 1)
-}
-
 /** Première fois sur un exercice chargé : on part d'un tiers de l'haltère le plus lourd du club. */
 function chargeDeDepart(enregistree: number | undefined, halteresMax: number, pas: number): number {
   if (enregistree !== undefined && enregistree > 0) return enregistree

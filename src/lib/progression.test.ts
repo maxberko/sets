@@ -144,38 +144,6 @@ describe('volume et deload', () => {
   })
 })
 
-describe('reprise de séance', () => {
-  // Copie de la logique de LecteurForce, gardée sous test parce que c'est elle qui
-  // décide où l'on repart après un téléphone verrouillé en pleine séance.
-  const slots = [
-    { id: 'a1', series: 3 },
-    { id: 'a2', series: 3 },
-    { id: 'a3', series: 2 },
-  ]
-  const slotDeReprise = (series: { slotId: string }[]) => {
-    if (series.length === 0) return 0
-    for (let i = 0; i < slots.length; i++) {
-      const s = slots[i]!
-      if (series.filter((x) => x.slotId === s.id).length < s.series) return i
-    }
-    return slots.length - 1
-  }
-  const faites = (id: string, n: number) => Array.from({ length: n }, () => ({ slotId: id }))
-
-  it('repart au premier exercice quand rien n\'est fait', () => {
-    expect(slotDeReprise([])).toBe(0)
-  })
-  it('repart sur l\'exercice entamé', () => {
-    expect(slotDeReprise(faites('a1', 2))).toBe(0)
-  })
-  it('passe au suivant quand un exercice est complet', () => {
-    expect(slotDeReprise(faites('a1', 3))).toBe(1)
-  })
-  it('saute les exercices déjà finis', () => {
-    expect(slotDeReprise([...faites('a1', 3), ...faites('a2', 3), ...faites('a3', 1)])).toBe(2)
-  })
-})
-
 describe('repMax', () => {
   it('applique Epley', () => {
     expect(repMax(22, 11)).toBe(30)

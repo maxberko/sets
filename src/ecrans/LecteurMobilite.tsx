@@ -9,6 +9,7 @@ import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
 import { useFond } from '../lib/fond'
+import { positionDeReprise, type CreneauReprise } from '../lib/reprise'
 import { Introuvable } from './ChoixLieu'
 
 type Cote = 'droit' | 'gauche' | null
@@ -17,28 +18,40 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   const d = useDonnees()
   const t = seance(templateId)
 
-  const [i, setI] = useState(0)
-  const [serie, setSerie] = useState(0)
-  const [cote, setCote] = useState<Cote>(null)
-  const [restant, setRestant] = useState(0)
-  const [enPause, setEnPause] = useState(false)
-  const [fini, setFini] = useState(false)
-  const journal = useRef<SetLog[]>([])
-  const debut = useRef(Date.now())
+  // La position n'est PAS un état à part : elle se déduit du journal des étapes faites.
+  // C'est ce qui rend l'écran juste après un aller-retour vers une fiche d'exercice,
+  // qui démonte ce composant, et après une séance interrompue. Garder un i/serie/cote
+  // en parallèle du journal, c'est se garantir qu'ils finiront par diverger.
+  const reprise = d.enCours?.templateId === templateId ? d.enCours : undefined
+  const [journal, setJournal] = useState<SetLog[]>(() => (reprise?.series ? [...reprise.series] : []))
+  const debut = useRef(reprise?.debut ?? Date.now())
 
-  const slot = t?.slots[i]
+  const slots = t?.slots ?? []
+  const etapes = creneaux(slots)
+  const total = etapes.reduce((n, c) => n + c.series * c.etapesParSerie, 0)
+  const fini = total > 0 && journal.length >= total
+
+  const position = positionDeReprise(etapes, journal)
+  const { creneau: i, serie, etape } = position
+
+  const slot = slots[i]
   const ex = slot ? exerciceDuSlot(slot, 'tapis') : undefined
-  const parCote = slot ? slot.mode.endsWith('par-cote') : false
-  const chrono = slot?.mode === 'temps-par-cote' || slot?.mode === 'temps'
+  const cote = coteDe(slot, etape)
+  const chrono = estChrono(slot)
+  const duree = slot && ex ? dureeDe(slot, d.progression.maintiens[ex.id]) : 0
 
-  // Prépare chaque étape : durée et côté de départ.
+  const [restant, setRestant] = useState(duree)
+  const [enPause, setEnPause] = useState(false)
+
+  // Chaque étape repart de sa durée pleine. La clé couvre l'exercice, la série et le côté.
+  const cle = `${i}-${serie}-${etape}`
+  const cleVue = useRef(cle)
   useEffect(() => {
-    if (!slot) return
-    setCote(parCote ? 'droit' : null)
-    setRestant(chrono ? dureeDe(slot, d.progression.maintiens[ex?.id ?? ''] ) : 0)
+    if (cleVue.current === cle) return
+    cleVue.current = cle
+    setRestant(duree)
     setEnPause(false)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i, serie])
+  }, [cle, duree])
 
   useEffect(() => {
     void garderEcranAllume(d.reglages.ecranAllume)
@@ -46,6 +59,23 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   }, [d.reglages.ecranAllume])
 
   useFond(fini ? 'var(--papier)' : COULEUR_PROGRAMME.mobilite ?? 'var(--papier)')
+
+  const etapeSuivante = () => {
+    if (!slot || !ex) return
+    const entree: SetLog = {
+      slotId: slot.id,
+      exerciceId: ex.id,
+      index: serie,
+      at: Date.now(),
+      ...(chrono ? { secondes: duree } : {}),
+    }
+    const suivant = [...journal, entree]
+    setJournal(suivant)
+    modifier((data) => {
+      data.enCours = { id: `${templateId}-${debut.current}`, templateId, venue: 'tapis', debut: debut.current, series: suivant }
+    })
+    viderLaFile()
+  }
 
   useEffect(() => {
     if (!chrono || enPause || fini || restant <= 0) return
@@ -63,49 +93,23 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restant, enPause, chrono, fini])
 
-  if (!t || !slot || !ex) return <Introuvable />
-  if (fini) return <FinMobilite templateId={templateId} debut={debut.current} journal={journal.current} />
+  if (!t) return <Introuvable />
+  if (fini) return <FinMobilite templateId={templateId} debut={debut.current} journal={journal} />
+  if (!slot || !ex) return <Introuvable />
 
-  function etapeSuivante() {
-    if (!slot || !ex || !t) return
-    journal.current.push({ slotId: slot.id, exerciceId: ex.id, index: serie, secondes: chrono ? dureeDe(slot, d.progression.maintiens[ex.id]) : undefined, at: Date.now() })
-    const copie = [...journal.current]
-    modifier((data) => {
-      data.enCours = { id: `${templateId}-${debut.current}`, templateId, venue: 'tapis', debut: debut.current, series: copie }
-    })
-    viderLaFile()
-
-    if (parCote && cote === 'droit') {
-      setCote('gauche')
-      setRestant(chrono ? dureeDe(slot, d.progression.maintiens[ex.id]) : 0)
-      return
-    }
-    if (serie < slot.series - 1) {
-      setSerie(serie + 1)
-      return
-    }
-    if (i < t.slots.length - 1) {
-      setSerie(0)
-      setI(i + 1)
-      return
-    }
-    setFini(true)
-  }
-
-  const suivantEx = t.slots[i + 1] ? exerciceDuSlot(t.slots[i + 1]!, 'tapis') : undefined
-  const total = chrono ? dureeDe(slot, d.progression.maintiens[ex.id]) : 1
-  const avancement = chrono ? ((total - restant) / total) * 100 : 0
+  const suivantEx = slots[i + 1] ? exerciceDuSlot(slots[i + 1]!, 'tapis') : undefined
+  const avancement = chrono && duree > 0 ? ((duree - restant) / duree) * 100 : 0
 
   return (
     <div class="ecran" style={{ background: COULEUR_PROGRAMME.mobilite, color: 'var(--sur-couleur)' }}>
       <Entete
         surCouleur
         gauche={
-          <button onClick={() => (journal.current.length ? setFini(true) : aller('/'))} aria-label="Quitter" style={{ minHeight: 'var(--cible)', minWidth: 'var(--cible)', display: 'flex', alignItems: 'center' }}>
+          <button onClick={() => aller('/')} aria-label="Quitter" style={{ minHeight: 'var(--cible)', minWidth: 'var(--cible)', display: 'flex', alignItems: 'center' }}>
             <Croix />
           </button>
         }
-        centre={`${t.nom} · ${i + 1} sur ${t.slots.length}`}
+        centre={`${t.nom} · ${i + 1} sur ${slots.length}`}
       />
 
       <div class="contenu" style={{ gap: 0 }}>
@@ -118,7 +122,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
               <div style={{ width: `${avancement}%`, height: '8px', background: 'var(--encre)', borderRadius: '1px' }} />
             </div>
             <div class="etiquette" style={{ opacity: 0.8 }}>
-              {cote ? `Côté ${cote} · ${total} s${cote === 'droit' ? ' · puis côté gauche' : ''}` : `${total} s`}
+              {cote ? `Côté ${cote} · ${duree} s${cote === 'droit' ? ' · puis côté gauche' : ''}` : `${duree} s`}
             </div>
           </div>
         ) : (
@@ -173,6 +177,20 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
       </div>
     </div>
   )
+}
+
+/** Le lecteur de mobilité enregistre une entrée par côté. */
+function creneaux(slots: Slot[]): CreneauReprise[] {
+  return slots.map((s) => ({ id: s.id, series: s.series, etapesParSerie: s.mode.endsWith('par-cote') ? 2 : 1 }))
+}
+
+function estChrono(slot: Slot | undefined): boolean {
+  return slot?.mode === 'temps-par-cote' || slot?.mode === 'temps'
+}
+
+function coteDe(slot: Slot | undefined, etape: number): Cote {
+  if (!slot || !slot.mode.endsWith('par-cote')) return null
+  return etape === 1 ? 'gauche' : 'droit'
 }
 
 function dureeDe(slot: Slot, maintienEnregistre?: number): number {
