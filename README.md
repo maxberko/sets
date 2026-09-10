@@ -45,18 +45,32 @@ La vidéo se lit **dans la page**, dans une iframe `youtube-nocookie`, sans vid�
 et sans plein écran forcé : appuyer sur lecture ne quitte pas l'appli. Rien n'est chargé
 avant l'appui, sinon chaque ouverture de fiche irait chercher le lecteur de Google, plus
 lourd que toute l'appli. Réserve honnête : la barre de contrôle de YouTube porte un lien
-« Regarder sur YouTube » que leurs conditions interdisent de masquer. Il faut ne pas y
-toucher ; il n'y a pas de moyen de le supprimer avec un lecteur intégré.
+« Regarder sur YouTube » que leurs conditions interdisent de masquer.
 
-**Un seul exercice sur 28 a aujourd'hui une vidéo intégrable.** Les 27 autres références
-collectées sont des pages d'article (ExRx, ACE, The Prehab Guys, Squat University), pas des
-vidéos : elles ont servi à vérifier les étapes et les points clés, elles ne peuvent pas être
-lues dans un lecteur. Ces fiches affichent donc « pas encore de vidéo » et nomment la source,
-plutôt qu'un cadre vide.
+**26 exercices sur 28 ont une démonstration.** Deux en sont volontairement dépourvus,
+`dips-chaises` et `roulade-avant-bras` : les seules vidéos trouvées montraient un autre
+mouvement que les étapes écrites, et une vidéo qui contredit la consigne est pire qu'une
+absence annoncée. Ces fiches le disent et nomment la source.
 
-Pour en ajouter une : renseigner `youtubeId` dans le champ `video` de l'exercice, avec
-`start` et `end` en secondes pour ne lire que le passage utile. Le catalogue complet des URL
-de référence est dans `content/videos.json` du dossier de conception.
+`creator` et `videoCreator` sont deux choses différentes, et le champ le reste exprès :
+les étapes ont souvent été vérifiées contre une page ExRx ou ACE tandis que la
+démonstration vient d'ailleurs (Renaissance Periodization, E3 Rehab, The Prehab Guys,
+Athlean-X). La fiche affiche les deux.
+
+Trois vidéos longues portent un `start` et un `end` en secondes, pris dans les chapitres
+publiés par la chaîne, pour ne lire que le passage utile. Aucun horodatage n'a été deviné :
+sans chapitre, la vidéo démarre au début.
+
+### Vérifier le catalogue
+
+```bash
+npm run check:videos
+```
+
+Contrôle que chaque `youtubeId` pointe sur une vidéo qui existe, publique, autorisée hors
+de YouTube, et que la chaîne correspond à celle annoncée. Sans ce contrôle, une référence
+erronée donne un cadre noir dans l'appli, sans message d'erreur. À relancer après toute
+modification du catalogue : les vidéos sont supprimées ou passent en privé sans prévenir.
 
 ## Sources
 

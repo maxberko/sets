@@ -208,8 +208,9 @@ function BlocVideo({ ex }: { ex: Exercise }) {
             )}
           </div>
           <p class="discret" style={{ fontSize: '13px', lineHeight: 1.45 }}>
-            {v.creator}
-            {v.start !== undefined ? ` · l'extrait démarre au passage utile` : ''} · la lecture reste dans l'appli
+            Démonstration : {v.videoCreator ?? v.creator}
+            {v.start !== undefined ? " · l'extrait démarre au passage utile" : ''}
+            {v.videoCreator && v.videoCreator !== v.creator ? ` · étapes vérifiées contre ${v.creator}` : ''}
           </p>
         </>
       ) : (

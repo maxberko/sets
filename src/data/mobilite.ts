@@ -26,7 +26,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La cheville alimente le genou. À la réception, pour chaque tranche de 10 % de dorsiflexion non utilisée, l'abduction du genou augmente de 3,2 degrés. Le drill lui-même n'a pas été testé, mais le lien entre cheville et genou, si.",
     sources: ['cheville-genou'],
-    video: { url: 'https://theprehabguys.com/unlock-ankle-mobility/', creator: 'The Prehab Guys' },
+    video: { url: 'https://theprehabguys.com/unlock-ankle-mobility/', creator: 'The Prehab Guys', youtubeId: 'NqgwyM9hXMI', videoCreator: 'Victoria Park Osteopaths' },
   },
   {
     id: 'hanche-90-90',
@@ -51,7 +51,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Les virages demandent de la rotation interne et externe de hanche, et le conflit fémoro-acétabulaire représente environ deux tiers des blessures de hanche en surf. Aucun essai n'a testé ce drill : il repose sur l'anatomie et l'usage clinique.",
     sources: ['surf-genou-hanche', 'fai-squat'],
-    video: { url: 'https://library.theprehabguys.com/vimeo-video/90-90-hip-stretch/', creator: 'The Prehab Guys' },
+    video: { url: 'https://library.theprehabguys.com/vimeo-video/90-90-hip-stretch/', creator: 'The Prehab Guys', youtubeId: '6Vm24G-koYU', videoCreator: 'John Rusin, DPT' },
   },
   {
     id: 'psoas-demi-genou',
@@ -80,7 +80,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La rame maintient les hanches en position raccourcie pendant la moitié d'une session. La durée de maintien vient de la littérature sur l'amplitude, mais l'exercice lui-même relève de l'usage clinique.",
     sources: ['thomas2018', 'delphi2025'],
-    video: { url: 'https://squatuniversity.com/active-hip-flexor-stretch/', creator: 'Squat University' },
+    video: { url: 'https://squatuniversity.com/active-hip-flexor-stretch/', creator: 'Squat University', youtubeId: 'gqoPYLUgP48', videoCreator: 'The Prehab Guys' },
   },
   {
     id: 'rotation-thoracique',
@@ -101,7 +101,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Les revues sur l'épaule du surfeur recommandent d'améliorer l'extension et la rotation thoraciques, parce que la rame se fait en extension prolongée. Le drill précis n'a pas été testé.",
     sources: ['langenberg2021', 'hanchard2021'],
-    video: { url: 'https://barbellrehab.com/three-effective-thoracic-rotation-drills/', creator: 'Barbell Rehab' },
+    video: { url: 'https://barbellrehab.com/three-effective-thoracic-rotation-drills/', creator: 'Barbell Rehab', youtubeId: '917w2gqZwZQ', videoCreator: 'Petroski Physio' },
   },
   {
     id: 'abduction-hanche',
@@ -122,7 +122,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "C'est l'exercice qui a les meilleures preuves de tout le programme mobilité. Les méta-analyses sur la douleur fémoro-patellaire montrent que renforcer les abducteurs et les rotateurs externes de hanche en plus du genou bat le travail du genou seul, et que les personnes concernées sont mesurablement plus faibles dans ces deux directions.",
     sources: ['halabchi2025', 'jospt2018'],
-    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys' },
+    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys', youtubeId: '-rDiQXjeXO0', videoCreator: 'The Prehab Guys' },
   },
   {
     id: 'descente-laterale',
@@ -151,7 +151,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le contrôle sur une jambe est au cœur des programmes FIFA 11+ et PEP, qui ont fait baisser les blessures de 30 à 46 % et les ruptures du ligament croisé antérieur de près de 88 % sur une saison. C'est aussi la position qui reproduit la réception d'un aérien.",
     sources: ['fifa11plus', 'pep', 'hohn2018'],
-    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys' },
+    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys', youtubeId: 'AO6lZFFrBdg', videoCreator: 'The Strength Guys' },
   },
   {
     id: 'nordic-ischios',
@@ -177,7 +177,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le Nordic divise par environ deux le risque de blessure aux ischio-jambiers dans les méta-analyses, même si une réévaluation méthodologique en 2021 a jugé l'effet moins certain qu'annoncé. C'est un des rares exercices avec une preuve directe de prévention.",
     sources: ['nordic', 'lauersen2014'],
-    video: { url: 'https://e3rehab.com/how-to-perform-copenhagen-planks/', creator: 'E3 Rehab' },
+    video: { url: 'https://e3rehab.com/how-to-perform-copenhagen-planks/', creator: 'E3 Rehab', youtubeId: '_e9vFU9-tkc', videoCreator: 'E3 Rehab', start: 56, end: 228 },
   },
   {
     id: 'copenhague',
@@ -199,7 +199,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le renforcement des adducteurs fait partie des programmes neuromusculaires qui réduisent les blessures. Sur une planche, ce sont eux qui tiennent l'écart entre les deux appuis.",
     sources: ['fifa11plus', 'lauersen2014'],
-    video: { url: 'https://theprehabguys.com/why-you-should-do-copenhagen-planks/', creator: 'The Prehab Guys' },
+    video: { url: 'https://theprehabguys.com/why-you-should-do-copenhagen-planks/', creator: 'The Prehab Guys', youtubeId: 'YRRnnZsRs9U', videoCreator: 'E3 Rehab', start: 71, end: 172 },
   },
   {
     id: 'reception-unipodale',
@@ -228,7 +228,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La réception est le mécanisme le plus souvent cité pour les blessures de genou en surf, et le genou est la première articulation blessée chez les professionnels. Les drills de réception sont au cœur des programmes 11+ et PEP.",
     sources: ['hohn2018', 'fifa11plus', 'pep'],
-    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys' },
+    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys', youtubeId: '6RCOGM5tZRM', videoCreator: 'The Prehab Guys' },
   },
   {
     id: 'bird-dog-gainage',
@@ -249,7 +249,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le bas du dos est le premier site de blessure chronique chez les surfeurs, devant l'épaule, et le mécanisme le plus cité est la rame prolongée. Ces deux exercices viennent du protocole de McGill et entraînent la stabilité sans charger le disque en flexion.",
     sources: ['hanchard2021', 'mcgill', 'fifa11plus'],
-    video: { url: 'https://squatuniversity.com/2018/06/21/the-mcgill-big-3-for-core-stability/', creator: 'Squat University' },
+    video: { url: 'https://squatuniversity.com/2018/06/21/the-mcgill-big-3-for-core-stability/', creator: 'Squat University', youtubeId: 'S1QbyYZaXIg', videoCreator: 'Northern Nevada Chiropractic' },
   },
   {
     id: 'rotation-externe',
@@ -270,6 +270,6 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La rame est propulsée par les rotateurs internes, et les surfeurs présentent un déficit de rotation externe. Les revues recommandent de renforcer les rotateurs externes, mais aucun essai n'a testé ce programme chez des surfeurs, donc le point reste creux.",
     sources: ['langenberg2021', 'furness2018'],
-    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys' },
+    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys', youtubeId: '_UvmPNGtlPM', videoCreator: 'AskDoctorJo, DPT' },
   },
 ]

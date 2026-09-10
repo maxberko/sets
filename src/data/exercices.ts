@@ -66,7 +66,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       'Le presse horizontal couvre le corps sternal du pectoral, la plus grosse portion du muscle. Les haltères demandent un peu moins de charge que la barre mais laissent chaque côté aller au bout de son amplitude.',
     sources: ['ace2012pecs', 'noteboom2024', 'schoenfeld2017vol'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/DBBenchPress', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/DBBenchPress', creator: 'ExRx', youtubeId: 'YQ2s_Y7g5Qk', videoCreator: 'Renaissance Periodization' },
   },
   {
     id: 'ecarte-poulie',
@@ -96,7 +96,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Un mouvement d'isolation qui charge le pectoral en position allongée, là où le développé le sollicite le moins. Dans le classement EMG de l'ACE, la poulie et la presse à pectoraux arrivent juste derrière le développé couché.",
     sources: ['ace2012pecs', 'schoenfeld2017charge'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/CBStandingFly', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/CBStandingFly', creator: 'ExRx', youtubeId: '4mfLHnFL0Uw', videoCreator: 'Renaissance Periodization' },
   },
   {
     id: 'dips-assistes',
@@ -125,7 +125,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Les dips atteignent environ 69 % de l'activation du développé couché dans le classement ACE, et couvrent la portion basse du pectoral que l'incliné ne touche pas.",
     sources: ['ace2012pecs'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDip', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDip', creator: 'ExRx', youtubeId: 'yZ83t4mrPrI', videoCreator: 'Renaissance Periodization' },
   },
 
   // ---------------------------------------------------------------- PECTORAUX, TAPIS
@@ -162,7 +162,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Pieds surélevés, la pompe fait passer la charge de 64 % du poids de corps à environ 70–74 %, et déplace le travail vers le haut de la poitrine, comme le fait le banc incliné.",
     sources: ['ebben2011', 'kotarsky2018', 'acsm2026'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralClavicular/BWDeclinePushup', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralClavicular/BWDeclinePushup', creator: 'ExRx', youtubeId: 'wU6mtZV8Jnc', videoCreator: 'John Rusin, DPT' },
   },
   {
     id: 'pompes-lestees',
@@ -198,7 +198,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       'Deux essais courts ont montré que des pompes progressives ou lestées produisent des gains comparables au développé couché. Au-delà de 30 reps propres, on ajoute de la charge plutôt que des répétitions.',
     sources: ['kikuchi2017', 'kotarsky2018', 'schoenfeld2017charge'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/WtPushup', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/WtPushup', creator: 'ExRx', youtubeId: 'jDvuRh9nYD4', videoCreator: 'Horton Barbell' },
   },
   {
     id: 'pompes-lentes',
@@ -218,7 +218,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Sans poulie, la façon de charger le pectoral en position allongée est de ralentir la descente et d'aller chercher l'amplitude complète. La charge compte peu tant que la série finit près de l'échec.",
     sources: ['schoenfeld2017charge', 'ebben2011'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx', youtubeId: 'EH9mTZKjDtA', videoCreator: 'E3 Rehab' },
   },
   {
     id: 'dips-chaises',
@@ -270,7 +270,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Premier ou deuxième du classement EMG de l'ACE pour le grand droit et les obliques, et le meilleur moyen de charger la portion basse. Le recrutement se fait près de la charge : jambes qui montent, bas du ventre qui travaille.",
     sources: ['ace2001abdos', 'escamilla2006', 'gomirato2023'],
-    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/hanging-leg-raise-how-to', creator: 'Athlean-X' },
+    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/hanging-leg-raise-how-to', creator: 'Athlean-X', youtubeId: 'Pr1ieGZ5atk', videoCreator: 'Athlean-X' },
   },
   {
     id: 'crunch-poulie',
@@ -295,7 +295,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "C'est le seul exercice abdominal du programme où on peut ajouter du poids semaine après semaine. L'abdominal est un muscle comme un autre : il grossit avec une surcharge progressive, et les squats et soulevés de terre ne l'activent pas assez pour ça.",
     sources: ['sbs-core', 'schoenfeld2017vol', 'gomirato2023'],
-    video: { url: 'https://exrx.net/WeightExercises/RectusAbdominis/CBKneelingCrunch', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/RectusAbdominis/CBKneelingCrunch', creator: 'ExRx', youtubeId: '6GMKPQVERzw', videoCreator: 'Renaissance Periodization' },
   },
   {
     id: 'roulette-abdominale',
@@ -321,7 +321,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Dans les travaux d'Escamilla, la roulade est en tête pour le grand droit et les obliques, avec une charge lombaire faible. Elle entraîne la fonction réelle de la sangle : empêcher le dos de se creuser.",
     sources: ['escamilla2006', 'escamilla2010'],
-    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/total-body-ab-wheel-workout', creator: 'Athlean-X' },
+    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/total-body-ab-wheel-workout', creator: 'Athlean-X', youtubeId: 'A3uK5TPzHq8', videoCreator: 'Athlean-X' },
   },
   {
     id: 'pallof-poulie',
@@ -341,7 +341,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Le tronc sert autant à empêcher un mouvement qu'à en produire un. L'anti-rotation complète la flexion chargée et couvre les obliques sans les faire grossir en volume.",
     sources: ['sbs-core'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/332/standing-anti-rotation-press/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/332/standing-anti-rotation-press/', creator: 'ACE', youtubeId: 'p3WA3yiEo-k', videoCreator: 'E3 Rehab' },
   },
   {
     id: 'gainage-lateral-leste',
@@ -361,7 +361,7 @@ export const EXERCICES: Exercise[] = [
     erreurs: ['Laisser le bassin s\'affaisser.', 'Basculer le buste vers l\'avant.', 'Retenir sa respiration.'],
     pourquoi: 'Travail latéral et stabilité du tronc, testé dans l\'étude ACE de 2014 aux côtés du crunch.',
     sources: ['ace2014abdos'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE', youtubeId: 'Od3c25ipwiU', videoCreator: 'The Prehab Guys' },
   },
 
   // ---------------------------------------------------------------- ABDOMINAUX, TAPIS
@@ -388,7 +388,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "C'est le mouvement qui charge le bas du grand droit, l'autre moitié du travail à côté du crunch. Le recrutement se fait près de la charge : bassin qui monte, bas du ventre qui travaille.",
     sources: ['gomirato2023', 'escamilla2006', 'ace2001abdos'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/', creator: 'ACE', youtubeId: 'fhrkw1aaP8k', videoCreator: 'Athlean-X', start: 0, end: 153 },
   },
   {
     id: 'roulade-avant-bras',
@@ -429,7 +429,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Le remplaçant sans matériel du Pallof press : même rôle anti-rotation, avec le poids du corps. Les exercices qui ajoutent un mouvement de bras sollicitent davantage la sangle que le gainage seul.",
     sources: ['ace2014abdos', 'sbs-core'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/', creator: 'ACE', youtubeId: 'g3bsSUOn-vo', videoCreator: 'E3 Rehab' },
   },
   {
     id: 'gainage-lateral',
@@ -449,6 +449,6 @@ export const EXERCICES: Exercise[] = [
     erreurs: ['Bassin qui descend.', 'Buste qui bascule vers l\'avant.', 'Apnée.'],
     pourquoi: 'Stabilité latérale du tronc, complément du travail de flexion. Le bas du dos est le premier site de blessure chronique chez les surfeurs.',
     sources: ['ace2014abdos', 'hanchard2021'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE', youtubeId: 'eRygfYEe1hs', videoCreator: 'E3 Rehab' },
   },
 ]

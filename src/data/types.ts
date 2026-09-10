@@ -17,6 +17,12 @@ export interface VideoRef {
    * qu'un cadre vide.
    */
   youtubeId?: string
+  /**
+   * Chaîne de la vidéo intégrée, quand elle diffère de la source de référence.
+   * Les étapes ont pu être vérifiées contre une page ExRx et la démonstration
+   * venir d'ailleurs : autant le dire plutôt que de mélanger les deux.
+   */
+  videoCreator?: string
   /** Secondes de début et de fin du passage utile, quand on les connaît. */
   start?: number
   end?: number
