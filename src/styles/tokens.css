@@ -118,6 +118,12 @@ a {
   display: flex;
   flex-direction: column;
   padding-top: calc(var(--barre-haut) + 44px);
+  /* Dessiné pour un téléphone : au-delà, on garde la colonne et on la centre
+     plutôt que d'étirer les compteurs sur toute la largeur d'un écran large.
+     Le fond du corps est peint de la même couleur, donc la couture ne se voit pas. */
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
 }
 
 .contenu {
@@ -206,6 +212,10 @@ a {
   top: 0;
   left: 0;
   right: 0;
+  /* Fixé, donc hors du flux : sans ça la croix de fermeture se colle au bord de
+     l'écran au lieu de rester alignée sur la colonne. */
+  max-width: 480px;
+  margin-inline: auto;
   z-index: 10;
   display: flex;
   align-items: center;

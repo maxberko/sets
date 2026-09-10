@@ -173,13 +173,20 @@ function BandeSemaine({ plan, jourActuel, faites }: { plan: Record<Jour, string[
         const actuel = j === jourActuel
         return (
           <div key={j} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {/* Le jour courant est encré en plein : à la taille d'une initiale, un
+                changement de graisse seul ne se voit pas d'un coup d'œil. */}
             <div
+              aria-current={actuel ? 'date' : undefined}
               style={{
                 fontSize: '11px',
                 letterSpacing: '0.08em',
                 textAlign: 'center',
-                color: actuel ? 'var(--encre)' : 'var(--sourdine)',
-                fontWeight: actuel ? 600 : 400,
+                lineHeight: 1,
+                padding: '4px 0 3px',
+                borderRadius: 'var(--r)',
+                background: actuel ? 'var(--encre)' : 'transparent',
+                color: actuel ? 'var(--papier)' : 'var(--sourdine)',
+                fontWeight: actuel ? 700 : 400,
               }}
             >
               {INITIALE_JOUR[j]}

@@ -78,10 +78,13 @@ export function prochaineCharge(
   }
 
   const manque = attendues - series.filter((s) => s.reps >= max).length
+  const cible = arrondirAuPas(chargeActuelle + pas, pas)
+  // Formulé comme une condition datée : « encore 1 série à 12 reps et tu montes
+  // de 2 kg » se lisait comme une consigne immédiate, et ne disait pas quand.
   return {
     valeur: chargeActuelle,
     changement: 'stable',
-    message: `Encore ${manque} série${manque > 1 ? 's' : ''} à ${max} reps et tu montes de ${pas} kg.`,
+    message: `Il te reste ${manque} série${manque > 1 ? 's' : ''} de ${max} reps pour monter à ${cible} kg à la séance suivante.`,
   }
 }
 
@@ -136,7 +139,7 @@ export function prochainEchelon(
   return {
     valeur: echelonActuel,
     changement: 'stable',
-    message: `${max} reps sur toutes les séries et tu passes à : ${suivant}.`,
+    message: `Toutes les séries à ${max} reps et tu passes à « ${suivant} » à la séance suivante.`,
   }
 }
 
