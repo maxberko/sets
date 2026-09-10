@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'preact/hooks'
 import { Fleche } from '../composants/icones'
-import { EQUIPEMENTS } from '../lib/db'
 import { modifier, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
-import { Bascule } from './Reglages'
 import { exercice } from '../data'
 
 interface EvenementInstall extends Event {
@@ -41,9 +39,9 @@ export function Installation() {
     <div class="ecran" style={{ paddingTop: 'calc(var(--barre-haut) + 44px)' }}>
       <div class="contenu" style={{ paddingBottom: 'calc(40px + var(--barre-bas))' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <span class="etiquette discret">Étape {etape + 1} sur 3</span>
+          <span class="etiquette discret">Étape {etape + 1} sur 2</span>
           <h1 style={{ fontSize: '44px', lineHeight: 0.95 }}>
-            {etape === 0 ? 'Sets' : etape === 1 ? 'Ta salle' : 'Ton niveau de pompes'}
+            {etape === 0 ? 'Sets' : 'Ton niveau de pompes'}
           </h1>
         </div>
 
@@ -66,28 +64,6 @@ export function Installation() {
         )}
 
         {etape === 1 && (
-          <>
-            <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
-              L'équipement change d'un club à l'autre. Coche ce que ton Basic-Fit a vraiment. Tu pourras corriger à tout moment dans
-              les réglages, et ce qui manque bascule automatiquement sur la version tapis.
-            </p>
-            {EQUIPEMENTS.map((e) => (
-              <Bascule
-                key={e.id}
-                label={e.label}
-                aide={e.aide}
-                actif={d.reglages.equipement[e.id] ?? true}
-                onChange={(v) => modifier((data) => void (data.reglages.equipement[e.id] = v))}
-              />
-            ))}
-            <button class="principal" onClick={() => setEtape(2)}>
-              <span>Continuer</span>
-              <Fleche couleur="var(--papier)" />
-            </button>
-          </>
-        )}
-
-        {etape === 2 && (
           <>
             <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
               Les jours sans salle, la séance tourne sur une échelle de pompes. Choisis l'échelon où tu tiens huit répétitions

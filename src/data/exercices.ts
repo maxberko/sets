@@ -218,7 +218,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Sans poulie, la façon de charger le pectoral en position allongée est de ralentir la descente et d'aller chercher l'amplitude complète. La charge compte peu tant que la série finit près de l'échec.",
     sources: ['schoenfeld2017charge', 'ebben2011'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx', youtubeId: 'EH9mTZKjDtA', videoCreator: 'E3 Rehab' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx', youtubeId: 'dHeMPgul4A0', videoCreator: 'Champion PT and Performance' },
   },
   {
     id: 'dips-chaises',
@@ -238,7 +238,7 @@ export const EXERCICES: Exercise[] = [
     erreurs: ['Chaises instables.', 'Descendre trop bas.', 'Rester vertical, ce qui bascule le travail sur les triceps.'],
     pourquoi: 'La version sans matériel du dip, pour couvrir la portion basse du pectoral les jours de tapis.',
     sources: ['ace2012pecs'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDipBenches', creator: 'ExRx' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDipBenches', creator: 'ExRx', youtubeId: 'xJLFsFUWRAQ', videoCreator: 'All Strength Training' },
   },
 
   // ---------------------------------------------------------------- ABDOMINAUX, SALLE
@@ -361,7 +361,7 @@ export const EXERCICES: Exercise[] = [
     erreurs: ['Laisser le bassin s\'affaisser.', 'Basculer le buste vers l\'avant.', 'Retenir sa respiration.'],
     pourquoi: 'Travail latéral et stabilité du tronc, testé dans l\'étude ACE de 2014 aux côtés du crunch.',
     sources: ['ace2014abdos'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE', youtubeId: 'Od3c25ipwiU', videoCreator: 'The Prehab Guys' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/100/side-plank-modified/', creator: 'ACE', youtubeId: 'iW_FBrrtmN4', videoCreator: 'Prevail Strength and Fitness' },
   },
 
   // ---------------------------------------------------------------- ABDOMINAUX, TAPIS
@@ -409,7 +409,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "La version sans roulette du même travail anti-extension, en tête des classements d'Escamilla pour l'activation avec une charge lombaire faible.",
     sources: ['escamilla2006', 'escamilla2010'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/', creator: 'ACE' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/', creator: 'ACE', youtubeId: '7t8rWKzLwg8', videoCreator: 'Higher Level Performance' },
   },
   {
     id: 'gainage-touches-epaule',

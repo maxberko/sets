@@ -33,6 +33,7 @@ function extraire(chemin) {
         exercice: dernierId,
         youtubeId: yt[1],
         chaineAttendue: videoCreator?.[1] ?? creator?.[1] ?? '?',
+        aUnExtrait: /start: \d+/.test(ligne),
         fichier: chemin,
       })
     }
@@ -50,17 +51,27 @@ async function oembed(id) {
   return { ok: true, titre: j.title, chaine: j.author_name }
 }
 
-/** La page d'intégration dit si le propriétaire autorise la lecture hors de YouTube. */
+/**
+ * `playableInEmbed` est le seul drapeau qui tranche : une chaîne peut interdire la
+ * lecture hors de YouTube alors que `playabilityStatus` reste « OK ». Ne regarder que
+ * le statut laissait donc passer précisément la panne qu'on cherche à éviter.
+ */
 async function integrable(id) {
-  const r = await fetch(`https://www.youtube-nocookie.com/embed/${id}`, {
-    headers: { 'user-agent': 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36' },
+  const r = await fetch(`https://www.youtube.com/watch?v=${id}`, {
+    headers: {
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',
+      'accept-language': 'fr-FR,fr;q=0.9',
+    },
   })
-  if (!r.ok) return { ok: false, raison: `page d'intégration HTTP ${r.status}` }
+  if (!r.ok) return { ok: false, raison: `page vidéo HTTP ${r.status}` }
   const html = await r.text()
-  if (/"status":"UNPLAYABLE"/.test(html)) return { ok: false, raison: 'lecture bloquée hors YouTube' }
-  if (/"status":"LOGIN_REQUIRED"/.test(html)) return { ok: false, raison: 'connexion exigée' }
-  if (/"status":"ERROR"/.test(html)) return { ok: false, raison: 'erreur de lecture' }
-  return { ok: true }
+  const statut = html.match(/"playabilityStatus":\{"status":"([A-Z_]+)"/)?.[1]
+  if (statut && statut !== 'OK') return { ok: false, raison: `statut ${statut}` }
+  const embed = html.match(/"playableInEmbed":(true|false)/)?.[1]
+  if (embed === 'false') return { ok: false, raison: 'intégration désactivée par la chaîne' }
+  if (embed === undefined) return { ok: true, doute: 'drapeau playableInEmbed absent' }
+  const duree = html.match(/"lengthSeconds":"(\d+)"/)?.[1]
+  return { ok: true, secondes: duree ? Number(duree) : undefined }
 }
 
 const entrees = FICHIERS.flatMap(extraire)
@@ -90,7 +101,17 @@ for (const e of entrees) {
   const attendue = normalise(e.chaineAttendue)
   const reelle = normalise(meta.chaine)
   const concordance = reelle.includes(attendue) || attendue.includes(reelle)
-  console.log(`✓ ${e.exercice} — « ${meta.titre} » — ${meta.chaine}${concordance ? '' : `  ⚠ chaîne annoncée : ${e.chaineAttendue}`}`)
+  const duree = emb.secondes ? ` (${emb.secondes} s)` : ''
+  const alertes = [
+    concordance ? null : `chaîne annoncée : ${e.chaineAttendue}`,
+    emb.doute,
+    // Une vidéo longue sans extrait démarre sur une introduction, pas sur le mouvement.
+    emb.secondes && emb.secondes > 240 && !e.aUnExtrait ? 'longue et sans start/end' : null,
+  ].filter(Boolean)
+  console.log(
+    `✓ ${e.exercice} — « ${meta.titre} » — ${meta.chaine}${duree}` +
+      (alertes.length ? `  ⚠ ${alertes.join(' · ')}` : ''),
+  )
 }
 
 console.log(`\n${entrees.length - echecs}/${entrees.length} valides`)

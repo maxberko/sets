@@ -34,6 +34,7 @@ npm run build    # vérifie les types puis construit dist/
 | `src/lib/db.ts` | IndexedDB via `idb-keyval`, plus export et import d'une sauvegarde JSON. |
 | `src/ecrans/` | Un fichier par écran. |
 | `scripts/icones.mjs` | Génère les icônes PNG sans dépendance, à partir de zlib. |
+| `scripts/verifier-videos.mjs` | Contrôle que chaque vidéo existe, est publique et autorise l'intégration. |
 
 ## Déploiement
 
@@ -47,10 +48,15 @@ avant l'appui, sinon chaque ouverture de fiche irait chercher le lecteur de Goog
 lourd que toute l'appli. Réserve honnête : la barre de contrôle de YouTube porte un lien
 « Regarder sur YouTube » que leurs conditions interdisent de masquer.
 
-**26 exercices sur 28 ont une démonstration.** Deux en sont volontairement dépourvus,
-`dips-chaises` et `roulade-avant-bras` : les seules vidéos trouvées montraient un autre
-mouvement que les étapes écrites, et une vidéo qui contredit la consigne est pire qu'une
-absence annoncée. Ces fiches le disent et nomment la source.
+**Les 28 exercices ont une démonstration.** La fiche garde tout de même l'état « pas encore
+de vidéo », qui nomme la source de référence : il servira au prochain exercice ajouté, et
+mieux vaut une absence annoncée qu'un lecteur qui ne joue rien.
+
+Le premier passage en avait laissé deux vides parce que la barre sur les chaînes était trop
+haute : des kinés et des coachs diplômés étaient écartés faute d'être sur une liste. En la
+baissant aux credentials nommés, les deux trous se sont comblés, et deux choix trop
+approximatifs ont été remplacés — une pompe ordinaire là où il fallait un tempo lent, un
+gainage latéral élastique là où il fallait une charge sur la hanche.
 
 `creator` et `videoCreator` sont deux choses différentes, et le champ le reste exprès :
 les étapes ont souvent été vérifiées contre une page ExRx ou ACE tandis que la
