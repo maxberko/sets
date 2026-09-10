@@ -36,7 +36,9 @@ export function Fiche({ id }: { id: string }) {
       </div>
 
       <div class="contenu" style={{ paddingTop: '24px', paddingBottom: 'calc(40px + var(--barre-bas))', gap: '26px' }}>
-        <Bloc titre="Comment faire">
+        <BlocVideo ex={ex} />
+
+        <Bloc titre="Comment faire" separateur>
           <ol style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '12px', columnGap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.5 }}>
             {ex.etapes.map((e, i) => (
               <li key={i} style={{ display: 'contents' }}>
@@ -61,8 +63,6 @@ export function Fiche({ id }: { id: string }) {
         <Bloc titre="Ce que tu dois sentir">
           <p style={{ fontSize: '15px', lineHeight: 1.5 }}>{ex.ressenti}</p>
         </Bloc>
-
-        <BlocVideo ex={ex} />
 
         <Bloc titre="Les erreurs fréquentes" separateur>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.45 }}>
@@ -160,8 +160,9 @@ function BlocVideo({ ex }: { ex: Exercise }) {
   if (!ex.video) return null
   const v = ex.video
 
+  // Premier bloc de la page, juste sous le bandeau coloré : pas de filet au-dessus.
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1.5px solid var(--encre)', paddingTop: '20px' }}>
+    <section style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       <h3 style={{ fontSize: '17px' }}>Le mouvement</h3>
 
       {v.youtubeId ? (
