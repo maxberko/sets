@@ -12,7 +12,19 @@ Rien n'est calé sur les sessions de surf : l'appli ne demande jamais quand tu v
 
 **Le créneau, pas l'exercice.** Une séance est une liste de `Slot`. « Presse haut des pectoraux, 3 × 8-12 » est un rôle qui pèse le même poids dans le volume hebdomadaire, qu'il soit rempli par un développé incliné en salle ou par des pompes pieds surélevés sur le tapis. Chaque séance de force commence par une question, salle ou tapis, et les deux réponses produisent le même nombre de séries efficaces. Les kilos et les échelons de difficulté progressent séparément : une série de tapis ne remet jamais à zéro une charge de salle.
 
+**Rien ne démarre tout seul.** Le chrono d'un exercice de mobilité attend un appui sur
+« Démarrer » : on se met en place, puis on lance. Seul le repos entre deux séries part
+automatiquement, puisqu'il commence quand la série finit.
+
 **Le point de preuve.** Chaque exercice de mobilité porte un point plein quand au moins un essai clinique soutient le fait de le faire, un point creux quand il ne repose que sur l'anatomie et l'usage clinique. Six pleins, cinq creux. Aucun exercice à point creux n'est présenté comme de la prévention. C'est ce qui rend la promesse « basé sur les preuves » vérifiable au lieu d'être décorative.
+
+## Premier lancement
+
+Un seul écran : un brief sur le fonctionnement et la logique derrière, puis « Démarrer la
+semaine 1 ». Aucune question posée, et c'est volontaire. L'échelle de pompes part d'un
+échelon moyen que le moteur corrige en deux séances — au sommet de la fourchette il monte,
+deux échecs sous le bas il redescend. L'équipement du club vit dans les réglages, parce
+qu'on ne connaît pas son club avant d'y être allé.
 
 ## Développement
 

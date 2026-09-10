@@ -42,6 +42,8 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
 
   const [restant, setRestant] = useState(duree)
   const [enPause, setEnPause] = useState(false)
+  // Le chrono ne démarre pas tout seul : on se met en place, puis on appuie.
+  const [demarre, setDemarre] = useState(false)
 
   // Chaque étape repart de sa durée pleine. La clé couvre l'exercice, la série et le côté.
   const cle = `${i}-${serie}-${etape}`
@@ -51,6 +53,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
     cleVue.current = cle
     setRestant(duree)
     setEnPause(false)
+    setDemarre(false)
   }, [cle, duree])
 
   useEffect(() => {
@@ -78,7 +81,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   }
 
   useEffect(() => {
-    if (!chrono || enPause || fini || restant <= 0) return
+    if (!chrono || !demarre || enPause || fini || restant <= 0) return
     const id = setTimeout(() => {
       const suivant = restant - 1
       if (suivant === 5) biper(d.reglages.sons, 660, 0.08)
@@ -91,7 +94,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
     }, 1000)
     return () => clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [restant, enPause, chrono, fini])
+  }, [restant, enPause, demarre, chrono, fini])
 
   if (!t) return <Introuvable />
   if (fini) return <FinMobilite templateId={templateId} debut={debut.current} journal={journal} />
@@ -159,10 +162,17 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
           )}
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 104px', gap: '12px' }}>
             {chrono ? (
-              <button class="principal" style={{ justifyContent: 'center' }} onClick={() => setEnPause(!enPause)}>
-                {enPause ? <Lecture couleur="var(--papier)" /> : <Pause couleur="var(--papier)" />}
-                <span>{enPause ? 'Reprendre' : 'Pause'}</span>
-              </button>
+              !demarre ? (
+                <button class="principal" style={{ justifyContent: 'center' }} onClick={() => setDemarre(true)}>
+                  <Lecture couleur="var(--papier)" />
+                  <span>Démarrer</span>
+                </button>
+              ) : (
+                <button class="principal" style={{ justifyContent: 'center' }} onClick={() => setEnPause(!enPause)}>
+                  {enPause ? <Lecture couleur="var(--papier)" /> : <Pause couleur="var(--papier)" />}
+                  <span>{enPause ? 'Reprendre' : 'Pause'}</span>
+                </button>
+              )
             ) : (
               <button class="principal" style={{ justifyContent: 'center' }} onClick={etapeSuivante}>
                 <Coche couleur="var(--papier)" />
