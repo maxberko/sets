@@ -1,5 +1,6 @@
 import { get, set, del } from 'idb-keyval'
 import type { Venue } from '../data/types'
+import type { Formule } from '../data/seances'
 
 export interface SetLog {
   slotId: string
@@ -31,6 +32,8 @@ export interface CheckIn {
 
 export interface Reglages {
   onboarde: boolean
+  /** Combien de séances par semaine. Ne change pas leur contenu. */
+  formule: Formule
   /** Plus petit incrément disponible dans la salle, par haltère. */
   pasCharge: number
   /** Haltère le plus lourd du club. Sert à prévenir quand la progression le dépasse. */
@@ -78,6 +81,7 @@ export const DEFAUT: Donnees = {
   version: 1,
   reglages: {
     onboarde: false,
+    formule: 'standard',
     pasCharge: 2,
     halteresMax: 30,
     sons: true,

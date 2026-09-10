@@ -1,19 +1,11 @@
 import { useState } from 'preact/hooks'
-import type { ComponentChildren } from 'preact'
 import { BoutonRetour, Entete } from '../composants/communs'
-import { Chevron, PointPreuve } from '../composants/icones'
+import { Lecture, PointPreuve } from '../composants/icones'
 import { COULEUR_PROGRAMME, NOM_PROGRAMME, exercice, sourcesFor } from '../data'
 import type { Exercise } from '../data/types'
 import { useDonnees } from '../lib/etat'
 import { Introuvable } from './ChoixLieu'
 
-/**
- * Carte de référence, pas document. On ouvre cette fiche pour vérifier un point
- * pendant une séance, donc ne reste visible que ce qui sert à ce moment-là :
- * la vidéo, les trois points clés, et le ressenti — seule chose qu'une vidéo ne
- * peut pas transmettre. Les étapes écrites doublaient la vidéo, les erreurs
- * disaient les points clés à l'envers, et le pourquoi se lit une fois : replié.
- */
 export function Fiche({ id }: { id: string }) {
   const d = useDonnees()
   const ex = exercice(id)
@@ -25,53 +17,54 @@ export function Fiche({ id }: { id: string }) {
 
   return (
     <div class="ecran" style={{ paddingTop: 0 }}>
-      <div style={{ background: couleur, color: 'var(--sur-couleur)', padding: `calc(var(--barre-haut) + 14px) var(--gouttiere) 20px` }}>
+      <div style={{ background: couleur, color: 'var(--sur-couleur)', padding: `calc(var(--barre-haut) + 14px) var(--gouttiere) 24px` }}>
         <Entete statique surCouleur gauche={<BoutonRetour label={NOM_PROGRAMME[ex.programme]} />} />
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
-          <h1 style={{ fontSize: '36px', lineHeight: 0.95 }}>{ex.nom}</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '14px' }}>
-            <span>{ex.resume}</span>
-            {ex.evidence && (
-              <>
-                <span style={{ opacity: 0.5 }}>·</span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  <PointPreuve plein={ex.evidence === 'pleine'} />
-                  {ex.evidence === 'pleine' ? 'essai clinique' : 'usage clinique'}
-                </span>
-              </>
-            )}
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '10px' }}>
+          <h1 style={{ fontSize: '40px', lineHeight: 0.95 }}>{ex.nom}</h1>
+          <p style={{ fontSize: '15px', lineHeight: 1.4 }}>{ex.resume}</p>
+          {ex.evidence && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+              <PointPreuve plein={ex.evidence === 'pleine'} />
+              <span>
+                {ex.evidence === 'pleine'
+                  ? "Un essai clinique soutient ce travail"
+                  : "Usage clinique, pas d'essai clinique"}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div class="contenu" style={{ paddingTop: '16px', paddingBottom: 'calc(40px + var(--barre-bas))', gap: '22px' }}>
-        <Video ex={ex} />
+      <div class="contenu" style={{ paddingTop: '24px', paddingBottom: 'calc(40px + var(--barre-bas))', gap: '26px' }}>
+        <BlocVideo ex={ex} />
 
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {ex.points.map((p, i) => (
-            <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'baseline', fontSize: '17px', lineHeight: 1.4 }}>
-              <span style={{ width: '8px', height: '8px', background: couleur, borderRadius: '1px', flex: 'none', position: 'relative', top: '-1px' }} />
-              <span>{p}</span>
-            </div>
-          ))}
-        </section>
+        <Bloc titre="Comment faire" separateur>
+          <ol style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '12px', columnGap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.5 }}>
+            {ex.etapes.map((e, i) => (
+              <li key={i} style={{ display: 'contents' }}>
+                <span class="discret num">{i + 1}</span>
+                <span>{e}</span>
+              </li>
+            ))}
+          </ol>
+        </Bloc>
 
-        <section style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <span class="etiquette discret">Ce que tu dois sentir</span>
+        <Bloc titre="Les points qui comptent">
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.45 }}>
+            {ex.points.map((p, i) => (
+              <li key={i} style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
+                <span style={{ width: '8px', height: '8px', background: couleur, borderRadius: '1px', flex: 'none', position: 'relative', top: '-1px' }} />
+                <span>{p}</span>
+              </li>
+            ))}
+          </ul>
+        </Bloc>
+
+        <Bloc titre="Ce que tu dois sentir">
           <p style={{ fontSize: '15px', lineHeight: 1.5 }}>{ex.ressenti}</p>
-        </section>
+        </Bloc>
 
-        {ex.echelle && echelon !== null && (
-          <section style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '14px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <span class="etiquette discret">Ton échelon</span>
-            <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
-              <strong>{ex.echelle[echelon]}</strong>
-              {echelon < ex.echelle.length - 1 ? ` · ensuite : ${ex.echelle[echelon + 1]?.toLowerCase()}` : ' · dernier échelon'}
-            </p>
-          </section>
-        )}
-
-        <Repliable titre="Les erreurs fréquentes">
+        <Bloc titre="Les erreurs fréquentes" separateur>
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.45 }}>
             {ex.erreurs.map((e, i) => (
               <li key={i} style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
@@ -83,99 +76,172 @@ export function Fiche({ id }: { id: string }) {
               </li>
             ))}
           </ul>
-        </Repliable>
+        </Bloc>
 
-        <Repliable titre="Les étapes, en texte">
-          <ol style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '12px', columnGap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.5 }}>
-            {ex.etapes.map((e, i) => (
-              <li key={i} style={{ display: 'contents' }}>
-                <span class="discret num">{i + 1}</span>
-                <span>{e}</span>
-              </li>
-            ))}
-          </ol>
-          {ex.verifierEnSalle && (
-            <p class="discret" style={{ fontSize: '14px', lineHeight: 1.5, paddingTop: '12px' }}>{ex.verifierEnSalle}</p>
-          )}
-        </Repliable>
+        {ex.echelle && (
+          <Bloc titre="Ton échelle de difficulté" separateur>
+            <ol style={{ display: 'flex', flexDirection: 'column', gap: '0', margin: 0, padding: 0, listStyle: 'none' }}>
+              {ex.echelle.map((e, i) => {
+                const actuel = i === echelon
+                return (
+                  <li
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                      padding: '12px 0',
+                      borderTop: i === 0 ? 'none' : '1px solid var(--filet)',
+                      fontSize: '15px',
+                      fontWeight: actuel ? 600 : 400,
+                      color: actuel ? 'var(--encre)' : 'var(--sourdine)',
+                    }}
+                  >
+                    <span>{e}</span>
+                    {actuel && <span class="etiquette">tu es ici</span>}
+                  </li>
+                )
+              })}
+            </ol>
+          </Bloc>
+        )}
 
-        <Repliable titre="Pourquoi cet exercice">
+        <Bloc titre="Pourquoi il est dans ton programme" separateur>
           <p style={{ fontSize: '15px', lineHeight: 1.5 }}>{ex.pourquoi}</p>
           {sources.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '8px', columnGap: '8px', paddingTop: '12px', fontSize: '13px', lineHeight: 1.45 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '8px', columnGap: '8px', paddingTop: '10px', fontSize: '13px', lineHeight: 1.45 }}>
               {sources.map((s, i) => (
-                <div key={s.id} style={{ display: 'contents' }}>
-                  <span class="discret num">{i + 1}</span>
-                  <span>{s.texte}</span>
-                </div>
+                <>
+                  <span key={`n${s.id}`} class="discret num">{i + 1}</span>
+                  <span key={s.id}>{s.texte}</span>
+                </>
               ))}
             </div>
           )}
-        </Repliable>
+        </Bloc>
+
+        {ex.verifierEnSalle && (
+          <Bloc titre="À vérifier dans ton club" separateur>
+            <p style={{ fontSize: '15px', lineHeight: 1.5 }}>{ex.verifierEnSalle}</p>
+          </Bloc>
+        )}
       </div>
     </div>
   )
 }
 
-/**
- * La vidéo est là dès l'ouverture, plus rien à charger d'abord. Pas d'autoplay :
- * c'est le bouton de lecture de YouTube qui la démarre. Le prix est réel — le
- * lecteur de Google est tiré à chaque ouverture de fiche — et c'est le choix assumé
- * puisque l'appli s'utilise connectée.
- */
-function Video({ ex }: { ex: Exercise }) {
-  if (!ex.video) return null
-  const v = ex.video
-
-  if (!v.youtubeId) {
-    return (
-      <div style={{ border: '1.5px solid var(--filet)', borderRadius: 'var(--r)', padding: '14px', fontSize: '14px', lineHeight: 1.45 }}>
-        <span style={{ fontWeight: 600 }}>Pas encore de vidéo.</span>{' '}
-        <span class="discret">Les étapes ont été vérifiées contre une page de {v.creator}.</span>
-      </div>
-    )
-  }
-
-  const p = new URLSearchParams({ rel: '0', modestbranding: '1', playsinline: '1', iv_load_policy: '3' })
-  if (v.start !== undefined) p.set('start', String(v.start))
-  if (v.end !== undefined) p.set('end', String(v.end))
-
+function Bloc({ titre, children, separateur }: { titre: string; children: preact.ComponentChildren; separateur?: boolean }) {
   return (
-    <figure style={{ margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#14181a', borderRadius: 'var(--r)', overflow: 'hidden' }}>
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?${p.toString()}`}
-          title={`Démonstration : ${ex.nom}`}
-          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
-        />
-      </div>
-      <figcaption class="discret" style={{ fontSize: '13px', lineHeight: 1.4 }}>
-        {v.videoCreator ?? v.creator}
-        {v.start !== undefined ? " · l'extrait démarre au passage utile" : ''}
-      </figcaption>
-    </figure>
+    <section
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        borderTop: separateur ? '1.5px solid var(--encre)' : 'none',
+        paddingTop: separateur ? '20px' : 0,
+      }}
+    >
+      <h3 style={{ fontSize: '17px' }}>{titre}</h3>
+      {children}
+    </section>
   )
 }
 
-function Repliable({ titre, children }: { titre: string; children: ComponentChildren }) {
-  const [ouvert, setOuvert] = useState(false)
+/**
+ * La vidéo se lit dans la page, dans une iframe : appuyer sur lecture ne quitte pas
+ * l'appli. Rien n'est chargé avant l'appui, sinon chaque ouverture de fiche irait
+ * chercher le lecteur de Google, ce qui pèse plus lourd que toute l'appli.
+ *
+ * Sans identifiant intégrable, on affiche la source et on le dit. Un cadre vide qui
+ * ne joue rien serait pire que l'absence annoncée.
+ */
+function BlocVideo({ ex }: { ex: Exercise }) {
+  const [joue, setJoue] = useState(false)
+  if (!ex.video) return null
+  const v = ex.video
+
+  // Premier bloc de la page, juste sous le bandeau coloré : pas de filet au-dessus.
   return (
-    <section style={{ borderTop: '1.5px solid var(--encre)' }}>
-      <button
-        onClick={() => setOuvert(!ouvert)}
-        aria-expanded={ouvert}
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', width: '100%', minHeight: 'var(--cible)', padding: '12px 0', textAlign: 'left' }}
-      >
-        <span style={{ fontSize: '16px', fontWeight: 600 }}>{titre}</span>
-        <span style={{ display: 'inline-flex', transform: ouvert ? 'rotate(90deg)' : 'none', transition: 'transform 120ms' }}>
-          <Chevron taille={18} />
-        </span>
-      </button>
-      {ouvert && <div style={{ paddingBottom: '14px' }}>{children}</div>}
+    <section style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <h3 style={{ fontSize: '17px' }}>Le mouvement</h3>
+
+      {v.youtubeId ? (
+        <>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#14181a', borderRadius: 'var(--r)', overflow: 'hidden' }}>
+            {joue ? (
+              <iframe
+                src={lienIntegre(v.youtubeId, v.start, v.end)}
+                title={`Technique : ${ex.nom}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+              />
+            ) : (
+              <button
+                onClick={() => setJoue(true)}
+                aria-label={`Lire la démonstration de ${ex.nom}`}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'grid',
+                  placeItems: 'center',
+                  background: 'linear-gradient(160deg, #333b3e 0%, #191e20 60%, #14181a 100%)',
+                }}
+              >
+                <span
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    border: '2px solid var(--papier)',
+                    borderRadius: '50%',
+                    display: 'grid',
+                    placeItems: 'center',
+                    paddingLeft: '4px',
+                  }}
+                >
+                  <Lecture taille={24} couleur="var(--papier)" />
+                </span>
+              </button>
+            )}
+          </div>
+          <p class="discret" style={{ fontSize: '13px', lineHeight: 1.45 }}>
+            Démonstration : {v.videoCreator ?? v.creator}
+            {v.start !== undefined ? " · l'extrait démarre au passage utile" : ''}
+            {v.videoCreator && v.videoCreator !== v.creator ? ` · étapes vérifiées contre ${v.creator}` : ''}
+          </p>
+        </>
+      ) : (
+        <>
+          <div
+            style={{
+              border: '1.5px solid var(--filet)',
+              borderRadius: 'var(--r)',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
+          >
+            <span style={{ fontSize: '15px', fontWeight: 600 }}>Pas encore de vidéo pour cet exercice</span>
+            <span class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
+              La référence enregistrée est une page de {v.creator}, pas une vidéo intégrable. Les étapes et les erreurs ci-dessus
+              ont été vérifiées contre elle.
+            </span>
+          </div>
+        </>
+      )}
     </section>
   )
+}
+
+/** youtube-nocookie, sans vidéos suggérées, lecture en ligne et non en plein écran forcé. */
+function lienIntegre(id: string, debut?: number, fin?: number): string {
+  const p = new URLSearchParams({ rel: '0', modestbranding: '1', playsinline: '1', autoplay: '1', iv_load_policy: '3' })
+  if (debut !== undefined) p.set('start', String(debut))
+  if (fin !== undefined) p.set('end', String(fin))
+  return `https://www.youtube-nocookie.com/embed/${id}?${p.toString()}`
 }

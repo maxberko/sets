@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Plus } from '../composants/icones'
-import { CIBLES_HEBDO, COULEUR_PROGRAMME, NOM_PROGRAMME, PLAN, SEMAINES_BLOC } from '../data'
+import { CIBLES_HEBDO, COULEUR_PROGRAMME, NOM_PROGRAMME, SEMAINES_BLOC, planDe } from '../data'
 import { JOURS } from '../data/seances'
 import { modifier, useDonnees } from '../lib/etat'
 import { lundiDe, semaineDuBloc, tendance, volumeParSemaine } from '../lib/semaine'
@@ -15,7 +15,8 @@ export function Suivi() {
   const cette = volumes.find((v) => v.semaine === cle)?.parProgramme ?? {}
   const faites = d.seances.filter((s) => s.fin).length
 
-  const mobilitePrevues = JOURS.reduce((n, j) => n + (PLAN[j] ?? []).filter((x) => x === 'mobilite').length, 0)
+  const plan = planDe(d.reglages.formule)
+  const mobilitePrevues = JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => x === 'mobilite').length, 0)
   const mobiliteFaites = d.seances.filter((s) => s.fin && s.templateId === 'mobilite' && lundiDe(new Date(s.debut)) === cle).length
 
   const points = tendance(d.seances, 'developpe-incline-halteres')

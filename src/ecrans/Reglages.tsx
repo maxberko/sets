@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks'
 import { BoutonRetour, Entete } from '../composants/communs'
 import { Coche } from '../composants/icones'
 import { EQUIPEMENTS, DEFAUT, exporterJSON, importerJSON } from '../lib/db'
+import { FORMULES } from '../data'
 import { modifier, remplacer, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { Champ } from './Suivi'
@@ -51,6 +52,42 @@ export function Reglages() {
       <Entete gauche={<BoutonRetour label="Aujourd'hui" />} />
       <div class="contenu" style={{ paddingBottom: 'calc(40px + var(--barre-bas))' }}>
         <h1>Réglages</h1>
+
+        <Groupe titre="Ta formule">
+          <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
+            Le nombre de séances par semaine. Le contenu des séances ne change pas.
+          </p>
+          {FORMULES.map((f) => {
+            const choisie = d.reglages.formule === f.id
+            return (
+              <button
+                key={f.id}
+                onClick={() => modifier((data) => void (data.reglages.formule = f.id))}
+                aria-pressed={choisie}
+                class="rangee"
+                style={{ alignItems: 'flex-start' }}
+              >
+                <span style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left', minWidth: 0 }}>
+                  <span style={{ fontWeight: choisie ? 600 : 500 }}>
+                    {f.nom} · {f.seances} séances
+                  </span>
+                  <span class="discret" style={{ fontSize: '13px', lineHeight: 1.4 }}>{f.resume}</span>
+                </span>
+                <span
+                  style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    border: '1.5px solid var(--encre)',
+                    background: choisie ? 'var(--encre)' : 'transparent',
+                    flex: 'none',
+                    marginTop: '2px',
+                  }}
+                />
+              </button>
+            )
+          })}
+        </Groupe>
 
         <Groupe titre="Ta salle">
           <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>

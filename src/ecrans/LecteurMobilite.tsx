@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { Entete } from '../composants/communs'
-import { Chevron, Coche, Croix, Lecture, Pause, PointPreuve } from '../composants/icones'
+import { Chevron, Coche, Croix, Lecture, Pause } from '../composants/icones'
 import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
 import type { Exercise, Slot } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
@@ -118,48 +118,55 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
       <div class="contenu" style={{ gap: 0 }}>
         {chrono ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: '150px', lineHeight: 0.9, letterSpacing: '-0.06em', marginLeft: '-8px' }}>
-              {formatChrono(restant)}
+            <div class="chiffre" style={{ fontSize: '164px', lineHeight: 0.86, letterSpacing: '-0.06em', marginLeft: '-9px' }}>
+              {restant < 60 ? restant : formatChrono(restant)}
             </div>
             <div style={{ height: '8px', background: 'rgba(243,245,242,0.45)', borderRadius: '1px' }}>
               <div style={{ width: `${avancement}%`, height: '8px', background: 'var(--encre)', borderRadius: '1px' }} />
             </div>
-            <div class="etiquette" style={{ opacity: 0.8 }}>
-              {cote ? `Côté ${cote} · ${duree} s${cote === 'droit' ? ' · puis côté gauche' : ''}` : `${duree} s`}
+            <div class="etiquette">
+              {cote ? `Côté ${cote}${cote === 'droit' ? ' · puis côté gauche' : ''}` : `${duree} s`}
             </div>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: '110px', lineHeight: 0.9, marginLeft: '-4px' }}>
+            <div class="chiffre" style={{ fontSize: '92px', lineHeight: 0.9, marginLeft: '-3px' }}>
               {slot.repsParCote ?? slot.reps?.[1] ?? 0}
             </div>
-            <div class="etiquette" style={{ opacity: 0.8 }}>
+            <div class="etiquette">
               {cote ? `répétitions · côté ${cote}` : 'répétitions'}
               {slot.series > 1 ? ` · série ${serie + 1} sur ${slot.series}` : ''}
             </div>
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '28px', flex: 1 }}>
-          <h2 style={{ fontSize: '34px' }}>{ex.nom}</h2>
-          <p style={{ fontSize: '22px', lineHeight: 1.3, fontWeight: 500, maxWidth: '320px', textWrap: 'balance' }}>{ex.points[0]}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '2px' }}>
-            <PointPreuve plein={ex.evidence === 'pleine'} />
-            <span style={{ fontSize: '13px', opacity: 0.85 }}>{legendePreuve(ex)}</span>
-          </div>
-          <button onClick={() => aller(`/exercice/${ex.id}`)} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', fontWeight: 600, minHeight: 'var(--cible)' }}>
-            La fiche : étapes, erreurs, vidéo <Chevron taille={14} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, paddingTop: '22px', paddingBottom: '10px' }}>
+          <h2 style={{ fontSize: '28px' }}>{ex.nom}</h2>
+          <p style={{ fontSize: '19px', lineHeight: 1.35, fontWeight: 500, textWrap: 'balance' }}>{ex.points[0]}</p>
+          <button
+            onClick={() => aller(`/exercice/${ex.id}`)}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', width: '100%', fontSize: '15px', fontWeight: 600, minHeight: 'var(--cible)' }}
+          >
+            La fiche de l'exercice
+            <Chevron taille={16} />
           </button>
+          {ex.video?.youtubeId && (
+            <div style={{ marginTop: 'auto' }}>
+              <Demonstration ex={ex} cle={cle} />
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingBottom: 'calc(20px + var(--barre-bas))' }}>
-          {suivantEx && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1.5px solid var(--encre)', padding: '14px 0 4px', fontSize: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', borderTop: '1.5px solid var(--encre)', padding: '14px 0 4px', fontSize: '15px', minHeight: '44px' }}>
+            {suivantEx ? (
               <span>
-                <span style={{ opacity: 0.7 }}>Ensuite</span> · {suivantEx.nom}
+                <span>Ensuite</span> · {suivantEx.nom}
               </span>
-            </div>
-          )}
+            ) : (
+              <span>Dernier exercice de la séance</span>
+            )}
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 104px', gap: '12px' }}>
             {chrono ? (
               !demarre ? (
@@ -203,14 +210,83 @@ function coteDe(slot: Slot | undefined, etape: number): Cote {
   return etape === 1 ? 'gauche' : 'droit'
 }
 
-function dureeDe(slot: Slot, maintienEnregistre?: number): number {
-  return maintienEnregistre ?? slot.secondes ?? 30
+/**
+ * Affiche dessinée par nous, iframe seulement à l'appui. Deux raisons : l'habillage
+ * de YouTube (bouton rouge, « Watch on YouTube », titre en anglais) domine l'écran
+ * alors qu'il n'est pas à nous, et une séance enchaîne onze exercices — autant de
+ * lecteurs Google chargés pour rien si personne n'appuie.
+ * `cle` remet l'affiche à chaque changement d'exercice.
+ */
+function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
+  const [joue, setJoue] = useState(false)
+  const vue = useRef(cle)
+  if (vue.current !== cle) {
+    vue.current = cle
+    if (joue) setJoue(false)
+  }
+  const v = ex.video
+  if (!v?.youtubeId) return null
+
+  const cadre = {
+    position: 'relative' as const,
+    width: '100%',
+    aspectRatio: '16 / 9',
+    background: '#14181a',
+    borderRadius: 'var(--r)',
+    overflow: 'hidden',
+  }
+
+  if (!joue) {
+    return (
+      <button onClick={() => setJoue(true)} aria-label={`Voir la démonstration de ${ex.nom}`} style={cadre}>
+        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '12px', padding: '12px 14px', background: '#14181a' }}>
+          <span style={{ fontSize: '12px', color: 'var(--papier)' }}>{v.videoCreator ?? v.creator}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', fontSize: '13px', fontWeight: 600, color: 'var(--papier)' }}>
+            <Lecture taille={14} couleur="var(--papier)" />
+            Voir le mouvement
+          </span>
+        </span>
+      </button>
+    )
+  }
+
+  // Boucle muette sans habillage : c'est une référence visuelle, pas une vidéo à
+  // regarder. cc_load_policy=0 coupe les sous-titres automatiques — ils s'affichaient
+  // en anglais approximatif par-dessus l'image dans une appli française. control=0
+  // retire au passage le bouton « Watch on YouTube », donc plus rien qui sorte d'ici.
+  const p = new URLSearchParams({
+    autoplay: '1',
+    mute: '1',
+    loop: '1',
+    playlist: v.youtubeId,
+    controls: '0',
+    cc_load_policy: '0',
+    disablekb: '1',
+    rel: '0',
+    modestbranding: '1',
+    playsinline: '1',
+    iv_load_policy: '3',
+  })
+  if (v.start !== undefined) p.set('start', String(v.start))
+  if (v.end !== undefined) p.set('end', String(v.end))
+
+  return (
+    <div style={cadre}>
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?${p.toString()}`}
+        title={`Démonstration : ${ex.nom}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+      />
+    </div>
+  )
 }
 
-function legendePreuve(ex: Exercise): string {
-  return ex.evidence === 'pleine'
-    ? 'Renforcement : un essai clinique soutient ce travail'
-    : "Amplitude et confort : usage clinique, pas d'essai"
+function dureeDe(slot: Slot, maintienEnregistre?: number): number {
+  return maintienEnregistre ?? slot.secondes ?? 30
 }
 
 function FinMobilite({ templateId, debut, journal }: { templateId: string; debut: number; journal: SetLog[] }) {

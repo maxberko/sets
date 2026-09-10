@@ -18,13 +18,27 @@ automatiquement, puisqu'il commence quand la série finit.
 
 **Le point de preuve.** Chaque exercice de mobilité porte un point plein quand au moins un essai clinique soutient le fait de le faire, un point creux quand il ne repose que sur l'anatomie et l'usage clinique. Six pleins, cinq creux. Aucun exercice à point creux n'est présenté comme de la prévention. C'est ce qui rend la promesse « basé sur les preuves » vérifiable au lieu d'être décorative.
 
+## Les trois formules
+
+Elles décident du **nombre** de séances par semaine, jamais de leur contenu :
+
+| Formule | Séances | Par semaine | Compromis assumé |
+|---|---|---|---|
+| Légère | 3 | ~1 h 30 | Les pectoraux gardent leurs deux séances, plancher demandé par la recherche. La mobilité tombe sous la cible d'amplitude. |
+| Standard | 5 | ~2 h | Les deux cibles sont tenues. |
+| Soutenue | 6 | ~2 h 40 | Volume pectoraux vers le haut de la fourchette utile ; rien de plus lourd n'est proposé, le gain par série cesse d'y monter. |
+
+Le plan est de la donnée écrite à la main, donc `src/data/formules.test.ts` vérifie que
+chaque formule contient bien le nombre de séances qu'elle annonce, ne référence que des
+séances existantes, garde les pectoraux au moins deux fois par semaine, laisse un jour de
+repos et ne colle jamais deux séances de force le même jour.
+
 ## Premier lancement
 
-Un seul écran : un brief sur le fonctionnement et la logique derrière, puis « Démarrer la
-semaine 1 ». Aucune question posée, et c'est volontaire. L'échelle de pompes part d'un
-échelon moyen que le moteur corrige en deux séances — au sommet de la fourchette il monte,
-deux échecs sous le bas il redescend. L'équipement du club vit dans les réglages, parce
-qu'on ne connaît pas son club avant d'y être allé.
+Deux écrans. Le premier dit ce que fait l'appli et sur quoi elle s'appuie. Le second fait
+choisir une formule. Rien d'autre n'est demandé : l'échelle de pompes part d'un échelon
+moyen que le moteur corrige en deux séances, et l'équipement du club vit dans les réglages,
+parce qu'on ne connaît pas son club avant d'y être allé.
 
 ## Développement
 
@@ -54,34 +68,12 @@ Pousser sur `main` déclenche le workflow. Dans les réglages du dépôt, mettre
 
 ## Vidéos
 
-La vidéo est **présente dès l'ouverture** de la fiche, dans une iframe `youtube-nocookie`,
-sans vidéos suggérées ni autoplay : c'est le bouton de lecture de YouTube qui la démarre, et
-la lecture ne quitte pas l'appli. Prix assumé : le lecteur de Google est tiré à chaque
-ouverture de fiche, ce qui pèse plus lourd que toute l'appli. C'est le choix fait puisque
-l'appli s'utilise connectée. Réserve honnête : la barre de contrôle de YouTube porte un lien
-« Regarder sur YouTube » que leurs conditions interdisent de masquer.
-
-## La fiche exercice est une carte, pas un document
-
-On l'ouvre pour vérifier un point pendant une séance. Ne reste donc visible que ce qui sert
-à ce moment-là : la vidéo, les trois points clés, le ressenti — seule chose qu'une vidéo ne
-transmet pas, puisqu'on ne voit pas une sensation — et l'échelon courant pour les exercices
-au poids de corps.
-
-Le reste est replié derrière un appui, parce qu'il faisait doublon ou ne se lit qu'une fois :
-les étapes numérotées redisaient ce que la vidéo montre, les erreurs fréquentes énonçaient
-les points clés à l'envers, et le pourquoi avec ses sources se lit au premier passage, pas à
-chaque série. La fiche est passée de 2 070 à 1 000 pixels de haut.
-
-**Les 28 exercices ont une démonstration.** La fiche garde tout de même l'état « pas encore
-de vidéo », qui nomme la source de référence : il servira au prochain exercice ajouté, et
-mieux vaut une absence annoncée qu'un lecteur qui ne joue rien.
-
-Le premier passage en avait laissé deux vides parce que la barre sur les chaînes était trop
-haute : des kinés et des coachs diplômés étaient écartés faute d'être sur une liste. En la
-baissant aux credentials nommés, les deux trous se sont comblés, et deux choix trop
-approximatifs ont été remplacés — une pompe ordinaire là où il fallait un tempo lent, un
-gainage latéral élastique là où il fallait une charge sur la hanche.
+La vidéo se lit **dans la page**, dans une iframe `youtube-nocookie`, sans vidéos suggérées
+et sans plein écran forcé : appuyer sur lecture ne quitte pas l'appli. Sur la fiche, rien
+n'est chargé avant l'appui. Dans le lecteur de mobilité elle est présente d'emblée, parce
+que c'est là qu'on regarde le mouvement avant de se lancer. Réserve honnête : la barre de
+contrôle de YouTube porte un lien « Regarder sur YouTube » que leurs conditions interdisent
+de masquer.
 
 `creator` et `videoCreator` sont deux choses différentes, et le champ le reste exprès :
 les étapes ont souvent été vérifiées contre une page ExRx ou ACE tandis que la

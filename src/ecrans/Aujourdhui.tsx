@@ -1,6 +1,6 @@
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, Fleche, Reglages as IconeReglages } from '../composants/icones'
-import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, PLAN, SEMAINES_BLOC, seance, seriesParProgramme } from '../data'
+import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, SEMAINES_BLOC, planDe, seance, seriesParProgramme } from '../data'
 import { useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatDateCourte, jourDe, lundiDe, semaineDuBloc } from '../lib/semaine'
@@ -18,10 +18,11 @@ export function Aujourdhui() {
     (s) => new Date(s.debut).toDateString() === maintenant.toDateString(),
   )
 
-  const prevues = PLAN[jour] ?? []
+  const plan = planDe(d.reglages.formule)
+  const prevues = plan[jour] ?? []
   const restantes = prevues.filter((id) => !faitesAujourdhui.some((s) => s.templateId === id))
   const mobiliteFaites = faitesCetteSemaine.filter((s) => s.templateId === 'mobilite').length
-  const mobilitePrevues = JOURS.reduce((n, j) => n + (PLAN[j] ?? []).filter((x) => x === 'mobilite').length, 0)
+  const mobilitePrevues = JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => x === 'mobilite').length, 0)
 
   return (
     <div class="ecran">
@@ -35,11 +36,11 @@ export function Aujourdhui() {
       <div class="contenu">
         <Titre titre={NOM_JOUR[jour]} apres={`${formatDateCourte(maintenant)} · semaine ${semaine} sur ${SEMAINES_BLOC}`} />
 
-        <BandeSemaine jourActuel={jour} faites={faitesCetteSemaine.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))} />
+        <BandeSemaine plan={plan} jourActuel={jour} faites={faitesCetteSemaine.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))} />
 
         {restantes.length === 0 && prevues.length > 0 && (
           <p style={{ padding: '18px 0', borderTop: '1.5px solid var(--encre)' }}>
-            Tout est fait pour aujourd'hui. Prochaine séance {prochainJourAvecSeance(jour)}.
+            Tout est fait pour aujourd'hui. Prochaine séance {prochainJourAvecSeance(plan, jour)}.
           </p>
         )}
 
@@ -92,11 +93,11 @@ export function Aujourdhui() {
   )
 }
 
-function prochainJourAvecSeance(jour: Jour): string {
+function prochainJourAvecSeance(plan: Record<Jour, string[]>, jour: Jour): string {
   const i = JOURS.indexOf(jour)
   for (let n = 1; n <= 7; n++) {
     const j = JOURS[(i + n) % 7]!
-    if ((PLAN[j] ?? []).length > 0) return NOM_JOUR[j].toLowerCase()
+    if ((plan[j] ?? []).length > 0) return NOM_JOUR[j].toLowerCase()
   }
   return 'bientôt'
 }
@@ -159,11 +160,11 @@ function CarteSeance({
   )
 }
 
-function BandeSemaine({ jourActuel, faites }: { jourActuel: Jour; faites: { jour: Jour; id: string }[] }) {
+function BandeSemaine({ plan, jourActuel, faites }: { plan: Record<Jour, string[]>; jourActuel: Jour; faites: { jour: Jour; id: string }[] }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '6px' }}>
       {JOURS.map((j) => {
-        const prevues = PLAN[j] ?? []
+        const prevues = plan[j] ?? []
         const actuel = j === jourActuel
         return (
           <div key={j} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>

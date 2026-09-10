@@ -109,16 +109,92 @@ export const INITIALE_JOUR: Record<Jour, string> = {
   lun: 'L', mar: 'M', mer: 'M', jeu: 'J', ven: 'V', sam: 'S', dim: 'D',
 }
 
-/** Deux séances de force, trois de mobilité. Rien n'est calé sur les sessions de surf. */
-export const PLAN: Record<Jour, string[]> = {
-  lun: ['pecs-a'],
-  mar: ['mobilite'],
-  mer: [],
-  jeu: ['pecs-b', 'mobilite'],
-  ven: ['mobilite'],
-  sam: [],
-  dim: [],
+/**
+ * Trois formules. Elles ne changent pas le contenu des séances, seulement combien on
+ * en fait, parce que l'investissement possible varie et qu'un plan qu'on ne tient pas
+ * ne vaut rien. Les compromis sont réels et affichés tels quels au choix.
+ */
+export type Formule = 'legere' | 'standard' | 'soutenue'
+
+export interface DescriptionFormule {
+  id: Formule
+  nom: string
+  seances: number
+  minutes: number
+  resume: string
+  compromis: string
 }
+
+export const FORMULES: DescriptionFormule[] = [
+  {
+    id: 'legere',
+    nom: 'Légère',
+    seances: 3,
+    minutes: 90,
+    resume: 'Deux séances de force, une de mobilité.',
+    compromis:
+      "Le muscle garde ses deux séances hebdomadaires, ce que la recherche demande au minimum. La mobilité passe en dessous de la cible d'amplitude, qui veut cinq minutes par muscle et par semaine.",
+  },
+  {
+    id: 'standard',
+    nom: 'Standard',
+    seances: 5,
+    minutes: 120,
+    resume: 'Deux séances de force, trois de mobilité.',
+    compromis:
+      'Les deux cibles sont tenues : 12 à 20 séries efficaces pour les pectoraux, et assez de temps de maintien pour gagner en amplitude.',
+  },
+  {
+    id: 'soutenue',
+    nom: 'Soutenue',
+    seances: 6,
+    minutes: 160,
+    resume: 'Trois séances de force, trois de mobilité.',
+    compromis:
+      "Volume pectoraux vers le haut de la fourchette utile. Au-delà, le gain par série cesse de monter, donc rien de plus lourd n'est proposé.",
+  },
+]
+
+const PLANS: Record<Formule, Record<Jour, string[]>> = {
+  legere: {
+    lun: ['pecs-a'],
+    mar: [],
+    mer: [],
+    jeu: ['pecs-b'],
+    ven: [],
+    sam: ['mobilite'],
+    dim: [],
+  },
+  standard: {
+    lun: ['pecs-a'],
+    mar: ['mobilite'],
+    mer: [],
+    jeu: ['pecs-b'],
+    ven: ['mobilite'],
+    sam: ['mobilite'],
+    dim: [],
+  },
+  soutenue: {
+    lun: ['pecs-a'],
+    mar: ['mobilite'],
+    mer: ['pecs-b'],
+    jeu: ['mobilite'],
+    ven: ['pecs-a'],
+    sam: ['mobilite'],
+    dim: [],
+  },
+}
+
+export function planDe(id: Formule): Record<Jour, string[]> {
+  return PLANS[id] ?? PLANS.standard
+}
+
+export function descriptionFormule(id: Formule): DescriptionFormule {
+  return FORMULES.find((f) => f.id === id) ?? FORMULES[1]!
+}
+
+/** Conservé pour les écrans qui n'ont pas besoin de la formule. */
+export const PLAN = PLANS.standard
 
 export const SEMAINES_BLOC = 8
 export const SEMAINE_DELOAD = 5
