@@ -69,7 +69,14 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   }, [d.reglages.ecranAllume])
 
   useHauteurFenetre()
-  useFond(t ? (COULEUR_PROGRAMME[t.programme] ?? 'var(--papier)') : 'var(--papier)')
+  // La couleur suit le programme de l'EXERCICE, pas celui de la séance : une
+  // séance « pecs » contient trois exercices d'abdos, et le champ affirmait
+  // « pectoraux » pendant qu'on les faisait. La fiche se réglait déjà comme ça,
+  // le lecteur et elle se contredisaient.
+  //
+  // La bascule tombe pendant le repos sans rien de plus : `slotIndex` avance
+  // avant que le repos démarre, donc l'exercice affiché est déjà le suivant.
+  useFond(ex ? (COULEUR_PROGRAMME[ex.programme] ?? 'var(--papier)') : 'var(--papier)')
 
   useEffect(() => {
     if (repos === null) return
@@ -86,7 +93,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   if (!t || !slot || !ex) return <Introuvable />
 
   const derniereFois = dernierePerf(d.seances, ex.id)
-  const couleur = COULEUR_PROGRAMME[t.programme]
+  const couleur = COULEUR_PROGRAMME[ex.programme]
   const totalSeries = slot.series
   const dernierSlot = slotIndex >= t.slots.length - 1
   const derniereSerie = serieIndex >= totalSeries - 1

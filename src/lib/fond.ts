@@ -11,7 +11,10 @@ export function useFond(couleur: string): void {
     const meta = document.querySelector('meta[name="theme-color"]')
     const themeAvant = meta?.getAttribute('content') ?? null
     document.body.style.background = couleur
-    meta?.setAttribute('content', couleur)
+    // `theme-color` n'accepte pas les variables CSS : posé tel quel, `var(--pecs)`
+    // était ignoré et la barre d'état du téléphone restait sur la couleur d'avant.
+    // On relit donc la valeur résolue sur le corps, qui sort en rgb().
+    meta?.setAttribute('content', getComputedStyle(document.body).backgroundColor || couleur)
     return () => {
       document.body.style.background = avant
       if (themeAvant) meta?.setAttribute('content', themeAvant)

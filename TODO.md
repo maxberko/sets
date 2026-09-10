@@ -29,6 +29,44 @@ devrait faire partie du nom de l'exercice :
 Concerne les exercices unilatéraux (`repsParCote`, et les maintiens joués côté
 droit puis côté gauche).
 
+## Fin de séance
+
+### Féliciter avec une vidéo de surf
+
+Quand tous les exercices d'une séance sont validés, l'écran de fin doit récompenser
+plutôt que se contenter de renvoyer à l'accueil. Une vidéo de surf, comme
+félicitation.
+
+À instruire : d'où vient la vidéo. Le composant `Demonstration`
+(`src/composants/demonstration.tsx`) sait déjà jouer un extrait YouTube sans
+quitter l'application, mais ces vidéos-là sont des démonstrations techniques,
+créditées et vérifiées par `npm run check:videos` — une vidéo de surf n'entre pas
+dans ce cadre et demandera sa propre source et son propre crédit.
+
+Concerne le lecteur de force (`terminer()`, qui redirige aujourd'hui vers `/`) et
+`FinMobilite` dans `src/ecrans/LecteurMobilite.tsx`, qui a déjà un écran de fin.
+
+## Navigation
+
+### Revoir la barre d'onglets
+
+Fichier : `BarreOnglets` dans `src/composants/communs.tsx`.
+
+Deux sujets : la navigation elle-même, et l'espacement entre les entrées du menu.
+Le critique de design l'avait relevé indépendamment — « Aujourd'hui » et
+« Programme » se touchent presque alors que « Suivi » et « Science » flottent dans
+de larges intervalles, parce que les quatre colonnes sont d'égale largeur alors que
+les libellés n'ont pas du tout la même longueur.
+
+### Mélanger Aujourd'hui et Suivi à l'ouverture
+
+L'écran d'arrivée doit combiner les deux : d'abord ce qu'il y a à faire
+aujourd'hui, ensuite le suivi. Aujourd'hui ce sont deux onglets séparés
+(`src/ecrans/Aujourdhui.tsx` et `src/ecrans/Suivi.tsx`).
+
+À trancher : ce que devient l'onglet Suivi s'il est absorbé, et quelle part du
+suivi mérite d'être vue à chaque ouverture plutôt qu'une fois par semaine.
+
 ## Ouvert, non traité
 
 - Gouttière blanche observée sur téléphone autour du champ coloré. Le DOM mesure
