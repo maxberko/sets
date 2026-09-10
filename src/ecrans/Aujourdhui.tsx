@@ -1,4 +1,4 @@
-import { BarreOnglets, Entete, Titre } from '../composants/communs'
+import { BarreOnglets, Titre } from '../composants/communs'
 import { Chevron, Fleche, Reglages as IconeReglages } from '../composants/icones'
 import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, SEMAINES_BLOC, planDe, seance, seriesParProgramme } from '../data'
 import { useDonnees } from '../lib/etat'
@@ -25,16 +25,21 @@ export function Aujourdhui() {
   const mobilitePrevues = JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => x === 'mobilite').length, 0)
 
   return (
-    <div class="ecran">
-      <Entete
-        droite={
-          <button onClick={() => aller('/reglages')} aria-label="Réglages" style={{ minHeight: 'var(--cible)', minWidth: 'var(--cible)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <IconeReglages />
-          </button>
-        }
-      />
+    <div class="ecran" style={{ paddingTop: 'calc(var(--barre-haut) + 20px)' }}>
       <div class="contenu">
-        <Titre titre={NOM_JOUR[jour]} apres={`${formatDateCourte(maintenant)} · semaine ${semaine} sur ${SEMAINES_BLOC}`} />
+        <Titre
+          titre={NOM_JOUR[jour]}
+          apres={`${formatDateCourte(maintenant)} · semaine ${semaine} sur ${SEMAINES_BLOC}`}
+          action={
+            <button
+              onClick={() => aller('/reglages')}
+              aria-label="Réglages"
+              style={{ minHeight: 'var(--cible)', minWidth: 'var(--cible)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
+            >
+              <IconeReglages />
+            </button>
+          }
+        />
 
         <BandeSemaine plan={plan} jourActuel={jour} faites={faitesCetteSemaine.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))} />
 

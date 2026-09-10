@@ -46,8 +46,20 @@ export const Plus = ({ taille = 24, couleur = 'currentColor', epaisseur = 2.4 }:
 export const Moins = ({ taille = 24, couleur = 'currentColor', epaisseur = 2.4 }: Props) =>
   base(taille, couleur, epaisseur, <path d="M5 12h14" />)
 
+/** Trois curseurs : plus lisible qu'un engrenage a cette taille, et coherent
+    avec un systeme de traits droits. */
 export const Reglages = ({ taille = 22, couleur = 'currentColor', epaisseur = 2 }: Props) =>
-  base(taille, couleur, epaisseur, <><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" /></>)
+  base(
+    taille,
+    couleur,
+    epaisseur,
+    <>
+      <path d="M4 7h16M4 12h16M4 17h16" />
+      <circle cx="9" cy="7" r="1.9" fill={couleur} stroke="none" />
+      <circle cx="15" cy="12" r="1.9" fill={couleur} stroke="none" />
+      <circle cx="7" cy="17" r="1.9" fill={couleur} stroke="none" />
+    </>,
+  )
 
 export const Pause = ({ taille = 18, couleur = 'currentColor' }: Props) => (
   <svg width={taille} height={taille} viewBox="0 0 24 24" fill={couleur} aria-hidden="true" style={{ flex: 'none' }}>

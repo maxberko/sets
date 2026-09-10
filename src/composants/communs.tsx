@@ -14,38 +14,38 @@ export function BarreOnglets() {
   return (
     <nav
       style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-        borderTop: '1.5px solid var(--encre)',
-        padding: `0 20px calc(20px + var(--barre-bas))`,
         background: 'var(--papier)',
         position: 'sticky',
         bottom: 0,
+        padding: `0 var(--gouttiere) calc(18px + var(--barre-bas))`,
       }}
     >
-      {ONGLETS.map((o) => {
-        const actif = o.vers === '/' ? c === '/' : c.startsWith(o.vers)
-        return (
-          <button
-            key={o.vers}
-            onClick={() => aller(o.vers)}
-            aria-current={actif ? 'page' : undefined}
-            style={{
-              fontFamily: 'var(--titre)',
-              fontWeight: 600,
-              fontSize: '14px',
-              padding: '16px 0 6px',
-              textAlign: 'center',
-              color: actif ? 'var(--encre)' : 'var(--sourdine)',
-              borderTop: actif ? '3px solid var(--encre)' : '3px solid transparent',
-              marginTop: '-1.5px',
-              minHeight: 'var(--cible)',
-            }}
-          >
-            {o.nom}
-          </button>
-        )
-      })}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', borderTop: '1.5px solid var(--encre)' }}>
+        {ONGLETS.map((o) => {
+          const actif = o.vers === '/' ? c === '/' : c.startsWith(o.vers)
+          return (
+            <button
+              key={o.vers}
+              onClick={() => aller(o.vers)}
+              aria-current={actif ? 'page' : undefined}
+              style={{
+                fontFamily: 'var(--titre)',
+                fontWeight: 600,
+                fontSize: '14px',
+                padding: '14px 0 4px',
+                textAlign: 'center',
+                color: 'var(--encre)',
+                opacity: actif ? 1 : 0.45,
+                borderTop: actif ? '3px solid var(--encre)' : '3px solid transparent',
+                marginTop: '-1.5px',
+                minHeight: 'var(--cible)',
+              }}
+            >
+              {o.nom}
+            </button>
+          )
+        })}
+      </div>
     </nav>
   )
 }
@@ -90,10 +90,13 @@ export function BoutonRetour({ label = 'Retour' }: { label?: string }) {
   )
 }
 
-export function Titre({ titre, apres }: { titre: string; apres?: ComponentChildren }) {
+export function Titre({ titre, apres, action }: { titre: string; apres?: ComponentChildren; action?: ComponentChildren }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px' }}>
-      <h1>{titre}</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+        <h1>{titre}</h1>
+        {action}
+      </div>
       {apres && <div class="etiquette discret">{apres}</div>}
     </div>
   )

@@ -203,7 +203,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             if (faite) {
               return (
                 <div key={i} style={ligne(i === 0)}>
-                  <span style={{ opacity: 0.7 }}>Série {i + 1}</span>
+                  <span style={{ fontSize: '14px' }}>Série {i + 1}</span>
                   <span class="num">{faite.kg ? `${faite.kg} kg × ${faite.reps}` : `${faite.reps} reps`}</span>
                   <Coche taille={20} />
                 </div>
@@ -211,18 +211,18 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             }
             if (!active) {
               return (
-                <div key={i} style={{ ...ligne(i === 0), opacity: 0.7 }}>
-                  <span>Série {i + 1}</span>
+                <div key={i} style={{ ...ligne(i === 0) }}>
+                  <span style={{ fontSize: '14px' }}>Série {i + 1}</span>
                   <span>—</span>
                   <span />
                 </div>
               )
             }
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px 0 18px', borderTop: i === 0 ? '1.5px solid var(--encre)' : '1px solid rgba(20,24,26,0.35)', borderBottom: '1px solid rgba(20,24,26,0.35)' }}>
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px 0 18px', borderTop: i === 0 ? '1.5px solid var(--encre)' : '1px solid rgba(20,24,26,0.55)', borderBottom: '1px solid rgba(20,24,26,0.55)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
                   <strong>Série {i + 1}</strong>
-                  {derniereFois && <span style={{ opacity: 0.7 }}>Dernière fois {derniereFois}</span>}
+                  {derniereFois && <span style={{ fontSize: '14px' }}>Dernière fois {derniereFois}</span>}
                 </div>
                 {echelle ? (
                   <div style={{ border: '1.5px solid var(--encre)', borderRadius: 'var(--r)', padding: '12px 14px', fontSize: '15px', fontWeight: 600 }}>
@@ -243,14 +243,14 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       <div class="pied-lecteur">
         <p style={{ fontSize: '15px', lineHeight: 1.4 }}>{message}</p>
         {repos !== null ? (
-          <button class="principal" onClick={() => setRepos(null)}>
+          <button class="principal" style={{ justifyContent: 'center' }} onClick={() => setRepos(null)}>
             <span class="num">Repos {formatChrono(repos)}</span>
-            <span style={{ fontSize: '15px', fontWeight: 500 }}>Passer</span>
+            <span style={{ fontSize: '15px', fontWeight: 500 }}>· passer</span>
           </button>
         ) : (
-          <button class="principal" onClick={valider}>
-            <span>{dernierSlot && derniereSerie ? 'Valider et terminer' : `Valider la série ${serieIndex + 1}`}</span>
+          <button class="principal" style={{ justifyContent: 'center' }} onClick={valider}>
             <Coche couleur="var(--papier)" />
+            <span>{dernierSlot && derniereSerie ? 'Valider et terminer' : `Valider la série ${serieIndex + 1}`}</span>
           </button>
         )}
       </div>
@@ -265,7 +265,7 @@ const ligne = (premier: boolean) => ({
   alignItems: 'center',
   padding: '14px 0',
   borderTop: premier ? '1.5px solid var(--encre)' : 'none',
-  borderBottom: '1px solid rgba(20,24,26,0.35)',
+  borderBottom: '1px solid rgba(20,24,26,0.55)',
   fontSize: '15px',
 })
 
@@ -304,7 +304,7 @@ function Compteur({
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '72px minmax(0, 1fr) 72px',
+        gridTemplateColumns: '68px minmax(0, 1fr) 68px',
         border: '1.5px solid var(--encre)',
         borderRadius: 'var(--r)',
         height: 'min(80px, calc(var(--hauteur-fenetre, 100dvh) * 0.105))',
@@ -318,10 +318,12 @@ function Compteur({
         <button
           onClick={() => setSaisie(String(valeur))}
           aria-label={`${valeur} ${unite}, appuie pour saisir au clavier`}
-          style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '6px' }}
+          style={{ display: 'grid', gridTemplateColumns: '1fr 52px', alignItems: 'baseline', columnGap: '8px' }}
         >
-          <span class="chiffre" style={{ fontSize: 'min(48px, calc(var(--hauteur-fenetre, 100dvh) * 0.062))' }}>{valeur}</span>
-          <span style={{ fontSize: '15px', fontWeight: 500 }}>{unite}</span>
+          <span class="chiffre" style={{ fontSize: 'min(48px, calc(var(--hauteur-fenetre, 100dvh) * 0.062))', textAlign: 'right' }}>
+            {valeur}
+          </span>
+          <span style={{ fontSize: '15px', fontWeight: 500, textAlign: 'left' }}>{unite}</span>
         </button>
       ) : (
         <input
@@ -339,7 +341,8 @@ function Compteur({
             fontFamily: 'var(--titre)',
             fontWeight: 800,
             fontSize: '44px',
-            textAlign: 'center',
+            textAlign: 'right',
+            paddingRight: '60px',
             border: 'none',
             background: 'transparent',
             color: 'var(--encre)',

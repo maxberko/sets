@@ -49,7 +49,7 @@ export function Suivi() {
                 style={{
                   height: '10px',
                   borderRadius: '1px',
-                  background: i < mobiliteFaites ? COULEUR_PROGRAMME.mobilite : 'rgba(47,134,190,0.2)',
+                  background: i < mobiliteFaites ? COULEUR_PROGRAMME.mobilite : 'rgba(62,146,200,0.25)',
                 }}
               />
             ))}

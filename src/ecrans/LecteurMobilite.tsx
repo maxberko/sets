@@ -120,8 +120,11 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
       <div class="contenu" style={{ gap: 0 }}>
         {chrono ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: 'min(112px, calc(var(--hauteur-fenetre, 100dvh) * 0.13))', lineHeight: 0.88, letterSpacing: '-0.05em', marginLeft: '-6px' }}>
-              {restant < 60 ? restant : formatChrono(restant)}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginLeft: '-6px' }}>
+              <span class="chiffre" style={{ fontSize: 'min(112px, calc(var(--hauteur-fenetre, 100dvh) * 0.13))', lineHeight: 0.88, letterSpacing: '-0.05em' }}>
+                {restant < 60 ? restant : formatChrono(restant)}
+              </span>
+              {restant < 60 && <span style={{ fontSize: '20px', fontWeight: 600 }}>s</span>}
             </div>
             <div style={{ height: '8px', background: 'rgba(243,245,242,0.45)', borderRadius: '1px' }}>
               <div style={{ width: `${avancement}%`, height: '8px', background: 'var(--encre)', borderRadius: '1px' }} />
@@ -132,7 +135,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: 'min(84px, calc(var(--hauteur-fenetre, 100dvh) * 0.11))', lineHeight: 0.9, marginLeft: '-3px' }}>
+            <div class="chiffre" style={{ fontSize: 'min(112px, calc(var(--hauteur-fenetre, 100dvh) * 0.13))', lineHeight: 0.88, letterSpacing: '-0.05em', marginLeft: '-6px' }}>
               {slot.repsParCote ?? slot.reps?.[1] ?? 0}
             </div>
             <div class="etiquette">
@@ -153,7 +156,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
             <Chevron taille={16} />
           </button>
           {ex.video?.youtubeId && (
-            <div style={{ marginTop: 'auto' }}>
+            <div style={{ flex: 1, minHeight: '150px', display: 'flex' }}>
               <Demonstration ex={ex} cle={cle} />
             </div>
           )}
@@ -232,7 +235,8 @@ function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
   const cadre = {
     position: 'relative' as const,
     width: '100%',
-    aspectRatio: '16 / 9',
+    height: '100%',
+    minHeight: '150px',
     background: '#14181a',
     borderRadius: 'var(--r)',
     overflow: 'hidden',
@@ -241,7 +245,32 @@ function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
   if (!joue) {
     return (
       <button onClick={() => setJoue(true)} aria-label={`Voir la démonstration de ${ex.nom}`} style={cadre}>
-        <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '12px', padding: '12px 14px', background: '#14181a' }}>
+        <img
+          src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`}
+          alt=""
+          loading="lazy"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            transform: 'scale(1.34)',
+          }}
+        />
+        <span
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            gap: '12px',
+            padding: '12px 14px',
+            background: 'linear-gradient(to top, rgba(20,24,26,0.85) 0%, rgba(20,24,26,0.35) 45%, rgba(20,24,26,0.1) 100%)',
+          }}
+        >
           <span style={{ fontSize: '12px', color: 'var(--papier)' }}>{v.videoCreator ?? v.creator}</span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '7px', fontSize: '13px', fontWeight: 600, color: 'var(--papier)' }}>
             <Lecture taille={14} couleur="var(--papier)" />
