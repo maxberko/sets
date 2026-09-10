@@ -41,7 +41,22 @@ Pousser sur `main` déclenche le workflow. Dans les réglages du dépôt, mettre
 
 ## Vidéos
 
-Les URL de référence de chaque exercice sont collectées dans `content/videos.json` du dossier de conception. Le lecteur n'est pas encore branché : l'exigence est que la vidéo se lise dans l'appli sans jamais ouvrir d'onglet tiers, ce qu'un lecteur YouTube intégré ne permet pas, puisqu'il porte toujours un titre cliquable et un bouton « Regarder sur YouTube » qui ouvre l'application YouTube sur Android. Les fiches affichent donc les étapes, les points clés, le ressenti et les erreurs, et le bloc vidéo indique que le lecteur reste à choisir.
+La vidéo se lit **dans la page**, dans une iframe `youtube-nocookie`, sans vidéos suggérées
+et sans plein écran forcé : appuyer sur lecture ne quitte pas l'appli. Rien n'est chargé
+avant l'appui, sinon chaque ouverture de fiche irait chercher le lecteur de Google, plus
+lourd que toute l'appli. Réserve honnête : la barre de contrôle de YouTube porte un lien
+« Regarder sur YouTube » que leurs conditions interdisent de masquer. Il faut ne pas y
+toucher ; il n'y a pas de moyen de le supprimer avec un lecteur intégré.
+
+**Un seul exercice sur 28 a aujourd'hui une vidéo intégrable.** Les 27 autres références
+collectées sont des pages d'article (ExRx, ACE, The Prehab Guys, Squat University), pas des
+vidéos : elles ont servi à vérifier les étapes et les points clés, elles ne peuvent pas être
+lues dans un lecteur. Ces fiches affichent donc « pas encore de vidéo » et nomment la source,
+plutôt qu'un cadre vide.
+
+Pour en ajouter une : renseigner `youtubeId` dans le champ `video` de l'exercice, avec
+`start` et `end` en secondes pour ne lire que le passage utile. Le catalogue complet des URL
+de référence est dans `content/videos.json` du dossier de conception.
 
 ## Sources
 

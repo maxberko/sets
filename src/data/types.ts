@@ -5,10 +5,19 @@ export type Venue = 'salle' | 'tapis'
 export type Evidence = 'pleine' | 'creuse'
 
 export interface VideoRef {
-  /** Where the clip lives. The display method is not settled yet; see README. */
+  /**
+   * Page de référence : c'est contre elle que les étapes et les points clés ont été
+   * vérifiés. Le plus souvent un article (ExRx, ACE, Prehab Guys), donc pas intégrable.
+   */
   url: string
   creator: string
-  /** Seconds into the video where the teaching segment starts / ends, when known. */
+  /**
+   * Identifiant YouTube, seulement quand une vidéo réellement intégrable existe.
+   * Sans lui, la fiche affiche la source sans lecteur : mieux vaut un manque annoncé
+   * qu'un cadre vide.
+   */
+  youtubeId?: string
+  /** Secondes de début et de fin du passage utile, quand on les connaît. */
   start?: number
   end?: number
 }

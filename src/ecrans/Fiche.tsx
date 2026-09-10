@@ -1,5 +1,6 @@
+import { useState } from 'preact/hooks'
 import { BoutonRetour, Entete } from '../composants/communs'
-import { PointPreuve } from '../composants/icones'
+import { Lecture, PointPreuve } from '../composants/icones'
 import { COULEUR_PROGRAMME, NOM_PROGRAMME, exercice, sourcesFor } from '../data'
 import type { Exercise } from '../data/types'
 import { useDonnees } from '../lib/etat'
@@ -147,39 +148,98 @@ function Bloc({ titre, children, separateur }: { titre: string; children: preact
 }
 
 /**
- * Le lecteur n'est pas encore branché : Max a demandé de stocker les URL et de trouver
- * ensuite comment les lire dans l'appli, sans jamais ouvrir un onglet tiers.
- * On affiche donc la source, et rien qui envoie ailleurs.
+ * La vidéo se lit dans la page, dans une iframe : appuyer sur lecture ne quitte pas
+ * l'appli. Rien n'est chargé avant l'appui, sinon chaque ouverture de fiche irait
+ * chercher le lecteur de Google, ce qui pèse plus lourd que toute l'appli.
+ *
+ * Sans identifiant intégrable, on affiche la source et on le dit. Un cadre vide qui
+ * ne joue rien serait pire que l'absence annoncée.
  */
 function BlocVideo({ ex }: { ex: Exercise }) {
+  const [joue, setJoue] = useState(false)
   if (!ex.video) return null
+  const v = ex.video
+
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1.5px solid var(--encre)', paddingTop: '20px' }}>
       <h3 style={{ fontSize: '17px' }}>Le mouvement</h3>
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '16 / 9',
-          background: 'linear-gradient(160deg, #333b3e 0%, #191e20 60%, #14181a 100%)',
-          borderRadius: 'var(--r)',
-          display: 'grid',
-          placeItems: 'center',
-          color: 'var(--papier)',
-          textAlign: 'center',
-          padding: '20px',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '20px' }}>Lecteur à venir</span>
-          <span style={{ fontSize: '13px', opacity: 0.8, maxWidth: '260px', lineHeight: 1.4 }}>
-            La source est enregistrée. Il reste à choisir comment la lire dans l'appli sans ouvrir d'onglet.
-          </span>
-        </div>
-      </div>
-      <p class="discret" style={{ fontSize: '13px', lineHeight: 1.45 }}>
-        Référence technique : {ex.video.creator}. Les étapes et les erreurs ci-dessus ont été vérifiées contre elle.
-      </p>
+
+      {v.youtubeId ? (
+        <>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', background: '#14181a', borderRadius: 'var(--r)', overflow: 'hidden' }}>
+            {joue ? (
+              <iframe
+                src={lienIntegre(v.youtubeId, v.start, v.end)}
+                title={`Technique : ${ex.nom}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+              />
+            ) : (
+              <button
+                onClick={() => setJoue(true)}
+                aria-label={`Lire la démonstration de ${ex.nom}`}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'grid',
+                  placeItems: 'center',
+                  background: 'linear-gradient(160deg, #333b3e 0%, #191e20 60%, #14181a 100%)',
+                }}
+              >
+                <span
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    border: '2px solid var(--papier)',
+                    borderRadius: '50%',
+                    display: 'grid',
+                    placeItems: 'center',
+                    paddingLeft: '4px',
+                  }}
+                >
+                  <Lecture taille={24} couleur="var(--papier)" />
+                </span>
+              </button>
+            )}
+          </div>
+          <p class="discret" style={{ fontSize: '13px', lineHeight: 1.45 }}>
+            {v.creator}
+            {v.start !== undefined ? ` · l'extrait démarre au passage utile` : ''} · la lecture reste dans l'appli
+          </p>
+        </>
+      ) : (
+        <>
+          <div
+            style={{
+              border: '1.5px solid var(--filet)',
+              borderRadius: 'var(--r)',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
+          >
+            <span style={{ fontSize: '15px', fontWeight: 600 }}>Pas encore de vidéo pour cet exercice</span>
+            <span class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
+              La référence enregistrée est une page de {v.creator}, pas une vidéo intégrable. Les étapes et les erreurs ci-dessus
+              ont été vérifiées contre elle.
+            </span>
+          </div>
+        </>
+      )}
     </section>
   )
+}
+
+/** youtube-nocookie, sans vidéos suggérées, lecture en ligne et non en plein écran forcé. */
+function lienIntegre(id: string, debut?: number, fin?: number): string {
+  const p = new URLSearchParams({ rel: '0', modestbranding: '1', playsinline: '1', autoplay: '1', iv_load_policy: '3' })
+  if (debut !== undefined) p.set('start', String(debut))
+  if (fin !== undefined) p.set('end', String(fin))
+  return `https://www.youtube-nocookie.com/embed/${id}?${p.toString()}`
 }

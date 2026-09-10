@@ -35,7 +35,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "C'est le haut du pectoral qui donne au muscle sa ligne supérieure. Un banc à 30° le sollicite plus qu'un banc plat ou qu'un banc à 45°, et les haltères laissent chaque bras aller au bout de son amplitude.",
     sources: ['rodriguez2020', 'chaves2020', 'acsm2026'],
-    video: { url: 'https://www.youtube.com/watch?v=-iWjdKWNpNg', creator: 'Jeff Nippard' },
+    video: { url: 'https://www.youtube.com/watch?v=-iWjdKWNpNg', creator: 'Jeff Nippard', youtubeId: '-iWjdKWNpNg' },
   },
   {
     id: 'developpe-couche-halteres',
