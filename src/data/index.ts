@@ -35,6 +35,36 @@ export function seriesParProgramme(template: SessionTemplate, venue: Venue): Rec
   return total
 }
 
+export interface BlocProgramme {
+  programme: string
+  exercices: number
+  series: number
+}
+
+/**
+ * Découpe une séance en blocs de programme, dans l'ordre où ils arrivent.
+ *
+ * Une séance « pecs » n'est pas faite que de pectoraux : `pecs-a` enchaîne huit
+ * séries de pectoraux puis huit d'abdominaux. Rien ne l'annonçait avant d'y être.
+ */
+export function blocsDeSeance(template: SessionTemplate, venue: Venue): BlocProgramme[] {
+  const ordre: string[] = []
+  const par: Record<string, BlocProgramme> = {}
+  for (const slot of template.slots) {
+    const ex = exerciceDuSlot(slot, venue)
+    if (!ex) continue
+    let bloc = par[ex.programme]
+    if (!bloc) {
+      bloc = { programme: ex.programme, exercices: 0, series: 0 }
+      par[ex.programme] = bloc
+      ordre.push(ex.programme)
+    }
+    bloc.exercices += 1
+    bloc.series += slot.series
+  }
+  return ordre.map((p) => par[p]!)
+}
+
 export const CIBLES_HEBDO: Record<string, [number, number]> = {
   pecs: [12, 20],
   abdos: [8, 12],

@@ -1,6 +1,6 @@
 import { BarreOnglets, Titre } from '../composants/communs'
 import { Chevron, Fleche, Reglages as IconeReglages } from '../composants/icones'
-import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, SEMAINES_BLOC, planDe, seance, seriesParProgramme } from '../data'
+import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, NOM_PROGRAMME, SEMAINES_BLOC, blocsDeSeance, planDe, seance, seriesParProgramme } from '../data'
 import { useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatDateCourte, jourDe, lundiDe, semaineDuBloc } from '../lib/semaine'
@@ -121,8 +121,6 @@ function CarteSeance({
   const t = seance(templateId)
   if (!t) return null
   const couleur = COULEUR_PROGRAMME[t.programme]
-  const series = seriesParProgramme(t, 'salle')
-  const autres = Object.keys(series).filter((p) => p !== t.programme)
 
   const ouvrir = () => aller(t.demandeLieu ? `/seance/${t.id}` : `/seance/${t.id}/tapis`)
 
@@ -143,24 +141,64 @@ function CarteSeance({
     )
   }
 
+  // La carte se partage en autant de champs que la séance a de programmes : les
+  // deux chapitres sont annoncés avant de commencer, et la couleur du lecteur ne
+  // surprend plus puisqu'elle a déjà été vue ici. Les pastilles secondaires
+  // n'ont plus lieu d'être, chaque bloc porte son propre champ.
+  const blocs = blocsDeSeance(t, 'salle')
+
   return (
-    <button onClick={ouvrir} class="bloc-couleur" style={{ background: couleur }}>
-      <span class="etiquette" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        {t.sousTitre}
-        {autres.map((p) => (
-          <span key={p} class="pastille" style={{ background: COULEUR_PROGRAMME[p] }} />
-        ))}
-      </span>
-      <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '40px', letterSpacing: '-0.025em', lineHeight: 0.95, textWrap: 'balance' }}>
-        {t.nom}
-      </span>
-      <span style={{ fontSize: '15px', lineHeight: 1.4 }}>
-        {t.slots.length} exercices · {t.slots.reduce((n, s) => n + s.series, 0)} séries efficaces
-      </span>
-      <span class="bloc-pied">
-        <span>Commencer · {t.minutes.salle} min</span>
-        <Fleche />
-      </span>
+    <button
+      onClick={ouvrir}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        textAlign: 'left',
+        color: 'var(--sur-couleur)',
+        borderRadius: 'var(--r)',
+        overflow: 'hidden',
+        // De la hauteur à distribuer, sinon les champs collent à leur contenu et
+        // le second se réduit à deux lignes.
+        minHeight: 'clamp(300px, 44vh, 440px)',
+      }}
+    >
+      {blocs.map((b, i) => (
+        <span
+          key={b.programme}
+          style={{
+            background: COULEUR_PROGRAMME[b.programme],
+            // Part égale du mou, pas proportionnelle aux séries : le premier champ
+            // porte le titre, donc son contenu l'emporte de toute façon. Mesuré,
+            // ça donnait 7 séries dans 214 px contre 8 dans 143 — l'inverse de ce
+            // qu'une hauteur proportionnelle prétendrait dire. Le compte de séries
+            // est écrit, c'est le canal fiable.
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            padding: '18px 18px 0',
+          }}
+        >
+          {i === 0 && (
+            <>
+              <span class="etiquette">{t.sousTitre}</span>
+              <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '36px', letterSpacing: '-0.025em', lineHeight: 0.95, textWrap: 'balance' }}>
+                {t.nom}
+              </span>
+            </>
+          )}
+          <span style={{ fontSize: '15px', lineHeight: 1.4 }}>
+            <span style={{ fontWeight: 600 }}>{NOM_PROGRAMME[b.programme]}</span> · {b.exercices} exercices · {b.series} séries
+          </span>
+          {i === blocs.length - 1 && (
+            <span class="bloc-pied" style={{ marginTop: 'auto' }}>
+              <span>Commencer · {t.minutes.salle} min</span>
+              <Fleche />
+            </span>
+          )}
+        </span>
+      ))}
     </button>
   )
 }

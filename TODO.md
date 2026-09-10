@@ -76,6 +76,9 @@ suivi mérite d'être vue à chaque ouverture plutôt qu'une fois par semaine.
 - Sous-titres automatiques anglais visibles sur certaines vidéos malgré
   `cc_load_policy=0` (vu sur le développé couché). Le paramètre ne suffit pas
   toujours.
+- `Suivi.tsx:52` écrit `rgba(62,146,200,0.25)` en dur : un doublon du bleu
+  `--mobilite` à 25 %. Il correspond aujourd'hui, mais ne suivra pas si le jeton
+  change.
 - Contrôle en salle des six équipements Basic-Fit (Biarritz), à faire sur place.
 - Échelon de départ des pompes non réglable à la main ; le moteur se corrige en
   deux séances.
