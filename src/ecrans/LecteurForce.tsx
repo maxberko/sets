@@ -11,6 +11,7 @@ import { creneauDeReprise, type CreneauReprise } from '../lib/reprise'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
 import { useFond } from '../lib/fond'
+import { useHauteurFenetre } from '../lib/fenetre'
 import { Introuvable } from './ChoixLieu'
 
 /** Le lecteur de force enregistre une entrée par série, jamais par côté. */
@@ -58,6 +59,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
     return () => void garderEcranAllume(false)
   }, [d.reglages.ecranAllume])
 
+  useHauteurFenetre()
   useFond(t ? (COULEUR_PROGRAMME[t.programme] ?? 'var(--papier)') : 'var(--papier)')
 
   useEffect(() => {
@@ -169,7 +171,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   const message = messageProgression(slot, faitesDuSlot, echelle, echelonInitial, d.reglages.pasCharge)
 
   return (
-    <div class="ecran" style={{ background: couleur, color: 'var(--sur-couleur)' }}>
+    <div class="ecran lecteur" style={{ background: couleur, color: 'var(--sur-couleur)' }}>
       <Entete
         surCouleur
         gauche={
@@ -235,22 +237,22 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
           })}
         </div>
 
-        <div style={{ flex: 1, minHeight: '16px' }} />
+        <div style={{ flex: 1, minHeight: '12px' }} />
+      </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: 'calc(20px + var(--barre-bas))' }}>
-          <p style={{ fontSize: '15px', lineHeight: 1.45 }}>{message}</p>
-          {repos !== null ? (
-            <button class="principal" onClick={() => setRepos(null)}>
-              <span class="num">Repos {formatChrono(repos)}</span>
-              <span style={{ fontSize: '15px', fontWeight: 500, opacity: 0.85 }}>Passer</span>
-            </button>
-          ) : (
-            <button class="principal" onClick={valider}>
-              <span>{dernierSlot && derniereSerie ? 'Valider et terminer' : `Valider la série ${serieIndex + 1}`}</span>
-              <Coche couleur="var(--papier)" />
-            </button>
-          )}
-        </div>
+      <div class="pied-lecteur">
+        <p style={{ fontSize: '15px', lineHeight: 1.4 }}>{message}</p>
+        {repos !== null ? (
+          <button class="principal" onClick={() => setRepos(null)}>
+            <span class="num">Repos {formatChrono(repos)}</span>
+            <span style={{ fontSize: '15px', fontWeight: 500 }}>Passer</span>
+          </button>
+        ) : (
+          <button class="principal" onClick={valider}>
+            <span>{dernierSlot && derniereSerie ? 'Valider et terminer' : `Valider la série ${serieIndex + 1}`}</span>
+            <Coche couleur="var(--papier)" />
+          </button>
+        )}
       </div>
     </div>
   )
@@ -305,7 +307,7 @@ function Compteur({
         gridTemplateColumns: '72px minmax(0, 1fr) 72px',
         border: '1.5px solid var(--encre)',
         borderRadius: 'var(--r)',
-        height: '80px',
+        height: 'min(80px, calc(var(--hauteur-fenetre, 100dvh) * 0.105))',
         overflow: 'hidden',
       }}
     >
@@ -318,7 +320,7 @@ function Compteur({
           aria-label={`${valeur} ${unite}, appuie pour saisir au clavier`}
           style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '6px' }}
         >
-          <span class="chiffre" style={{ fontSize: '48px' }}>{valeur}</span>
+          <span class="chiffre" style={{ fontSize: 'min(48px, calc(var(--hauteur-fenetre, 100dvh) * 0.062))' }}>{valeur}</span>
           <span style={{ fontSize: '15px', fontWeight: 500 }}>{unite}</span>
         </button>
       ) : (

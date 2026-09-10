@@ -9,6 +9,7 @@ import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatChrono } from '../lib/semaine'
 import { useFond } from '../lib/fond'
+import { useHauteurFenetre } from '../lib/fenetre'
 import { positionDeReprise, type CreneauReprise } from '../lib/reprise'
 import { Introuvable } from './ChoixLieu'
 
@@ -61,6 +62,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
     return () => void garderEcranAllume(false)
   }, [d.reglages.ecranAllume])
 
+  useHauteurFenetre()
   useFond(fini ? 'var(--papier)' : COULEUR_PROGRAMME.mobilite ?? 'var(--papier)')
 
   const etapeSuivante = () => {
@@ -104,7 +106,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   const avancement = chrono && duree > 0 ? ((duree - restant) / duree) * 100 : 0
 
   return (
-    <div class="ecran" style={{ background: COULEUR_PROGRAMME.mobilite, color: 'var(--sur-couleur)' }}>
+    <div class="ecran lecteur" style={{ background: COULEUR_PROGRAMME.mobilite, color: 'var(--sur-couleur)' }}>
       <Entete
         surCouleur
         gauche={
@@ -118,7 +120,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
       <div class="contenu" style={{ gap: 0 }}>
         {chrono ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: '164px', lineHeight: 0.86, letterSpacing: '-0.06em', marginLeft: '-9px' }}>
+            <div class="chiffre" style={{ fontSize: 'min(112px, calc(var(--hauteur-fenetre, 100dvh) * 0.13))', lineHeight: 0.88, letterSpacing: '-0.05em', marginLeft: '-6px' }}>
               {restant < 60 ? restant : formatChrono(restant)}
             </div>
             <div style={{ height: '8px', background: 'rgba(243,245,242,0.45)', borderRadius: '1px' }}>
@@ -130,7 +132,7 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div class="chiffre" style={{ fontSize: '92px', lineHeight: 0.9, marginLeft: '-3px' }}>
+            <div class="chiffre" style={{ fontSize: 'min(84px, calc(var(--hauteur-fenetre, 100dvh) * 0.11))', lineHeight: 0.9, marginLeft: '-3px' }}>
               {slot.repsParCote ?? slot.reps?.[1] ?? 0}
             </div>
             <div class="etiquette">
@@ -157,7 +159,8 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingBottom: 'calc(20px + var(--barre-bas))' }}>
+      </div>
+      <div class="pied-lecteur">
           <div style={{ display: 'flex', alignItems: 'center', borderTop: '1.5px solid var(--encre)', padding: '14px 0 4px', fontSize: '15px', minHeight: '44px' }}>
             {suivantEx ? (
               <span>
@@ -190,7 +193,6 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
               Passer
             </button>
           </div>
-        </div>
       </div>
     </div>
   )

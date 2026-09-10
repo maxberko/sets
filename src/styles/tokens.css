@@ -226,3 +226,26 @@ a {
   padding-right: 0;
   height: 44px;
 }
+
+/* Écrans de lecteur : hauteur exacte de la fenêtre, jamais de débordement.
+   Le contenu défile s'il le faut, la barre d'action reste toujours visible. */
+.ecran.lecteur {
+  height: var(--hauteur-fenetre, 100dvh);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ecran.lecteur > .contenu {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pied-lecteur {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 var(--gouttiere) calc(18px + var(--barre-bas));
+}
