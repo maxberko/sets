@@ -54,11 +54,24 @@ Pousser sur `main` déclenche le workflow. Dans les réglages du dépôt, mettre
 
 ## Vidéos
 
-La vidéo se lit **dans la page**, dans une iframe `youtube-nocookie`, sans vidéos suggérées
-et sans plein écran forcé : appuyer sur lecture ne quitte pas l'appli. Rien n'est chargé
-avant l'appui, sinon chaque ouverture de fiche irait chercher le lecteur de Google, plus
-lourd que toute l'appli. Réserve honnête : la barre de contrôle de YouTube porte un lien
+La vidéo est **présente dès l'ouverture** de la fiche, dans une iframe `youtube-nocookie`,
+sans vidéos suggérées ni autoplay : c'est le bouton de lecture de YouTube qui la démarre, et
+la lecture ne quitte pas l'appli. Prix assumé : le lecteur de Google est tiré à chaque
+ouverture de fiche, ce qui pèse plus lourd que toute l'appli. C'est le choix fait puisque
+l'appli s'utilise connectée. Réserve honnête : la barre de contrôle de YouTube porte un lien
 « Regarder sur YouTube » que leurs conditions interdisent de masquer.
+
+## La fiche exercice est une carte, pas un document
+
+On l'ouvre pour vérifier un point pendant une séance. Ne reste donc visible que ce qui sert
+à ce moment-là : la vidéo, les trois points clés, le ressenti — seule chose qu'une vidéo ne
+transmet pas, puisqu'on ne voit pas une sensation — et l'échelon courant pour les exercices
+au poids de corps.
+
+Le reste est replié derrière un appui, parce qu'il faisait doublon ou ne se lit qu'une fois :
+les étapes numérotées redisaient ce que la vidéo montre, les erreurs fréquentes énonçaient
+les points clés à l'envers, et le pourquoi avec ses sources se lit au premier passage, pas à
+chaque série. La fiche est passée de 2 070 à 1 000 pixels de haut.
 
 **Les 28 exercices ont une démonstration.** La fiche garde tout de même l'état « pas encore
 de vidéo », qui nomme la source de référence : il servira au prochain exercice ajouté, et
