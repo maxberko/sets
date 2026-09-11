@@ -2,23 +2,28 @@ import { Fragment } from 'preact'
 import type { ComponentChildren } from 'preact'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { Entete } from '../composants/communs'
+import { Demonstration } from '../composants/demonstration'
 import { Chevron, Coche, Croix, Lecture, Moins, Plus } from '../composants/icones'
-import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
-import type { Slot, Venue } from '../data/types'
+import { COULEUR_PROGRAMME, estSemaineDeDecharge, exerciceDuSlot, seance, seriesDeLaSemaine } from '../data'
+import type { Exercise, Slot, Venue } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
 import type { SetLog } from '../lib/db'
 import { modifier, useDonnees, viderLaFile } from '../lib/etat'
 import { prochaineCharge, prochainEchelon, type SerieFaite } from '../lib/progression'
 import { creneauDeReprise, type CreneauReprise } from '../lib/reprise'
 import { aller } from '../lib/routeur'
-import { formatChrono } from '../lib/semaine'
+import { formatChrono, semaineDuBloc } from '../lib/semaine'
 import { useFond } from '../lib/fond'
 import { useHauteurFenetre } from '../lib/fenetre'
 import { Introuvable } from './ChoixLieu'
 
-/** Le lecteur de force enregistre une entrée par série, jamais par côté. */
-function creneaux(slots: Slot[]): CreneauReprise[] {
-  return slots.map((s) => ({ id: s.id, series: s.series, etapesParSerie: 1 }))
+/**
+ * Le lecteur de force enregistre une entrée par série, jamais par côté. Les séries
+ * sont celles de la semaine : en décharge, un créneau de trois en compte deux, et
+ * la reprise doit le savoir pour ne pas en attendre une de trop.
+ */
+function creneaux(slots: Slot[], semaine: number): CreneauReprise[] {
+  return slots.map((s) => ({ id: s.id, series: seriesDeLaSemaine(s.series, semaine), etapesParSerie: 1 }))
 }
 
 export function LecteurForce({ templateId, venue }: { templateId: string; venue: Venue }) {
@@ -28,9 +33,11 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   // Une séance interrompue est reprise là où elle s'est arrêtée : téléphone verrouillé,
   // appli tuée, ou simple aller-retour vers une fiche d'exercice, qui démonte ce composant.
   const reprise = d.enCours?.templateId === templateId && d.enCours.venue === venue ? d.enCours : undefined
+  const semaine = semaineDuBloc(d.reglages.debutBloc)
+  const decharge = estSemaineDeDecharge(semaine)
   const [journal, setJournal] = useState<SetLog[]>(reprise?.series ?? [])
   const [slotIndex, setSlotIndex] = useState(() =>
-    creneauDeReprise(creneaux(t?.slots ?? []), reprise?.series ?? []),
+    creneauDeReprise(creneaux(t?.slots ?? [], semaine), reprise?.series ?? []),
   )
   const [repos, setRepos] = useState<number | null>(null)
   /** Durée totale du repos en cours : le compte à rebours seul ne suffit pas à
@@ -39,6 +46,8 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   /** La série est lancée : on passe du bouton « Démarrer » à celui qui la clôt.
       État d'écran, pas une donnée : perdu à la reprise, sans conséquence. */
   const [demarree, setDemarree] = useState(false)
+  /** Démonstration ouverte en plein écran, par-dessus la séance. */
+  const [demoOuverte, setDemoOuverte] = useState(false)
   const debut = useRef(reprise?.debut ?? Date.now())
 
   const slot = t?.slots[slotIndex]
@@ -94,7 +103,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
 
   const derniereFois = dernierePerf(d.seances, ex.id)
   const couleur = COULEUR_PROGRAMME[ex.programme]
-  const totalSeries = slot.series
+  const totalSeries = seriesDeLaSemaine(slot.series, semaine)
   const dernierSlot = slotIndex >= t.slots.length - 1
   const derniereSerie = serieIndex >= totalSeries - 1
 
@@ -119,7 +128,10 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
     viderLaFile()
 
     if (derniereSerie) {
-      appliquerProgression(ex.id, slot, suivant, echelle, echelonInitial)
+      // En décharge, les charges ne bougent pas : c'est la définition même de la
+      // semaine. Un créneau réduit à deux séries ne doit ni faire monter ni compter
+      // comme un échec.
+      if (!decharge) appliquerProgression(ex.id, slot, suivant, echelle, echelonInitial)
       if (dernierSlot) return terminer(suivant)
       setSlotIndex(slotIndex + 1)
       demarrerRepos(slot.reposSec)
@@ -209,7 +221,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '4px' }}>
           <h2 style={{ fontWeight: 700, fontSize: '26px', minHeight: '50px' }}>{ex.nom}</h2>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px', fontSize: '14px' }}>
-            <span>{doseLisible(slot, echelle, echelonInitial)}</span>
+            <span>{doseLisible(slot, totalSeries, decharge, echelle, echelonInitial)}</span>
             <button
               onClick={() => aller(`/exercice/${ex.id}`)}
               style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600, whiteSpace: 'nowrap', minHeight: 'var(--cible)' }}
@@ -218,6 +230,18 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             </button>
           </div>
         </div>
+
+        {/* La démonstration sous le titre, comme dans la fiche et dans le lecteur de
+            mobilité. Ici ce n'est qu'une vignette : entre les compteurs et le
+            bouton, la place manque pour lire une vidéo sur un écran de 700 px, et
+            sous 150 px l'iframe YouTube recouvre l'image de son habillage. Un
+            appui ouvre la lecture en plein écran, sans quitter la séance. Absente
+            pendant le repos, comme demandé. */}
+        {repos === null && ex.video?.youtubeId && (
+          <div class="vignette-demo" style={{ display: 'flex', flex: 'none', marginTop: '8px', height: 'clamp(64px, calc(var(--hauteur-fenetre, 100dvh) * 0.1), 120px)' }}>
+            <Demonstration ex={ex} cle={`${ex.id}-${slotIndex}`} hauteurMini="0" surOuvrir={() => setDemoOuverte(true)} />
+          </div>
+        )}
 
         {/* Ancré sous l'en-tête, à sa taille naturelle : le mou se ramasse en bas,
             au-dessus du bouton. Centré, il ouvrait un vide de 100 px juste sous
@@ -275,8 +299,11 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
               return <Fragment key={i}>{bloc}</Fragment>
             })}
           </div>
+
         </div>
       </div>
+
+      {demoOuverte && <LectureEcran ex={ex} cle={`${ex.id}-${slotIndex}`} fermer={() => setDemoOuverte(false)} />}
 
       <div class="pied-lecteur">
         {repos !== null ? (
@@ -301,6 +328,51 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             <span>{dernierSlot && derniereSerie ? 'Valider et terminer' : `Valider la série ${serieIndex + 1}`}</span>
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * La démonstration en plein écran, par-dessus la séance. Rien n'est démonté
+ * derrière : le journal, le repos et les compteurs restent tels quels.
+ */
+function LectureEcran({ ex, cle, fermer }: { ex: Exercise; cle: string; fermer: () => void }) {
+  useEffect(() => {
+    const touche = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') fermer()
+    }
+    addEventListener('keydown', touche)
+    return () => removeEventListener('keydown', touche)
+  }, [fermer])
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Démonstration : ${ex.nom}`}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 30,
+        background: 'var(--encre)',
+        color: 'var(--papier)',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 'calc(var(--barre-haut) + 4px) var(--gouttiere) calc(24px + var(--barre-bas))',
+        gap: '16px',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minHeight: 'var(--cible)' }}>
+        <button onClick={fermer} aria-label="Fermer la démonstration" style={{ minHeight: 'var(--cible)', minWidth: 'var(--cible)', display: 'flex', alignItems: 'center' }}>
+          <Croix couleur="var(--papier)" />
+        </button>
+        <span style={{ fontSize: '15px', fontWeight: 600 }}>{ex.nom}</span>
+      </div>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center' }}>
+        <div style={{ width: '100%', aspectRatio: '16 / 9', display: 'flex' }}>
+          <Demonstration ex={ex} cle={cle} demarre />
+        </div>
       </div>
     </div>
   )
@@ -442,8 +514,10 @@ function Compteur({
         // Le compteur prend le mou du bloc plutôt que de le laisser en marge, avec
         // un plancher tactile et un plafond pour ne pas devenir un panneau.
         // Taille mesurée sur la fenêtre, pas sur le mou disponible : le bloc
-        // qu'on regarde n'a pas à enfler parce que l'écran est grand.
-        height: 'clamp(58px, calc(var(--hauteur-fenetre, 100dvh) * 0.118), 148px)',
+        // qu'on regarde n'a pas à enfler parce que l'écran est grand. 10,3 % et
+        // non plus 11,8 : c'est ce qui laisse sa place à la vignette de
+        // démonstration sous le titre, jusqu'à 680 px de haut.
+        height: 'clamp(58px, calc(var(--hauteur-fenetre, 100dvh) * 0.103), 148px)',
         // Le chiffre suit la boîte, ce qui le garde proportionné à toute hauteur.
         containerType: 'size',
         overflow: 'hidden',
@@ -504,8 +578,9 @@ function Compteur({
  * sténo de salle : le « × » et le tiret de fourchette se décodent, et « reps en
  * réserve » est une traduction littérale de RIR qui ne dit pas quoi faire.
  */
-function doseLisible(slot: Slot, echelle: string[] | undefined, echelon: number): string {
-  const series = `${slot.series} série${slot.series > 1 ? 's' : ''}`
+function doseLisible(slot: Slot, nombre: number, decharge: boolean, echelle: string[] | undefined, echelon: number): string {
+  // La décharge est dite, sinon deux séries au lieu de trois passent pour un bug.
+  const series = `${nombre} série${nombre > 1 ? 's' : ''}${decharge ? ' de décharge' : ''}`
   if (slot.reps) return `${series} · ${slot.reps[0]} à ${slot.reps[1]} reps`
   if (slot.repsParCote) return `${series} · ${slot.repsParCote} reps par côté`
   if (slot.secondes) return `${series} · ${slot.secondes} s${echelle ? ` · ${echelle[echelon]}` : ''}`

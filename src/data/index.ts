@@ -1,7 +1,7 @@
 import type { Exercise, SessionTemplate, Slot, Venue } from './types'
 import { EXERCICES } from './exercices'
 import { MOBILITE } from './mobilite'
-import { SEANCES } from './seances'
+import { SEANCES, dechargeConcerne, seriesDeLaSemaine } from './seances'
 
 export * from './types'
 export * from './seances'
@@ -47,7 +47,7 @@ export interface BlocProgramme {
  * Une séance « pecs » n'est pas faite que de pectoraux : `pecs-a` enchaîne huit
  * séries de pectoraux puis huit d'abdominaux. Rien ne l'annonçait avant d'y être.
  */
-export function blocsDeSeance(template: SessionTemplate, venue: Venue): BlocProgramme[] {
+export function blocsDeSeance(template: SessionTemplate, venue: Venue, semaine?: number): BlocProgramme[] {
   const ordre: string[] = []
   const par: Record<string, BlocProgramme> = {}
   for (const slot of template.slots) {
@@ -60,14 +60,22 @@ export function blocsDeSeance(template: SessionTemplate, venue: Venue): BlocProg
       ordre.push(ex.programme)
     }
     bloc.exercices += 1
-    bloc.series += slot.series
+    const reduite = semaine !== undefined && dechargeConcerne(ex.programme)
+    bloc.series += reduite ? seriesDeLaSemaine(slot.series, semaine) : slot.series
   }
   return ordre.map((p) => par[p]!)
 }
 
+/**
+ * Séries efficaces par muscle et par semaine. Les abdominaux suivent la même
+ * fourchette que les pectoraux : aucune étude ne mesure le volume utile qui leur
+ * est propre, donc on applique la règle générale (12–20 chez l'homme entraîné,
+ * Baz-Valle 2022), comme l'écran Science le dit déjà. L'ancien 8–12 n'avait pas
+ * de source et contredisait ce principe ; le programme, lui, en donnait 16.
+ */
 export const CIBLES_HEBDO: Record<string, [number, number]> = {
   pecs: [12, 20],
-  abdos: [8, 12],
+  abdos: [12, 20],
 }
 
 export const NOM_PROGRAMME: Record<string, string> = {

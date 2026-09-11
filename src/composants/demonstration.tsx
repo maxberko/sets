@@ -4,15 +4,32 @@ import type { Exercise } from '../data/types'
 
 /**
  * Vignette cliquable qui laisse place à une boucle muette et sans habillage.
- * Utilisée par le lecteur de mobilité et par la fiche d'exercice : la vidéo ne
- * quitte jamais l'application, aucun onglet tiers ne s'ouvre.
+ * Utilisée par les deux lecteurs (la fiche d'exercice a son propre `BlocVideo`) :
+ * la vidéo ne quitte jamais l'application, aucun onglet tiers ne s'ouvre.
  *
  * `cle` remet la vignette en place quand on change d'exercice.
  * Le composant remplit son conteneur : c'est à l'appelant de lui donner une
  * hauteur.
+ *
+ * `surOuvrir` remplace la lecture sur place par un appel à l'appelant : utile là
+ * où la vignette est trop basse pour lire la vidéo — sous 150 px, l'iframe YouTube
+ * superpose son propre habillage. `demarre` lance la lecture sans passer par la
+ * vignette, pour un lecteur qu'on vient d'ouvrir exprès.
  */
-export function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
-  const [joue, setJoue] = useState(false)
+export function Demonstration({
+  ex,
+  cle,
+  surOuvrir,
+  demarre = false,
+  hauteurMini = '150px',
+}: {
+  ex: Exercise
+  cle: string
+  surOuvrir?: () => void
+  demarre?: boolean
+  hauteurMini?: string
+}) {
+  const [joue, setJoue] = useState(demarre)
   const vue = useRef(cle)
   if (vue.current !== cle) {
     vue.current = cle
@@ -25,7 +42,7 @@ export function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
     position: 'relative' as const,
     width: '100%',
     height: '100%',
-    minHeight: '150px',
+    minHeight: hauteurMini,
     background: '#14181a',
     borderRadius: 'var(--r)',
     overflow: 'hidden',
@@ -34,7 +51,7 @@ export function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
   if (!joue) {
     return (
       <button
-        onClick={() => setJoue(true)}
+        onClick={() => (surOuvrir ? surOuvrir() : setJoue(true))}
         aria-label={`Voir la démonstration de ${ex.nom}`}
         style={cadre}
       >
@@ -101,7 +118,10 @@ export function Demonstration({ ex, cle }: { ex: Exercise; cle: string }) {
         title={`Démonstration : ${ex.nom}`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
-        loading="lazy"
+        // Pas de chargement différé : l'iframe n'existe qu'après un appui, donc
+        // toujours quand on veut la voir. En différé, elle restait noire dans le
+        // calque plein écran.
+        loading="eager"
         referrerPolicy="strict-origin-when-cross-origin"
         style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
       />

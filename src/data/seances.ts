@@ -1,4 +1,5 @@
 import type { SessionTemplate } from './types'
+import { seriesApresDeload } from '../lib/progression'
 
 /**
  * Un Slot est un rôle, pas un exercice. « Presse haut des pectoraux, 3 × 8-12 » pèse
@@ -150,8 +151,10 @@ export const FORMULES: DescriptionFormule[] = [
     seances: 6,
     minutes: 160,
     resume: 'Trois séances de force, trois de mobilité.',
+    // L'ancien texte affirmait rester dans la fourchette utile alors que la formule
+    // la dépasse : 23 séries de pectoraux et 24 d'abdominaux par semaine.
     compromis:
-      "Volume pectoraux vers le haut de la fourchette utile. Au-delà, le gain par série cesse de monter, donc rien de plus lourd n'est proposé.",
+      "Pectoraux et abdominaux passent au-dessus de vingt séries par semaine. Chaque série de plus rapporte un peu moins, sans jamais nuire : tu le paies surtout en temps et en récupération.",
   },
 ]
 
@@ -200,3 +203,25 @@ export const SEMAINES_BLOC = 8
 export const SEMAINE_DELOAD = 5
 /** Le deload garde les charges et coupe le volume. */
 export const RATIO_DELOAD = 0.6
+
+export function estSemaineDeDecharge(semaine: number): boolean {
+  return semaine === SEMAINE_DELOAD
+}
+
+/**
+ * La décharge ne concerne que le travail chargé. La mobilité n'a pas de charge à
+ * relâcher, et ses gains suivent le temps de maintien hebdomadaire (Thomas 2018) :
+ * la couper retirerait le stimulus sans rien récupérer en échange.
+ */
+export function dechargeConcerne(programme: string): boolean {
+  return programme !== 'mobilite'
+}
+
+/**
+ * Séries d'un créneau pour une semaine donnée du bloc. Seul point d'entrée de la
+ * décharge : `seriesApresDeload` était écrite et testée mais aucun écran ne
+ * l'appelait, si bien que la semaine 5 se faisait à plein volume.
+ */
+export function seriesDeLaSemaine(series: number, semaine: number): number {
+  return seriesApresDeload(series, semaine, SEMAINE_DELOAD, RATIO_DELOAD)
+}

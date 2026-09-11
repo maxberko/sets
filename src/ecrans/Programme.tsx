@@ -42,24 +42,34 @@ export function Programme() {
         <section style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
           <h3>Tous les exercices</h3>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {FILTRES.map((f) => (
-              <button
-                key={f}
-                onClick={() => setFiltre(f)}
-                style={{
-                  border: '1.5px solid var(--encre)',
-                  borderRadius: 'var(--r)',
-                  padding: '9px 13px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  background: filtre === f ? 'var(--encre)' : 'transparent',
-                  color: filtre === f ? 'var(--papier)' : 'var(--encre)',
-                  minHeight: 'var(--cible)',
-                }}
-              >
-                {f === 'tous' ? 'Tous' : NOM_PROGRAMME[f]}
-              </button>
-            ))}
+            {FILTRES.map((f) => {
+              // Chaque filtre porte la couleur de son programme, selon la même règle
+              // que la bande de semaine : contour quand il est libre, plein quand il
+              // est choisi. « Tous » n'est pas un programme, il reste à l'encre.
+              const actif = filtre === f
+              const teinte = f === 'tous' ? 'var(--encre)' : COULEUR_PROGRAMME[f]
+              return (
+                <button
+                  key={f}
+                  onClick={() => setFiltre(f)}
+                  aria-pressed={actif}
+                  style={{
+                    border: `1.5px solid ${teinte}`,
+                    borderRadius: 'var(--r)',
+                    padding: '9px 13px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    background: actif ? teinte : 'transparent',
+                    // Encre sur les trois couleurs de programme, vérifiée en
+                    // contraste ; seul « Tous », plein d'encre, passe au papier.
+                    color: actif && f === 'tous' ? 'var(--papier)' : 'var(--encre)',
+                    minHeight: 'var(--cible)',
+                  }}
+                >
+                  {f === 'tous' ? 'Tous' : NOM_PROGRAMME[f]}
+                </button>
+              )
+            })}
           </div>
 
           {liste.map((e) => (

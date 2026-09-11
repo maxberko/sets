@@ -1,6 +1,6 @@
 import { BarreOnglets, Titre } from '../composants/communs'
 import { Chevron, Fleche, Reglages as IconeReglages } from '../composants/icones'
-import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, NOM_PROGRAMME, SEMAINES_BLOC, blocsDeSeance, planDe, seance, seriesParProgramme } from '../data'
+import { COULEUR_PROGRAMME, INITIALE_JOUR, JOURS, NOM_JOUR, NOM_PROGRAMME, SEMAINES_BLOC, blocsDeSeance, estSemaineDeDecharge, planDe, seance, seriesParProgramme } from '../data'
 import { useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatDateCourte, jourDe, lundiDe, semaineDuBloc } from '../lib/semaine'
@@ -29,7 +29,7 @@ export function Aujourdhui() {
       <div class="contenu">
         <Titre
           titre={NOM_JOUR[jour]}
-          apres={`${formatDateCourte(maintenant)} · semaine ${semaine} sur ${SEMAINES_BLOC}`}
+          apres={`${formatDateCourte(maintenant)} · semaine ${semaine} sur ${SEMAINES_BLOC}${estSemaineDeDecharge(semaine) ? ' · décharge' : ''}`}
           action={
             <button
               onClick={() => aller('/reglages')}
@@ -78,7 +78,7 @@ export function Aujourdhui() {
         )}
 
         {restantes.map((id, i) => (
-          <CarteSeance key={id} templateId={id} principale={i === 0} mobiliteFaites={mobiliteFaites} mobilitePrevues={mobilitePrevues} />
+          <CarteSeance key={id} templateId={id} principale={i === 0} semaine={semaine} mobiliteFaites={mobiliteFaites} mobilitePrevues={mobilitePrevues} />
         ))}
 
         {faitesAujourdhui.length > 0 && (
@@ -110,11 +110,13 @@ function prochainJourAvecSeance(plan: Record<Jour, string[]>, jour: Jour): strin
 function CarteSeance({
   templateId,
   principale,
+  semaine,
   mobiliteFaites,
   mobilitePrevues,
 }: {
   templateId: string
   principale: boolean
+  semaine: number
   mobiliteFaites: number
   mobilitePrevues: number
 }) {
@@ -145,7 +147,7 @@ function CarteSeance({
   // deux chapitres sont annoncés avant de commencer, et la couleur du lecteur ne
   // surprend plus puisqu'elle a déjà été vue ici. Les pastilles secondaires
   // n'ont plus lieu d'être, chaque bloc porte son propre champ.
-  const blocs = blocsDeSeance(t, 'salle')
+  const blocs = blocsDeSeance(t, 'salle', semaine)
 
   return (
     <button

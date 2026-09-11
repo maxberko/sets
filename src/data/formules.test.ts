@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { FORMULES, JOURS, SEANCES, planDe, descriptionFormule } from './seances'
+import { FORMULES, JOURS, SEANCES, planDe, descriptionFormule, estSemaineDeDecharge, seriesDeLaSemaine, dechargeConcerne } from './seances'
+import { blocsDeSeance } from './index'
 
 /**
  * Le plan est de la donnée écrite à la main : rien n'empêche de compter faux ou de
@@ -68,5 +69,33 @@ describe('les trois formules', () => {
   it('retombent sur standard pour une formule inconnue', () => {
     expect(descriptionFormule('inexistante' as never).id).toBe('standard')
     expect(planDe('inexistante' as never)).toEqual(planDe('standard'))
+  })
+})
+
+describe('semaine de décharge', () => {
+  it('coupe les séries en semaine 5 et seulement en semaine 5', () => {
+    expect(estSemaineDeDecharge(5)).toBe(true)
+    expect(seriesDeLaSemaine(3, 5)).toBe(2)
+    expect(seriesDeLaSemaine(2, 5)).toBe(1)
+    for (const semaine of [1, 4, 6, 8]) {
+      expect(estSemaineDeDecharge(semaine)).toBe(false)
+      expect(seriesDeLaSemaine(3, semaine)).toBe(3)
+    }
+  })
+
+  it('se répercute sur le découpage des séances', () => {
+    const t = SEANCES.find((s) => s.id === 'pecs-a')!
+    const normale = blocsDeSeance(t, 'salle', 4)
+    const decharge = blocsDeSeance(t, 'salle', 5)
+    expect(normale.map((b) => b.series)).toEqual([8, 8])
+    expect(decharge.map((b) => b.series)).toEqual([5, 5])
+  })
+
+  it('épargne la mobilité, qui n\'a pas de charge à relâcher', () => {
+    expect(dechargeConcerne('pecs')).toBe(true)
+    expect(dechargeConcerne('abdos')).toBe(true)
+    expect(dechargeConcerne('mobilite')).toBe(false)
+    const mobilite = SEANCES.find((s) => s.id === 'mobilite')!
+    expect(blocsDeSeance(mobilite, 'tapis', 5)).toEqual(blocsDeSeance(mobilite, 'tapis', 4))
   })
 })

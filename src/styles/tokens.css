@@ -252,6 +252,15 @@ a {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Vignette de démonstration du lecteur de force : sous 680 px de haut, elle
+   pousse la dernière série sous le bouton de validation (mesuré : 0 px de
+   débordement à 680, 23 à 660). Elle s'efface alors, « La fiche » garde la vidéo. */
+@media (max-height: 679px) {
+  .vignette-demo {
+    display: none !important;
+  }
+}
+
 .pied-lecteur {
   flex: none;
   display: flex;
