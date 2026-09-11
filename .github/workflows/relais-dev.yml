@@ -1,0 +1,20 @@
+name: Relais dev
+
+# L'environnement github-pages n'accepte de déploiement que depuis main. Un push
+# sur dev relance donc le déploiement de main, qui construit les deux versions.
+# Un déclenchement workflow_dispatch fait avec le jeton du dépôt lance bien un
+# nouveau run, contrairement aux autres événements émis par ce jeton.
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  actions: write
+
+jobs:
+  relais:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}

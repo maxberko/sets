@@ -6,6 +6,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 // Override with BASE_PATH=/ for a custom domain.
 const base = process.env.BASE_PATH ?? '/sets/'
 
+// Le canal « dev » est la branche du même nom, publiée sous /sets/dev/ à côté de
+// la version principale. Pages ne sert qu'un site par dépôt : les deux partagent
+// donc domaine et stockage, d'où une clé de données à part (voir src/lib/db.ts).
+const canal = process.env.VITE_CANAL === 'dev' ? 'dev' : 'principal'
+
 export default defineConfig({
   base,
   plugins: [
@@ -14,8 +19,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Sets',
-        short_name: 'Sets',
+        name: canal === 'dev' ? 'Sets dev' : 'Sets',
+        short_name: canal === 'dev' ? 'Sets dev' : 'Sets',
         description: "Force et mobilite, base sur les preuves.",
         lang: 'fr',
         dir: 'ltr',
@@ -36,6 +41,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2}'],
         cleanupOutdatedCaches: true,
         navigateFallback: `${base}index.html`,
+        // Sans ça, le service worker de la version principale (portée /sets/)
+        // répondait aussi aux navigations vers /sets/dev/ avec sa propre page :
+        // la version dev ne s'ouvrait jamais sur un téléphone où l'appli est installée.
+        navigateFallbackDenylist: canal === 'dev' ? [] : [new RegExp(`^${base}dev/`)],
       },
       devOptions: { enabled: false },
     }),

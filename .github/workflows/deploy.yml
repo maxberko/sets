@@ -28,6 +28,32 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm test
       - run: npm run build
+
+      # La branche dev est publiée sous /sets/dev/, dans le même site : Pages ne sert
+      # qu'un site par dépôt, et son environnement n'accepte de déploiement que depuis
+      # main. Ce job tourne donc toujours sur main et construit dev à côté ; un push
+      # sur dev le relance via .github/workflows/relais-dev.yml.
+      # Un échec côté dev ne bloque pas la version principale : dev disparaît de ce
+      # déploiement et un avertissement le signale.
+      - name: Version dev
+        id: dev
+        continue-on-error: true
+        run: |
+          if ! git ls-remote --exit-code --heads origin dev >/dev/null; then
+            echo "Pas de branche dev : seule la version principale est publiée."
+            exit 0
+          fi
+          git fetch --depth 1 origin dev:refs/remotes/origin/dev
+          git worktree add ../dev origin/dev
+          cd ../dev
+          npm ci
+          npm test
+          BASE_PATH=/sets/dev/ VITE_CANAL=dev npm run build
+          mkdir -p "$GITHUB_WORKSPACE/dist/dev"
+          cp -R dist/. "$GITHUB_WORKSPACE/dist/dev/"
+      - if: steps.dev.outcome == 'failure'
+        run: echo "::warning::La version dev n'a pas pu être construite ; seule la principale est publiée."
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
