@@ -95,7 +95,9 @@ export const DEFAUT: Donnees = {
   checkins: [],
 }
 
-const CLE = 'sets:donnees'
+// La version dev partage le domaine de la principale, donc son stockage : sans clé
+// à part, tester une séance sur dev l'aurait inscrite dans le vrai historique.
+const CLE = import.meta.env.VITE_CANAL === 'dev' ? 'sets-dev:donnees' : 'sets:donnees'
 
 export async function charger(): Promise<Donnees> {
   try {
