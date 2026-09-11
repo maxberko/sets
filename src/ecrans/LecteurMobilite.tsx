@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { Entete } from '../composants/communs'
 import { Chevron, Coche, Croix, Lecture, Pause } from '../composants/icones'
 import { Demonstration } from '../composants/demonstration'
+import { BOUTON_CERNE, BOUTON_PLEIN, FinSeance, bilanDeSeance } from '../composants/finSeance'
 import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
 import type { Slot } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
@@ -64,7 +65,8 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
   }, [d.reglages.ecranAllume])
 
   useHauteurFenetre()
-  useFond(fini ? 'var(--papier)' : COULEUR_PROGRAMME.mobilite ?? 'var(--papier)')
+  // En fin de séance, c'est l'encre : l'écran de fin ne peint pas le fond lui-même.
+  useFond(fini ? 'var(--encre)' : COULEUR_PROGRAMME.mobilite ?? 'var(--papier)')
 
   const etapeSuivante = () => {
     if (!slot || !ex) return
@@ -229,7 +231,6 @@ function dureeDe(slot: Slot, maintienEnregistre?: number): number {
 }
 
 function FinMobilite({ templateId, debut, journal }: { templateId: string; debut: number; journal: SetLog[] }) {
-  const d = useDonnees()
   const [enregistre, setEnregistre] = useState(false)
 
   const noter = (facile: boolean) => {
@@ -259,27 +260,22 @@ function FinMobilite({ templateId, debut, journal }: { templateId: string; debut
   const minutes = Math.max(1, Math.round((Date.now() - debut) / 60000))
   const pleines = new Set(journal.map((j) => j.exerciceId)).size
 
+  // La réponse clôt l'écran : c'est elle qui enregistre la séance, donc pas de
+  // bouton « Revenir » qui permettrait de partir sans l'avoir donnée.
   return (
-    <div class="ecran">
-      <Entete centre="Séance terminée" />
-      <div class="contenu">
-        <h1>C'est fait</h1>
-        <p style={{ fontSize: '17px' }}>
-          {pleines} exercices, {minutes} minutes. {d.reglages.sons ? '' : ''}
+    <FinSeance bilan={bilanDeSeance(pleines, minutes)}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '6px', borderTop: '1px solid rgba(243,245,242,0.3)' }}>
+        <h3 style={{ color: 'var(--papier)', paddingTop: '8px' }}>Les maintiens étaient comment ?</h3>
+        <p style={{ fontSize: '14px', opacity: 0.8 }}>
+          Deux séances de suite notées faciles et la durée passe au palier suivant.
         </p>
-        <div style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3>Les maintiens étaient comment ?</h3>
-          <p class="discret" style={{ fontSize: '14px' }}>
-            Deux séances de suite notées faciles et la durée passe au palier suivant.
-          </p>
-          <button class="principal" disabled={enregistre} onClick={() => noter(true)} style={{ justifyContent: 'center' }}>
-            Faciles
-          </button>
-          <button class="secondaire" disabled={enregistre} onClick={() => noter(false)}>
-            Difficiles, on garde cette durée
-          </button>
-        </div>
+        <button disabled={enregistre} onClick={() => noter(true)} style={{ ...BOUTON_PLEIN, opacity: enregistre ? 0.4 : 1 }}>
+          Faciles
+        </button>
+        <button disabled={enregistre} onClick={() => noter(false)} style={{ ...BOUTON_CERNE, opacity: enregistre ? 0.4 : 1 }}>
+          Difficiles, on garde cette durée
+        </button>
       </div>
-    </div>
+    </FinSeance>
   )
 }

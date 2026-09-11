@@ -5,6 +5,7 @@ import { useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { formatDateCourte, jourDe, lundiDe, semaineDuBloc } from '../lib/semaine'
 import type { Jour } from '../data/seances'
+import { SuiviAccueil } from './Suivi'
 
 export function Aujourdhui() {
   const d = useDonnees()
@@ -87,9 +88,7 @@ export function Aujourdhui() {
           </p>
         )}
 
-        <p class="discret" style={{ fontSize: '14px', paddingTop: '4px' }}>
-          Tu surfes aujourd'hui ? Rien à faire, ça ne change pas le plan.
-        </p>
+        <SuiviAccueil />
 
         <div style={{ height: '12px' }} />
       </div>
@@ -160,9 +159,10 @@ function CarteSeance({
         color: 'var(--sur-couleur)',
         borderRadius: 'var(--r)',
         overflow: 'hidden',
-        // De la hauteur à distribuer, sinon les champs collent à leur contenu et
-        // le second se réduit à deux lignes.
-        minHeight: 'clamp(300px, 44vh, 440px)',
+        // De la hauteur à distribuer entre deux champs, sinon le second se réduit
+        // à deux lignes. Une carte à un seul programme n'a rien à répartir : la
+        // hauteur imposée y creusait un grand vide avant « Commencer ».
+        minHeight: blocs.length > 1 ? 'clamp(300px, 44vh, 440px)' : undefined,
       }}
     >
       {blocs.map((b, i) => (

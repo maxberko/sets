@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks'
 import { seance } from './data'
 import type { Venue } from './data/types'
 import { initEtat, useDonnees } from './lib/etat'
-import { segments, useChemin } from './lib/routeur'
+import { aller, segments, useChemin } from './lib/routeur'
 import { Aujourdhui } from './ecrans/Aujourdhui'
 import { ChoixLieu, Introuvable } from './ecrans/ChoixLieu'
 import { Fiche } from './ecrans/Fiche'
@@ -12,7 +12,6 @@ import { LecteurMobilite } from './ecrans/LecteurMobilite'
 import { Programme } from './ecrans/Programme'
 import { Reglages } from './ecrans/Reglages'
 import { Science } from './ecrans/Science'
-import { Suivi } from './ecrans/Suivi'
 
 export function App() {
   const [pret, setPret] = useState(false)
@@ -33,8 +32,9 @@ export function App() {
   switch (s[0]) {
     case 'programme':
       return <Programme />
+    // Le suivi vit désormais sur l'accueil : l'ancienne adresse y renvoie.
     case 'suivi':
-      return <Suivi />
+      return <Redirection vers="/" />
     case 'science':
       return <Science />
     case 'reglages':
@@ -67,4 +67,9 @@ function Chargement() {
       </div>
     </div>
   )
+}
+
+function Redirection({ vers }: { vers: string }) {
+  useEffect(() => aller(vers), [vers])
+  return null
 }

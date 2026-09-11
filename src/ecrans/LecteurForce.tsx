@@ -3,6 +3,7 @@ import type { ComponentChildren } from 'preact'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { Entete } from '../composants/communs'
 import { Demonstration } from '../composants/demonstration'
+import { FinSeance, bilanDeSeance } from '../composants/finSeance'
 import { Chevron, Coche, Croix, Lecture, Moins, Plus } from '../composants/icones'
 import { COULEUR_PROGRAMME, estSemaineDeDecharge, exerciceDuSlot, seance, seriesDeLaSemaine } from '../data'
 import type { Exercise, Slot, Venue } from '../data/types'
@@ -48,6 +49,8 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   const [demarree, setDemarree] = useState(false)
   /** Démonstration ouverte en plein écran, par-dessus la séance. */
   const [demoOuverte, setDemoOuverte] = useState(false)
+  /** Bilan de la séance qui vient de s'achever : l'écran de fin le remplace au lecteur. */
+  const [fini, setFini] = useState<string | null>(null)
   const debut = useRef(reprise?.debut ?? Date.now())
 
   const slot = t?.slots[slotIndex]
@@ -85,7 +88,8 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   //
   // La bascule tombe pendant le repos sans rien de plus : `slotIndex` avance
   // avant que le repos démarre, donc l'exercice affiché est déjà le suivant.
-  useFond(ex ? (COULEUR_PROGRAMME[ex.programme] ?? 'var(--papier)') : 'var(--papier)')
+  // En fin de séance, c'est l'encre : l'écran de fin ne peint pas le fond lui-même.
+  useFond(fini ? 'var(--encre)' : ex ? (COULEUR_PROGRAMME[ex.programme] ?? 'var(--papier)') : 'var(--papier)')
 
   useEffect(() => {
     if (repos === null) return
@@ -132,7 +136,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       // semaine. Un créneau réduit à deux séries ne doit ni faire monter ni compter
       // comme un échec.
       if (!decharge) appliquerProgression(ex.id, slot, suivant, echelle, echelonInitial)
-      if (dernierSlot) return terminer(suivant)
+      if (dernierSlot) return terminer(suivant, true)
       setSlotIndex(slotIndex + 1)
       demarrerRepos(slot.reposSec)
       return
@@ -174,7 +178,9 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
     }
   }
 
-  const terminer = (log: SetLog[]) => {
+  // `celebrer` sépare la vraie fin de séance de l'abandon : on ne félicite pas
+  // quelqu'un qui vient de choisir d'arrêter en cours de route.
+  const terminer = (log: SetLog[], celebrer: boolean) => {
     modifier((data) => {
       data.seances.push({
         id: `${templateId}-${debut.current}`,
@@ -187,7 +193,10 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       delete data.enCours
     })
     viderLaFile()
-    aller('/')
+    if (!celebrer) return aller('/')
+    const exercices = new Set(log.map((l) => l.exerciceId)).size
+    const minutes = Math.max(1, Math.round((Date.now() - debut.current) / 60000))
+    setFini(bilanDeSeance(exercices, minutes))
   }
 
   // La séance est déjà enregistrée à chaque série validée : quitter la met en pause,
@@ -198,9 +207,11 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       viderLaFile()
       aller('/')
     } else {
-      terminer(journal)
+      terminer(journal, false)
     }
   }
+
+  if (fini) return <FinSeance bilan={fini} revenir={() => aller('/')} />
 
   return (
     <div class="ecran lecteur" style={{ background: couleur, color: 'var(--sur-couleur)' }}>

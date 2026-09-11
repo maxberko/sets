@@ -1,19 +1,22 @@
 import { useState } from 'preact/hooks'
-import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Plus } from '../composants/icones'
 import { CIBLES_HEBDO, COULEUR_PROGRAMME, NOM_PROGRAMME, SEMAINES_BLOC, planDe } from '../data'
 import { JOURS } from '../data/seances'
 import { modifier, useDonnees } from '../lib/etat'
-import { lundiDe, semaineDuBloc, tendance, volumeParSemaine } from '../lib/semaine'
+import { lundiDe, tendance, volumeParSemaine } from '../lib/semaine'
 
-export function Suivi() {
+/**
+ * Le suivi, tel qu'il s'affiche sous la séance du jour sur l'écran d'accueil.
+ * Il avait son propre onglet ; on ne l'ouvrait qu'en y pensant. Il suit désormais
+ * ce qu'il y a à faire aujourd'hui, dans l'ordre : la semaine, la progression,
+ * puis le point du corps, qui ne change qu'une fois par semaine.
+ */
+export function SuiviAccueil() {
   const d = useDonnees()
   const maintenant = new Date()
-  const semaine = semaineDuBloc(d.reglages.debutBloc, maintenant)
   const volumes = volumeParSemaine(d.seances)
   const cle = lundiDe(maintenant)
   const cette = volumes.find((v) => v.semaine === cle)?.parProgramme ?? {}
-  const faites = d.seances.filter((s) => s.fin).length
 
   const plan = planDe(d.reglages.formule)
   const mobilitePrevues = JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => x === 'mobilite').length, 0)
@@ -23,17 +26,15 @@ export function Suivi() {
   const dernierCheck = d.checkins[d.checkins.length - 1]
   const premierCheck = d.checkins[0]
 
-  return (
-    <div class="ecran">
-      <Entete />
-      <div class="contenu">
-        <Titre titre="Suivi" apres={`Semaine ${semaine} sur ${SEMAINES_BLOC} · ${faites} séance${faites > 1 ? 's' : ''}`} />
+  const rubrique = { borderTop: '1.5px solid var(--encre)', paddingTop: '18px', display: 'flex', flexDirection: 'column' as const, gap: '12px' }
 
-        <h3>Séries efficaces par semaine</h3>
+  return (
+    <>
+      <section style={rubrique}>
+        <h3>Ta semaine</h3>
         {(['pecs', 'abdos'] as const).map((p) => (
           <Barres key={p} programme={p} volumes={volumes} actuel={cette[p] ?? 0} />
         ))}
-
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
             <span class="pastille" style={{ background: COULEUR_PROGRAMME.mobilite }} />
@@ -55,29 +56,28 @@ export function Suivi() {
             ))}
           </div>
         </div>
+      </section>
 
-        {points.length > 1 && (
-          <section style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <h3>Développé incliné haltères</h3>
-              <span class="discret" style={{ fontSize: '13px' }}>1RM estimé {points[points.length - 1]!.rm} kg</span>
-            </div>
-            <Courbe points={points} />
-          </section>
-        )}
-
-        <section style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3>Le point du corps</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px' }}>
-            <Mesure valeur={dernierCheck?.kg} unite="kg" delta={delta(dernierCheck?.kg, premierCheck?.kg)} legende="Poids" />
-            <Mesure valeur={dernierCheck?.tailleCm} unite="cm" delta={delta(dernierCheck?.tailleCm, premierCheck?.tailleCm)} legende="Tour de taille" />
+      {points.length > 1 && (
+        <section style={rubrique}>
+          <h3>Ta progression</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600 }}>Développé incliné haltères</span>
+            <span class="discret" style={{ fontSize: '13px' }}>1RM estimé {points[points.length - 1]!.rm} kg</span>
           </div>
-          <FormulaireCheckIn />
+          <Courbe points={points} />
         </section>
-        <div style={{ height: '12px' }} />
-      </div>
-      <BarreOnglets />
-    </div>
+      )}
+
+      <section style={rubrique}>
+        <h3>Le point du corps</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '16px' }}>
+          <Mesure valeur={dernierCheck?.kg} unite="kg" delta={delta(dernierCheck?.kg, premierCheck?.kg)} legende="Poids" />
+          <Mesure valeur={dernierCheck?.tailleCm} unite="cm" delta={delta(dernierCheck?.tailleCm, premierCheck?.tailleCm)} legende="Tour de taille" />
+        </div>
+        <FormulaireCheckIn />
+      </section>
+    </>
   )
 }
 

@@ -2,10 +2,14 @@ import type { ComponentChildren } from 'preact'
 import { aller, useChemin } from '../lib/routeur'
 import { Retour } from './icones'
 
+/**
+ * Trois onglets depuis que le suivi a rejoint l'accueil. À quatre colonnes égales,
+ * « Aujourd'hui » et « Programme » se touchaient pendant que « Suivi » et
+ * « Science » flottaient ; à trois, les libellés ont la place qu'il leur faut.
+ */
 const ONGLETS: { vers: string; nom: string }[] = [
   { vers: '/', nom: "Aujourd'hui" },
   { vers: '/programme', nom: 'Programme' },
-  { vers: '/suivi', nom: 'Suivi' },
   { vers: '/science', nom: 'Science' },
 ]
 
@@ -20,7 +24,7 @@ export function BarreOnglets() {
         padding: `0 var(--gouttiere) calc(18px + var(--barre-bas))`,
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', borderTop: '1.5px solid var(--encre)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${ONGLETS.length}, minmax(0, 1fr))`, borderTop: '1.5px solid var(--encre)' }}>
         {ONGLETS.map((o) => {
           const actif = o.vers === '/' ? c === '/' : c.startsWith(o.vers)
           return (

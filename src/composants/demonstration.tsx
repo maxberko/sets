@@ -1,6 +1,6 @@
 import { useRef, useState } from 'preact/hooks'
 import { Lecture } from './icones'
-import type { Exercise } from '../data/types'
+import type { Exercise, VideoRef } from '../data/types'
 
 /**
  * Vignette cliquable qui laisse place à une boucle muette et sans habillage.
@@ -91,10 +91,35 @@ export function Demonstration({
     )
   }
 
-  // Boucle muette sans habillage : c'est une référence visuelle, pas une vidéo à
-  // regarder. cc_load_policy=0 coupe les sous-titres automatiques — ils s'affichaient
-  // en anglais approximatif par-dessus l'image dans une appli française. control=0
-  // retire au passage le bouton « Watch on YouTube », donc plus rien qui sorte d'ici.
+
+  return (
+    <div style={cadre}>
+      <iframe
+        src={lienBoucleMuette(v)}
+        title={`Démonstration : ${ex.nom}`}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        // Pas de chargement différé : l'iframe n'existe qu'après un appui, donc
+        // toujours quand on veut la voir. En différé, elle restait noire dans le
+        // calque plein écran.
+        loading="eager"
+        referrerPolicy="strict-origin-when-cross-origin"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+      />
+    </div>
+  )
+}
+
+/**
+ * Boucle muette sans habillage : une référence visuelle, pas une vidéo à regarder.
+ * cc_load_policy=0 coupe les sous-titres automatiques — ils s'affichaient en anglais
+ * approximatif par-dessus l'image dans une appli française. controls=0 retire au
+ * passage le bouton « Watch on YouTube », donc plus rien qui sorte d'ici.
+ *
+ * Partagée par les démonstrations et la vidéo de fin de séance.
+ */
+export function lienBoucleMuette(v: VideoRef): string {
+  if (!v.youtubeId) return ''
   const p = new URLSearchParams({
     autoplay: '1',
     mute: '1',
@@ -110,21 +135,5 @@ export function Demonstration({
   })
   if (v.start !== undefined) p.set('start', String(v.start))
   if (v.end !== undefined) p.set('end', String(v.end))
-
-  return (
-    <div style={cadre}>
-      <iframe
-        src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}?${p.toString()}`}
-        title={`Démonstration : ${ex.nom}`}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        // Pas de chargement différé : l'iframe n'existe qu'après un appui, donc
-        // toujours quand on veut la voir. En différé, elle restait noire dans le
-        // calque plein écran.
-        loading="eager"
-        referrerPolicy="strict-origin-when-cross-origin"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
-      />
-    </div>
-  )
+  return `https://www.youtube-nocookie.com/embed/${v.youtubeId}?${p.toString()}`
 }

@@ -12,7 +12,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ICI = dirname(fileURLToPath(import.meta.url))
-const FICHIERS = ['src/data/exercices.ts', 'src/data/mobilite.ts']
+const FICHIERS = ['src/data/exercices.ts', 'src/data/mobilite.ts', 'src/data/surf.ts']
 
 /** Associe chaque youtubeId à l'exercice qui le déclare, en remontant au dernier `id:`. */
 function extraire(chemin) {
