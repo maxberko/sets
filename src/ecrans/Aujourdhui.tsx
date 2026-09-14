@@ -146,6 +146,10 @@ function CarteSeance({
   // deux chapitres sont annoncés avant de commencer, et la couleur du lecteur ne
   // surprend plus puisqu'elle a déjà été vue ici. Les pastilles secondaires
   // n'ont plus lieu d'être, chaque bloc porte son propre champ.
+  //
+  // Pas de sous-titre non plus : « Pecs A · avec les abdos » annonçait les deux
+  // programmes une deuxième fois, juste au-dessus des champs qui les nomment et
+  // les colorent. Chaque programme n'est donc écrit qu'une fois, dans sa couleur.
   const blocs = blocsDeSeance(t, 'salle', semaine)
 
   return (
@@ -183,12 +187,9 @@ function CarteSeance({
           }}
         >
           {i === 0 && (
-            <>
-              <span class="etiquette">{t.sousTitre}</span>
-              <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '36px', letterSpacing: '-0.025em', lineHeight: 0.95, textWrap: 'balance' }}>
-                {t.nom}
-              </span>
-            </>
+            <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '36px', letterSpacing: '-0.025em', lineHeight: 0.95, textWrap: 'balance' }}>
+              {t.nom}
+            </span>
           )}
           <span style={{ fontSize: '15px', lineHeight: 1.4 }}>
             <span style={{ fontWeight: 600 }}>{NOM_PROGRAMME[b.programme]}</span> · {b.exercices} exercices · {b.series} séries
