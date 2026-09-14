@@ -147,9 +147,10 @@ function CarteSeance({
   // surprend plus puisqu'elle a déjà été vue ici. Les pastilles secondaires
   // n'ont plus lieu d'être, chaque bloc porte son propre champ.
   //
-  // Pas de sous-titre non plus : « Pecs A · avec les abdos » annonçait les deux
-  // programmes une deuxième fois, juste au-dessus des champs qui les nomment et
-  // les colorent. Chaque programme n'est donc écrit qu'une fois, dans sa couleur.
+  // Chaque champ est titré par son programme, en gros : c'est ce qu'on lit de
+  // loin, et la couleur le confirme. Le sous-titre « Pecs A · avec les abdos »
+  // les annonçait une deuxième fois juste au-dessus ; il a disparu, et le nom
+  // de la séance passe en étiquette — il distingue A de B, rien de plus.
   const blocs = blocsDeSeance(t, 'salle', semaine)
 
   return (
@@ -163,10 +164,10 @@ function CarteSeance({
         color: 'var(--sur-couleur)',
         borderRadius: 'var(--r)',
         overflow: 'hidden',
-        // De la hauteur à distribuer entre deux champs, sinon le second se réduit
-        // à deux lignes. Une carte à un seul programme n'a rien à répartir : la
-        // hauteur imposée y creusait un grand vide avant « Commencer ».
-        minHeight: blocs.length > 1 ? 'clamp(300px, 44vh, 440px)' : undefined,
+        // Plus de hauteur imposée : depuis que chaque champ est titré par son
+        // programme, les deux ont le même contenu et `flex: 1` les égalise tout
+        // seul. Les 44vh d'avant ne servaient qu'à empêcher le second champ de
+        // tomber à deux lignes ; ils creusent maintenant deux grands vides.
       }}
     >
       {blocs.map((b, i) => (
@@ -183,16 +184,20 @@ function CarteSeance({
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
-            padding: '18px 18px 0',
+            // Le dernier champ finit par le pied, qui porte sa propre marge basse ;
+            // les autres ont besoin de la leur, sinon leur dernière ligne touche
+            // la couleur suivante.
+            padding: i === blocs.length - 1 ? '18px 18px 0' : '18px',
           }}
         >
-          {i === 0 && (
-            <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '36px', letterSpacing: '-0.025em', lineHeight: 0.95, textWrap: 'balance' }}>
-              {t.nom}
+          {i === 0 && <span class="etiquette">{t.nom}</span>}
+          <span style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '36px', letterSpacing: '-0.025em', lineHeight: 0.95 }}>
+              {NOM_PROGRAMME[b.programme]}
             </span>
-          )}
-          <span style={{ fontSize: '15px', lineHeight: 1.4 }}>
-            <span style={{ fontWeight: 600 }}>{NOM_PROGRAMME[b.programme]}</span> · {b.exercices} exercices · {b.series} séries
+            <span style={{ fontSize: '15px', lineHeight: 1.4 }}>
+              {b.exercices} exercices · {b.series} séries
+            </span>
           </span>
           {i === blocs.length - 1 && (
             <span class="bloc-pied" style={{ marginTop: 'auto' }}>
