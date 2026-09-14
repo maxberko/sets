@@ -164,10 +164,10 @@ function CarteSeance({
         color: 'var(--sur-couleur)',
         borderRadius: 'var(--r)',
         overflow: 'hidden',
-        // Plus de hauteur imposée : depuis que chaque champ est titré par son
-        // programme, les deux ont le même contenu et `flex: 1` les égalise tout
-        // seul. Les 44vh d'avant ne servaient qu'à empêcher le second champ de
-        // tomber à deux lignes ; ils creusent maintenant deux grands vides.
+        // De la hauteur à distribuer entre les champs. Une carte à un seul
+        // programme n'a rien à répartir : la hauteur imposée y creusait un grand
+        // vide avant « Commencer ».
+        minHeight: blocs.length > 1 ? 'clamp(300px, 44vh, 440px)' : undefined,
       }}
     >
       {blocs.map((b, i) => (
@@ -175,12 +175,18 @@ function CarteSeance({
           key={b.programme}
           style={{
             background: COULEUR_PROGRAMME[b.programme],
-            // Part égale du mou, pas proportionnelle aux séries : le premier champ
-            // porte le titre, donc son contenu l'emporte de toute façon. Mesuré,
-            // ça donnait 7 séries dans 214 px contre 8 dans 143 — l'inverse de ce
-            // qu'une hauteur proportionnelle prétendrait dire. Le compte de séries
-            // est écrit, c'est le canal fiable.
-            flex: 1,
+            // Champs inégaux, et volontairement pas au prorata des séries : le
+            // premier ouvre la séance et porte son nom, il a droit à plus de
+            // place. C'est une hiérarchie de lecture, pas une mesure — d'ailleurs
+            // les deux blocs font huit séries chacun ici. Le compte est écrit,
+            // c'est le canal fiable.
+            //
+            // Base zéro pour que le rapport porte sur la hauteur entière et pas
+            // sur le seul mou : le contenu des deux champs a trop peu d'écart
+            // depuis qu'ils sont titrés pareil, et le partage du mou les rendait
+            // presque égaux. `min-height: auto` protège du débordement si la
+            // carte tombe à ses 300 px.
+            flex: i === 0 ? '1.25 1 0' : '1 1 0',
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
