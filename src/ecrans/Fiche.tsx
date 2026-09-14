@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks'
 import { BoutonRetour, Entete } from '../composants/communs'
 import { Lecture, PointPreuve } from '../composants/icones'
+import { Positions, aDesDessins } from '../composants/positions'
 import { COULEUR_PROGRAMME, NOM_PROGRAMME, exercice, sourcesFor } from '../data'
 import type { Exercise } from '../data/types'
 import { useDonnees } from '../lib/etat'
@@ -37,6 +38,12 @@ export function Fiche({ id }: { id: string }) {
 
       <div class="contenu" style={{ paddingTop: '24px', paddingBottom: 'calc(40px + var(--barre-bas))', gap: '26px' }}>
         <BlocVideo ex={ex} />
+
+        {aDesDessins(ex.id) && (
+          <Bloc titre="Les positions">
+            <Positions ex={ex} couleur={couleur} />
+          </Bloc>
+        )}
 
         <Bloc titre="Comment faire" separateur>
           <ol style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '12px', columnGap: '10px', margin: 0, padding: 0, listStyle: 'none', fontSize: '15px', lineHeight: 1.5 }}>

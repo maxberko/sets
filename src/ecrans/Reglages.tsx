@@ -173,6 +173,24 @@ export function Reglages() {
             Tout effacer
           </button>
         </Groupe>
+
+        <Groupe titre="Crédits">
+          <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
+            Les dessins de position viennent de{' '}
+            <a href="https://github.com/bryllim/workout-guide" target="_blank" rel="noreferrer">
+              Workout Guide
+            </a>{' '}
+            (Bryl Lim), d'après{' '}
+            <a href="https://github.com/everkinetic/data" target="_blank" rel="noreferrer">
+              Everkinetic
+            </a>
+            , sous licence{' '}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank" rel="noreferrer">
+              CC BY-SA 4.0
+            </a>
+            . Ils sont repris tels quels ; seule la couleur d'affichage change.
+          </p>
+        </Groupe>
       </div>
     </div>
   )
