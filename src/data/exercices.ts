@@ -206,6 +206,15 @@ export const EXERCICES: Exercise[] = [
     programme: 'pecs',
     resume: 'Pectoraux en étirement · tempo lent, mains larges',
     venues: ['tapis'],
+    // Sans poulie, on charge en allongeant la descente puis en creusant
+    // l'amplitude, pas en ajoutant du poids : c'est l'étirement qu'on cherche ici.
+    echelle: [
+      'Pompes lentes sur les genoux',
+      'Pompes lentes au sol',
+      'Descente en cinq secondes',
+      'Mains sur deux appuis, poitrine plus bas',
+      'Poitrine plus bas, pieds surélevés',
+    ],
     etapes: [
       'Mains légèrement plus larges que pour une pompe classique.',
       'Descends en trois secondes, poitrine jusqu\'au sol si tu peux.',
@@ -417,6 +426,14 @@ export const EXERCICES: Exercise[] = [
     programme: 'abdos',
     resume: 'Anti-rotation · sans matériel',
     venues: ['tapis'],
+    // Plus les appuis se rapprochent, plus le bassin veut tourner : c'est la
+    // difficulté de l'exercice, et donc son échelle.
+    echelle: [
+      "Touches d'épaule sur les genoux",
+      "Touches d'épaule, pieds écartés",
+      "Touches d'épaule, pieds serrés",
+      'Pieds serrés, sac à dos lesté',
+    ],
     etapes: [
       'En position de pompe haute, mains sous les épaules, pieds écartés.',
       'Serre les fessiers et rentre les côtes.',
