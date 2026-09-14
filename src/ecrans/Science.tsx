@@ -1,105 +1,111 @@
 import { useState } from 'preact/hooks'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, PointPreuve } from '../composants/icones'
-import { COULEUR_PROGRAMME, sourcesFor } from '../data'
+import { sourcesFor } from '../data'
 
-interface Principe {
-  programme: 'pecs' | 'abdos' | 'mobilite'
+interface Chapitre {
   titre: string
-  texte: string
+  paragraphes: string[]
+  /** Montre le point de preuve au lieu d'en parler : c'est un symbole, il se voit. */
+  legendePoints?: boolean
+  /** Ce que le chapitre change, concrètement, dans un écran que tu as déjà vu. */
+  dansLappli: string
   sources: string[]
 }
 
-const PRINCIPES: Principe[] = [
+/**
+ * Quatre chapitres courts, tenus par un fil : quelqu'un qui surfe déjà, et qui
+ * s'entraîne à terre pour durer.
+ *
+ * Les titres tiennent sur une ligne, sans point final : au-delà d'une trentaine de signes il se coupe
+ * en deux, et un titre plié se lit comme deux idées. La nuance qu'il perd est
+ * dans le texte juste dessous.
+ *
+ * Deux paragraphes par chapitre, phrases courtes : c'est un écran qu'on lit
+ * debout, pas un article. Le sommaire remplace le paragraphe d'introduction, qui
+ * annonçait le texte au lieu de le commencer.
+ */
+const CHAPITRES: Chapitre[] = [
   {
-    programme: 'abdos',
-    titre: 'On ne perd pas de gras là où on travaille',
-    texte:
-      "Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille ni au pli cutané dans un essai contrôlé, douze semaines de travail sur une seule jambe ont fait perdre du gras au tronc et aux bras mais pas à la jambe entraînée, et une méta-analyse de treize études donne un effet nul. L'appli ne prétendra jamais qu'un exercice brûle le gras du ventre : c'est le déficit calorique qui le fait.",
-    sources: ['vispute2011', 'ramirez2013', 'ramirez2022'],
+    titre: "Durer plus longtemps à l'eau",
+    paragraphes: [
+      "L'eau te donne des heures de rame et de l'équilibre. Elle ne te charge jamais assez pour épaissir un muscle, et elle laisse des traces. Chez les surfeurs professionnels, le genou est la première articulation blessée. Les deux tiers des blessures de hanche viennent d'un conflit. L'épaule perd de la rotation externe.",
+      "En face, l'entraînement en force divise les blessures par trois, sur 25 essais et 26 000 personnes. C'est ce qu'on vient chercher ici : des années de pratique en plus.",
+    ],
+    dansLappli:
+      "Deux séances de force et trois de mobilité par semaine, parce que l'eau occupe déjà le reste. L'appli ne te demande jamais quand tu surfes.",
+    sources: ['hohn2018', 'surf-genou-hanche', 'furness2018', 'lauersen2014'],
   },
   {
-    programme: 'abdos',
-    titre: "L'abdominal est un muscle comme un autre",
-    texte:
-      "Il n'existe pas de recherche sur le volume propre aux abdominaux, donc on applique ce qui vaut ailleurs : plus de séries hebdomadaires, plus de croissance jusqu'à un plateau, et deux séances par semaine valent mieux qu'une quand elles ajoutent du volume. Les squats et les soulevés de terre laissent l'activation abdominale bien en dessous du maximum, donc le travail direct et chargé reste nécessaire.",
-    sources: ['schoenfeld2017vol', 'schoenfeld2016freq', 'sbs-core'],
+    titre: 'Renforcer ce que le surf use',
+    paragraphes: [
+      "Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception revient le plus souvent. Un genou se protège au-dessus et en dessous de lui : renforcer la hanche bat le travail du genou seul, et chaque tranche de 10 % de dorsiflexion non utilisée à la réception lui ajoute 3,2 degrés d'abduction.",
+      "L'étirement, lui, n'a réduit aucune blessure dans les essais. Il sert à gagner de l'amplitude, ce qui demande cinq minutes par muscle et par semaine.",
+    ],
+    dansLappli:
+      "La séance de mobilité est à moitié du renforcement : moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe. L'épaule a l'open book et la rotation externe. Les maintiens s'allongent quand tu les trouves faciles.",
+    sources: ['hanchard2021', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'cochrane2011', 'thomas2018', 'behm2016'],
   },
   {
-    programme: 'abdos',
-    titre: 'Haut et bas des abdominaux : on oriente, on n\'isole pas',
-    texte:
-      "Le recrutement se fait près de la charge : un crunch sollicite davantage les segments hauts, un relevé de jambes les segments bas. C'est une orientation, pas une isolation, et c'est pour ça que chaque séance associe un mouvement qui amène les côtes vers le bassin et un mouvement qui amène le bassin vers les côtes.",
-    sources: ['gomirato2023', 'ace2001abdos', 'escamilla2006'],
+    titre: 'Progresser par le volume',
+    paragraphes: [
+      "Dix séries par muscle et par semaine suffisent à progresser, douze à vingt chez quelqu'un d'entraîné. Au-delà, chaque série rapporte moins. La fréquence ne fait que répartir ce volume : deux séances servent à le caser.",
+      "La charge compte moins que la proximité de l'échec. Léger et lourd donnent la même hypertrophie quand la série finit près de la limite. Un jour de tapis vaut un jour de salle.",
+    ],
+    dansLappli:
+      "La jauge de l'accueil compte tes séries contre la fourchette 12–20. Sur tapis, la progression passe par une échelle de difficulté au lieu des kilos.",
+    sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017charge', 'robinson2024'],
   },
   {
-    programme: 'pecs',
-    titre: 'Le volume fait le travail, la fréquence le répartit',
-    texte:
-      "La prise de position ACSM de 2026, bâtie sur 137 revues systématiques, situe la cible autour de dix séries par muscle et par semaine, avec au moins deux séances. Chez l'homme entraîné, la fourchette utile monte à 12–20 séries. Une fois le volume égalisé, la fréquence n'apporte plus rien par elle-même : deux séances sont un moyen de caser le volume, pas une recette magique.",
-    sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq'],
-  },
-  {
-    programme: 'pecs',
-    titre: 'Trente degrés, pas quarante-cinq',
-    texte:
-      "L'activation du haut du pectoral culmine à 30 degrés d'inclinaison et se déplace vers le deltoïde antérieur au-delà. La seule étude qui a comparé la croissance selon l'angle a trouvé que l'entraînement incliné épaissit davantage le haut du pectoral que le banc plat. C'est le haut du pectoral qui donne sa ligne supérieure au muscle.",
-    sources: ['rodriguez2020', 'chaves2020'],
-  },
-  {
-    programme: 'pecs',
-    titre: 'La charge compte moins que la proximité de l\'échec',
-    texte:
-      "Charges légères et lourdes produisent une hypertrophie comparable quand les séries finissent près de l'échec, et la croissance augmente à mesure que la série s'en approche. C'est ce qui rend les jours de tapis aussi valables que les jours de salle : ce n'est pas le matériel qui compte, c'est l'effort réel de la dernière répétition.",
-    sources: ['schoenfeld2017charge', 'robinson2024', 'acsm2026'],
-  },
-  {
-    programme: 'mobilite',
-    titre: 'Le genou est la surprise du surf',
-    texte:
-      "Chez les professionnels suivis par un même centre orthopédique, le genou est la première articulation blessée, devant la cheville et l'épaule, avec une moitié d'entorses du ligament collatéral médial et un tiers de lésions méniscales. Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception est le mécanisme le plus souvent cité.",
-    sources: ['hohn2018', 'surf-genou-hanche', 'hanchard2021'],
-  },
-  {
-    programme: 'mobilite',
-    titre: 'Ce qui protège un genou, c\'est la force de hanche',
-    texte:
-      "Les méta-analyses sur la douleur fémoro-patellaire montrent qu'ajouter du renforcement des abducteurs et rotateurs externes de hanche au travail du genou bat le travail du genou seul. La cheville compte aussi : pour chaque tranche de 10 % de dorsiflexion non utilisée à la réception, l'abduction du genou augmente de 3,2 degrés.",
-    sources: ['halabchi2025', 'jospt2018', 'cheville-genou'],
-  },
-  {
-    programme: 'mobilite',
-    titre: "L'étirement ne prévient pas les blessures. La force, si.",
-    texte:
-      "Sur 25 essais et 26 000 personnes, l'étirement n'a réduit les blessures en rien, tandis que l'entraînement en force les a divisées par trois. Les étirements après l'effort ne réduisent pas non plus les courbatures. C'est pourquoi la séance de mobilité est à moitié du renforcement, et pourquoi chaque exercice porte un point : plein quand un essai le soutient, creux quand il ne repose que sur l'usage clinique.",
-    sources: ['lauersen2014', 'cochrane2011', 'delphi2025'],
-  },
-  {
-    programme: 'mobilite',
-    titre: "L'amplitude, elle, demande du volume hebdomadaire",
-    texte:
-      "Ce qui prédit les gains d'amplitude durables, c'est le temps total par muscle et par semaine, au moins cinq minutes, réparti sur plusieurs séances, en maintiens de 30 à 60 secondes. Trois séances par semaine suffisent à atteindre ce total sans jamais empiéter sur le temps passé à l'eau.",
-    sources: ['thomas2018', 'delphi2025', 'behm2016'],
+    titre: 'La transparence au cœur',
+    paragraphes: [
+      "Aucun exercice ne fait fondre le ventre. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille, et treize études réunies donnent un effet nul. L'alimentation découvre les abdominaux ; l'entraînement les épaissit.",
+      "Tu n'as pas à deviner sur quoi tu t'appuies. Le renforcement a des essais cliniques derrière lui, et pour le reste, chaque fiche porte un point qui le dit :",
+    ],
+    legendePoints: true,
+    dansLappli:
+      "Aucun exercice à point creux n'est présenté comme de la prévention.",
+    sources: ['vispute2011', 'ramirez2022', 'delphi2025', 'fifa11plus', 'pep', 'nordic'],
   },
 ]
+
+const ancre = (i: number) => `chapitre-${i + 1}`
 
 export function Science() {
   return (
     <div class="ecran">
       <Entete />
       <div class="contenu">
-        <Titre titre="Science" apres={`${PRINCIPES.length} principes`} />
-        <p class="discret" style={{ fontSize: '15px', lineHeight: 1.5 }}>
-          Ce sur quoi le programme est bâti, et ce qu'il refuse de promettre. Chaque principe est déplié avec ses sources.
-        </p>
-        {PRINCIPES.map((p, i) => (
-          <Depliant key={i} principe={p} />
+        <Titre titre="Science" apres="Nos partis pris, et ce qui les fonde" />
+
+        {/* Le sommaire remplace le paragraphe qui annonçait le texte : il montre
+            les quatre titres et mène droit au chapitre cherché. */}
+        <nav style={{ display: 'flex', flexDirection: 'column' }}>
+          {CHAPITRES.map((c, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                // Glissé, sauf chez qui a demandé moins de mouvement : un saut
+                // sec fait perdre le fil autant qu'un changement d'écran.
+                const calme = matchMedia('(prefers-reduced-motion: reduce)').matches
+                document.getElementById(ancre(i))?.scrollIntoView({ behavior: calme ? 'auto' : 'smooth', block: 'start' })
+              }}
+              class="rangee"
+              style={{ borderBottom: '1px solid var(--filet)', gap: '12px' }}
+            >
+              <span style={{ display: 'flex', gap: '10px', alignItems: 'baseline', minWidth: 0, textAlign: 'left' }}>
+                <span class="discret num" style={{ fontSize: '13px' }}>{i + 1}</span>
+                <span style={{ fontSize: '15px', fontWeight: 500 }}>{c.titre}</span>
+              </span>
+              <Chevron taille={14} />
+            </button>
+          ))}
+        </nav>
+
+        {CHAPITRES.map((c, i) => (
+          <Section key={i} chapitre={c} numero={i + 1} id={ancre(i)} />
         ))}
-        <p class="discret" style={{ fontSize: '13px', lineHeight: 1.5, paddingTop: '8px', borderTop: '1px solid var(--filet)' }}>
-          Le point plein signifie qu'au moins un essai clinique soutient le fait de faire l'exercice. Le point creux signifie que
-          l'exercice repose sur l'anatomie et l'usage clinique, sans essai. Aucun exercice à point creux n'est présenté comme de la
-          prévention.
-        </p>
+
         <div style={{ height: '12px' }} />
       </div>
       <BarreOnglets />
@@ -107,16 +113,47 @@ export function Science() {
   )
 }
 
-function Depliant({ principe }: { principe: Principe }) {
+function Section({ chapitre, numero, id }: { chapitre: Chapitre; numero: number; id: string }) {
   const [ouvert, setOuvert] = useState(false)
-  const sources = sourcesFor(principe.sources)
+  const sources = sourcesFor(chapitre.sources)
+
   return (
-    <section style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span class="pastille" style={{ background: COULEUR_PROGRAMME[principe.programme] }} />
-        <h3 style={{ fontSize: '18px', fontFamily: 'var(--titre)', fontWeight: 700, letterSpacing: '-0.01em' }}>{principe.titre}</h3>
+    <section
+      id={id}
+      style={{ borderTop: '1.5px solid var(--encre)', paddingTop: '16px', scrollMarginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+    >
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
+        <span class="discret num" style={{ fontSize: '13px' }}>{numero}</span>
+        <h3 style={{ fontSize: '20px', fontFamily: 'var(--titre)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.1 }}>
+          {chapitre.titre}
+        </h3>
       </div>
-      <p style={{ fontSize: '15px', lineHeight: 1.5 }}>{principe.texte}</p>
+
+      {chapitre.paragraphes.map((p, i) => (
+        <p key={i} style={{ fontSize: '15px', lineHeight: 1.55 }}>{p}</p>
+      ))}
+
+      {/* Le point se montre : décrit en mots, « plein » et « creux » ne voulaient
+          rien dire tant qu'on ne les avait pas vus sur une fiche. */}
+      {chapitre.legendePoints && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '15px', lineHeight: 1.45 }}>
+          <span style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+            <PointPreuve plein />
+            <span>Un essai clinique soutient cet exercice.</span>
+          </span>
+          <span style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+            <PointPreuve plein={false} />
+            <span>Aucun essai à ce jour. L'anatomie et l'usage en cabinet le soutiennent.</span>
+          </span>
+        </div>
+      )}
+
+      {/* Le chapitre se termine sur la décision qu'il a produite : c'est là que
+          l'explication devient vérifiable, puisqu'on peut aller voir l'écran. */}
+      <p style={{ fontSize: '15px', lineHeight: 1.55, paddingLeft: '12px', borderLeft: '2px solid var(--encre)' }}>
+        <strong>Dans l'appli</strong> · {chapitre.dansLappli}
+      </p>
+
       <button
         onClick={() => setOuvert(!ouvert)}
         aria-expanded={ouvert}
@@ -127,6 +164,7 @@ function Depliant({ principe }: { principe: Principe }) {
           <Chevron taille={14} />
         </span>
       </button>
+
       {ouvert && (
         <div style={{ display: 'grid', gridTemplateColumns: '22px minmax(0, 1fr)', rowGap: '10px', columnGap: '8px', fontSize: '13px', lineHeight: 1.45, paddingBottom: '6px' }}>
           {sources.map((s, i) => (
