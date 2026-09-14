@@ -6,7 +6,7 @@ import { lienBoucleMuette } from './demonstration'
 /**
  * La fin de séance : une vague de Teahupo'o en plein écran, sans son, et le bilan
  * par-dessus. Commune aux deux lecteurs — côté force elle crée l'écran de fin qui
- * manquait, côté mobilité elle porte la question sur les maintiens.
+ * manquait, côté mobilité elle porte la question qui fait monter les durées.
  *
  * Le texte repose sur un aplat d'encre translucide, pas sur un dégradé : le
  * système n'en a aucun ailleurs. Au pire, de l'écume blanche sous l'aplat, le
@@ -40,25 +40,34 @@ export function FinSeance({
   const [joue, setJoue] = useState(false)
 
   useEffect(() => {
-    if (calme) return
+    if (calme || joue) return
+    let minuterie: ReturnType<typeof setTimeout> | undefined
     const recoit = (e: MessageEvent) => {
       if (!e.origin.endsWith('youtube-nocookie.com') && !e.origin.endsWith('youtube.com')) return
       try {
         const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
-        // 1 = en lecture, dans la convention du lecteur YouTube.
-        if (d?.info?.playerState === 1 || d?.info === 1) setJoue(true)
+        // 1 = en lecture, dans la convention du lecteur YouTube. On attend une
+        // seconde de plus : au démarrage, YouTube pose son titre et ses commandes
+        // par-dessus l'image, puis les efface. Lever le voile pile à cet instant
+        // revenait à troquer le bouton « play » contre le reste de l'habillage.
+        // Armée une seule fois : le lecteur répète son état plusieurs fois par
+        // seconde, et réarmer à chaque message repoussait le voile indéfiniment.
+        if ((d?.info?.playerState === 1 || d?.info === 1) && minuterie === undefined) {
+          minuterie = setTimeout(() => setJoue(true), 1100)
+        }
       } catch {
         /* message qui ne nous concerne pas */
       }
     }
     addEventListener('message', recoit)
 
-    // Le lecteur n'envoie rien tant qu'on ne s'est pas annoncé. On réessaie le
-    // temps que l'iframe se charge, puis on arrête.
+    // Le lecteur n'envoie rien tant qu'on ne s'est pas annoncé. On réessaie
+    // jusqu'à ce qu'il réponde : l'appli peut être en arrière-plan au moment où
+    // l'écran s'ouvre, et la lecture ne démarre qu'au retour.
     let essais = 0
     const id = setInterval(() => {
       essais += 1
-      if (essais > 40) return clearInterval(id)
+      if (essais > 240) return clearInterval(id)
       cadre.current?.contentWindow?.postMessage(
         JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }),
         '*',
@@ -68,8 +77,9 @@ export function FinSeance({
     return () => {
       removeEventListener('message', recoit)
       clearInterval(id)
+      clearTimeout(minuterie)
     }
-  }, [calme])
+  }, [calme, joue])
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'var(--encre)', color: 'var(--papier)', overflow: 'hidden' }}>

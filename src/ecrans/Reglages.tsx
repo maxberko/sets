@@ -124,7 +124,7 @@ export function Reglages() {
         </Groupe>
 
         <Groupe titre="Pendant la séance">
-          <Bascule label="Sons" aide="Un bip à la fin du repos et des maintiens." actif={d.reglages.sons} onChange={(v) => modifier((data) => void (data.reglages.sons = v))} />
+          <Bascule label="Sons" aide="Un bip à la fin du repos et des exercices." actif={d.reglages.sons} onChange={(v) => modifier((data) => void (data.reglages.sons = v))} />
           <Bascule label="Vibration" aide="Une vibration à chaque série validée." actif={d.reglages.vibration} onChange={(v) => modifier((data) => void (data.reglages.vibration = v))} />
           <Bascule label="Garder l'écran allumé" aide="Pendant les séances uniquement." actif={d.reglages.ecranAllume} onChange={(v) => modifier((data) => void (data.reglages.ecranAllume = v))} />
         </Groupe>

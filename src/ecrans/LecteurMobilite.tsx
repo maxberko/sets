@@ -275,15 +275,16 @@ function FinMobilite({ templateId, debut, journal }: { templateId: string; debut
   return (
     <FinSeance bilan={bilanDeSeance(pleines, minutes)}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '6px', borderTop: '1px solid rgba(243,245,242,0.3)' }}>
-        <h3 style={{ color: 'var(--papier)', paddingTop: '8px' }}>Les maintiens étaient comment ?</h3>
-        <p style={{ fontSize: '14px', opacity: 0.8 }}>
-          Deux séances de suite notées faciles et la durée passe au palier suivant.
-        </p>
+        {/* Une question fermée et deux réponses qui lui répondent, sans rien
+            expliquer : à ce moment-là on veut ranger son tapis, pas lire la règle
+            de progression. La conséquence — deux « facile » de suite et la durée
+            monte d'un palier — se voit à la séance suivante. */}
+        <h3 style={{ color: 'var(--papier)', paddingTop: '8px' }}>C'était facile ?</h3>
         <button disabled={enregistre} onClick={() => noter(true)} style={{ ...BOUTON_PLEIN, opacity: enregistre ? 0.4 : 1 }}>
-          Faciles
+          Oui, c'était facile
         </button>
         <button disabled={enregistre} onClick={() => noter(false)} style={{ ...BOUTON_CERNE, opacity: enregistre ? 0.4 : 1 }}>
-          Difficiles, on garde cette durée
+          Non, c'était dur
         </button>
       </div>
     </FinSeance>
