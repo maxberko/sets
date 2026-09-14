@@ -2,10 +2,10 @@ import { useState } from 'preact/hooks'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, Coche, PointPreuve } from '../composants/icones'
 import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe } from '../data'
-import { JOURS, NOM_JOUR, descriptionFormule, type Jour } from '../data/seances'
-import { useDonnees } from '../lib/etat'
+import { FORMULES, JOURS, NOM_JOUR, SEMAINES_BLOC, SEMAINE_DELOAD, descriptionFormule, type Jour } from '../data/seances'
+import { modifier, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
-import { jourDe, lundiDe } from '../lib/semaine'
+import { jourDe, lundiDe, semaineDuBloc } from '../lib/semaine'
 
 const FILTRES = ['tous', 'pecs', 'abdos', 'mobilite'] as const
 type Filtre = (typeof FILTRES)[number]
@@ -29,6 +29,23 @@ export function Programme() {
   const compte = (ids: string[]) => JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => ids.includes(x)).length, 0)
   const force = compte(SEANCES.filter((t) => t.programme !== 'mobilite').map((t) => t.id))
   const mobilite = compte(['mobilite'])
+  const semaine = semaineDuBloc(d.reglages.debutBloc, maintenant)
+
+  // Un exercice n'apparaît qu'une fois son premier repère posé : une liste de
+  // « pas encore » n'apprendrait rien, et l'appli en était déjà couverte.
+  const reperes = TOUS_EXERCICES.flatMap((e) => {
+    const echelon = d.progression.echelons[e.id]
+    const charge = d.progression.charges[e.id]
+    const maintien = d.progression.maintiens[e.id]
+    const valeur = e.echelle && echelon !== undefined
+      ? e.echelle[Math.min(echelon, e.echelle.length - 1)]
+      : charge !== undefined
+        ? `${charge} kg`
+        : maintien !== undefined
+          ? `${maintien} s`
+          : undefined
+    return valeur ? [{ id: e.id, nom: e.nom, programme: e.programme, valeur }] : []
+  })
 
   return (
     <div class="ecran">
@@ -36,10 +53,48 @@ export function Programme() {
       <div class="contenu">
         <Titre
           titre="Programme"
-          apres={`Formule ${formule.nom.toLowerCase()} · ${force} séances de force, ${mobilite} de mobilité`}
+          apres={`${force} séances de force, ${mobilite} de mobilité · ${formule.minutes >= 60 ? `${Math.floor(formule.minutes / 60)} h${formule.minutes % 60 ? ` ${formule.minutes % 60}` : ''}` : `${formule.minutes} min`} par semaine`}
         />
 
+        {/* Le rythme se choisit ici, sur l'écran qui parle du programme, et pas
+            seulement au fond des réglages. Le changement prend effet tout de
+            suite : le bloc continue, les charges et les échelons sont gardés —
+            changer de rythme n'est pas changer d'entraînement. */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <h3>Ta formule</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '8px' }}>
+            {FORMULES.map((f) => {
+              const choisie = d.reglages.formule === f.id
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => modifier((data) => void (data.reglages.formule = f.id))}
+                  aria-pressed={choisie}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '3px',
+                    padding: '10px 11px',
+                    border: '1.5px solid var(--encre)',
+                    borderRadius: 'var(--r)',
+                    background: choisie ? 'var(--encre)' : 'transparent',
+                    color: choisie ? 'var(--papier)' : 'var(--encre)',
+                    minHeight: 'var(--cible)',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontWeight: 600, fontSize: '14px' }}>{f.nom}</span>
+                  <span style={{ fontSize: '12px', opacity: 0.8 }}>{f.seances} séances</span>
+                </button>
+              )
+            })}
+          </div>
+          <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>{formule.compromis}</p>
+        </section>
+
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
+          <h3>Tes séances</h3>
           {SEANCES.map((t) => {
             const jours = joursDe(t.id)
             const prevues = jours.length
@@ -86,6 +141,46 @@ export function Programme() {
               </button>
             )
           })}
+        </section>
+
+        {/* « Où j'en suis » au sens de l'entraînement, c'est la charge qu'on va
+            prendre : elle était enfermée dans chaque fiche, une par une. La
+            semaine du bloc la précède en une ligne, pour le cadre. La semaine en
+            cours, elle, reste sur l'accueil : la répéter ici brouillerait les
+            deux écrans. */}
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
+          <h3>Où tu en es</h3>
+          <p class="discret" style={{ fontSize: '14px' }}>
+            Semaine {semaine} sur {SEMAINES_BLOC} ·{' '}
+            {semaine === SEMAINE_DELOAD
+              ? 'semaine de décharge'
+              : semaine < SEMAINE_DELOAD
+                ? `décharge en semaine ${SEMAINE_DELOAD}`
+                : `décharge passée, semaine ${SEMAINE_DELOAD}`}
+          </p>
+
+          {reperes.length === 0 ? (
+            <p class="discret" style={{ fontSize: '14px' }}>
+              Tes charges apparaîtront ici après ta première séance.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {reperes.map((r) => (
+                <button
+                  key={r.id}
+                  onClick={() => aller(`/exercice/${r.id}`)}
+                  class="rangee"
+                  style={{ borderBottom: '1px solid var(--filet)' }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                    <span class="pastille" style={{ background: COULEUR_PROGRAMME[r.programme] }} />
+                    <span style={{ fontSize: '14px', lineHeight: 1.3, minWidth: 0 }}>{r.nom}</span>
+                  </span>
+                  <span style={{ fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', paddingLeft: '10px' }}>{r.valeur}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         <section style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
