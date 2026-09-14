@@ -1,29 +1,11 @@
 import { BoutonRetour, Entete } from '../composants/communs'
 import { Fleche } from '../composants/icones'
-import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
-import { useDonnees } from '../lib/etat'
+import { seance } from '../data'
 import { aller } from '../lib/routeur'
-import type { Venue } from '../data/types'
 
 export function ChoixLieu({ templateId }: { templateId: string }) {
-  const d = useDonnees()
   const t = seance(templateId)
   if (!t) return <Introuvable />
-
-  const liste = (venue: Venue) =>
-    t.slots
-      .map((s) => exerciceDuSlot(s, venue)?.nom)
-      .filter(Boolean)
-      .join(' · ')
-
-  const echelonExemple = (() => {
-    const slot = t.slots.find((s) => exerciceDuSlot(s, 'tapis')?.echelle)
-    if (!slot) return null
-    const ex = exerciceDuSlot(slot, 'tapis')
-    if (!ex?.echelle) return null
-    const i = d.progression.echelons[ex.id] ?? 1
-    return ex.echelle[Math.min(i, ex.echelle.length - 1)]
-  })()
 
   return (
     <div class="ecran">
@@ -31,47 +13,48 @@ export function ChoixLieu({ templateId }: { templateId: string }) {
       <div class="contenu">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h1 style={{ fontSize: '40px', lineHeight: 0.95 }}>Tu t'entraînes où aujourd'hui ?</h1>
-          <p class="discret" style={{ fontSize: '15px' }}>
-            Même séance, même volume, mêmes séries comptées dans ton suivi. Seuls les exercices changent.
-          </p>
+          <p class="discret" style={{ fontSize: '15px' }}>Même séance, même volume. Seuls les exercices changent.</p>
         </div>
 
-        <button class="bloc-couleur" style={{ background: COULEUR_PROGRAMME[t.programme] }} onClick={() => aller(`/seance/${t.id}/salle`)}>
-          <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', width: '100%' }}>
-            <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '30px', lineHeight: 1 }}>Salle</span>
-            <span class="etiquette">Basic-Fit · {t.minutes.salle} min</span>
-          </span>
-          <span style={{ fontSize: '14px', lineHeight: 1.5 }}>{liste('salle')}</span>
-          <span class="bloc-pied">
-            <span>Commencer en salle</span>
-            <Fleche />
-          </span>
-        </button>
+        {/* Deux cartes identiques : le lieu ne hiérarchise rien, les deux séances
+            comptent pareil. La couleur du programme a quitté cet écran — le rouge
+            dit « pectoraux » partout ailleurs, il ne peut pas dire « salle » ici.
+            Les listes d'exercices sont parties avec : on les lit une fois, et
+            elles pesaient vingt mots chacune devant un choix binaire. */}
+        <Lieu
+          nom="En salle"
+          detail={`${t.minutes.salle} min`}
+          surClic={() => aller(`/seance/${t.id}/salle`)}
+        />
+        <Lieu
+          nom="À la maison"
+          detail={`${t.minutes.tapis} min`}
+          surClic={() => aller(`/seance/${t.id}/tapis`)}
+        />
 
-        <button
-          onClick={() => aller(`/seance/${t.id}/tapis`)}
-          class="bloc-couleur"
-          style={{ background: 'transparent', border: '1.5px solid var(--encre)' }}
-        >
-          <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', width: '100%' }}>
-            <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '30px', lineHeight: 1 }}>Tapis</span>
-            <span class="etiquette discret">Rien d'autre · {t.minutes.tapis} min</span>
-          </span>
-          <span style={{ fontSize: '14px', lineHeight: 1.5 }}>{liste('tapis')}</span>
-          <span class="bloc-pied" style={{ borderTop: '1px solid var(--filet)' }}>
-            <span>Commencer sur tapis</span>
-            <Fleche />
-          </span>
-        </button>
-
-        <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
-          Sur tapis, la charge monte par l'échelle de difficulté.
-          {echelonExemple ? ` Ton dernier échelon : ${echelonExemple.toLowerCase()}.` : ''} Une machine manque en salle ? L'exercice bascule
-          tout seul, la séance continue.
-        </p>
         <div style={{ height: '12px' }} />
       </div>
     </div>
+  )
+}
+
+function Lieu({ nom, detail, surClic }: { nom: string; detail: string; surClic: () => void }) {
+  return (
+    <button
+      onClick={surClic}
+      class="bloc-couleur"
+      style={{ background: 'transparent', border: '1.5px solid var(--encre)', gap: '6px', padding: '18px' }}
+    >
+      {/* Le nom, la flèche, et le détail dessous : posé à côté du nom, « Rien
+          d'autre · 35 min » repoussait « À la maison » sur deux lignes et les deux
+          cartes n'avaient plus la même hauteur. La flèche remplace la ligne
+          « Commencer en salle », qui répétait le titre. */}
+      <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
+        <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '30px', lineHeight: 1 }}>{nom}</span>
+        <Fleche />
+      </span>
+      <span class="etiquette discret">{detail}</span>
+    </button>
   )
 }
 

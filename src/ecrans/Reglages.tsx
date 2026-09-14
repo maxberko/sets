@@ -54,7 +54,7 @@ export function Reglages() {
 
         <Groupe titre="Ta salle">
           <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>
-            L'équipement varie d'un club Basic-Fit à l'autre. Décoche ce que ton club n'a pas : l'exercice bascule sur sa version tapis
+            L'équipement varie d'un club Basic-Fit à l'autre. Décoche ce que ton club n'a pas : l'exercice bascule sur sa version maison
             et la séance continue.
           </p>
           {EQUIPEMENTS.map((e) => (

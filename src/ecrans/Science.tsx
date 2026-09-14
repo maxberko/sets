@@ -50,10 +50,10 @@ const CHAPITRES: Chapitre[] = [
     titre: 'Progresser par le volume',
     paragraphes: [
       "Dix séries par muscle et par semaine suffisent à progresser, douze à vingt chez quelqu'un d'entraîné. Au-delà, chaque série rapporte moins. La fréquence ne fait que répartir ce volume : deux séances servent à le caser.",
-      "La charge compte moins que la proximité de l'échec. Léger et lourd donnent la même hypertrophie quand la série finit près de la limite. Un jour de tapis vaut un jour de salle.",
+      "La charge compte moins que la proximité de l'échec. Léger et lourd donnent la même hypertrophie quand la série finit près de la limite. Un jour à la maison vaut un jour de salle.",
     ],
     dansLappli:
-      "La jauge de l'accueil compte tes séries contre la fourchette 12–20. Sur tapis, la progression passe par une échelle de difficulté au lieu des kilos.",
+      "La jauge de l'accueil compte tes séries contre la fourchette 12–20. À la maison, la progression passe par une échelle de difficulté au lieu des kilos.",
     sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017charge', 'robinson2024'],
   },
   {
