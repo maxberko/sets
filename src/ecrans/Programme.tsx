@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks'
 import { BandeSemaine } from '../composants/bandeSemaine'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, Coche, PointPreuve } from '../composants/icones'
-import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe } from '../data'
+import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe, seriesParProgramme } from '../data'
 import { FORMULES, JOURS, NOM_JOUR, descriptionFormule, type Jour } from '../data/seances'
 import { modifier, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
@@ -116,7 +116,16 @@ export function Programme() {
                 style={{ borderBottom: '1px solid var(--filet)', opacity: toutFait ? 0.55 : 1 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                  <span class="pastille" style={{ background: COULEUR_PROGRAMME[t.programme] }} />
+                  {/* Une pastille par programme réellement travaillé, selon la
+                      règle de la bande de semaine : les séances de force portent
+                      autant d'abdominaux que de pectoraux, et la pastille unique
+                      de `programme` les taisait — les deux écrans se
+                      contredisaient sur la même séance. */}
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', flex: 'none' }}>
+                    {Object.keys(seriesParProgramme(t, 'salle')).map((p) => (
+                      <span key={p} class="pastille" style={{ background: COULEUR_PROGRAMME[p] }} />
+                    ))}
+                  </span>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0 }}>
                     <span style={{ fontWeight: 600 }}>{t.nom}</span>
                     <span style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>

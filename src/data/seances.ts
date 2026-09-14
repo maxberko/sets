@@ -9,8 +9,11 @@ import { seriesApresDeload } from '../lib/progression'
 export const SEANCES: SessionTemplate[] = [
   {
     id: 'pecs-a',
-    nom: 'Jour du développé incliné',
-    sousTitre: 'Pecs A · avec les abdos',
+    // Nommée par ce qu'elle travaille, pas par son premier mouvement. « Haut des
+    // pectoraux » est ce qui la distingue : c'est la seule séance où le haut
+    // prend trois séries, contre deux dans l'autre.
+    nom: 'Haut des pectoraux',
+    sousTitre: 'Avec les abdominaux',
     programme: 'pecs',
     minutes: { salle: 39, tapis: 36 },
     demandeLieu: true,
@@ -43,8 +46,10 @@ export const SEANCES: SessionTemplate[] = [
   },
   {
     id: 'pecs-b',
-    nom: 'Jour du développé couché',
-    sousTitre: 'Pecs B · avec les abdos',
+    // « Milieu » seul aurait été faux : c'est la seule séance qui travaille le
+    // bas des pectoraux, avec les dips.
+    nom: 'Milieu et bas des pectoraux',
+    sousTitre: 'Avec les abdominaux',
     programme: 'pecs',
     minutes: { salle: 38, tapis: 35 },
     demandeLieu: true,
