@@ -48,6 +48,8 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   /** La série est lancée : on passe du bouton « Démarrer » à celui qui la clôt.
       État d'écran, pas une donnée : perdu à la reprise, sans conséquence. */
   const [demarree, setDemarree] = useState(false)
+  /** Ce repos est le dernier de l'exercice : à sa fin, on passe au suivant. */
+  const [enchaine, setEnchaine] = useState(false)
   /** Démonstration ouverte en plein écran, par-dessus la séance. */
   const [demoOuverte, setDemoOuverte] = useState(false)
   /** Bilan de la séance qui vient de s'achever : l'écran de fin le remplace au lecteur. */
@@ -87,17 +89,30 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   // « pectoraux » pendant qu'on les faisait. La fiche se réglait déjà comme ça,
   // le lecteur et elle se contredisaient.
   //
-  // La bascule tombe pendant le repos sans rien de plus : `slotIndex` avance
-  // avant que le repos démarre, donc l'exercice affiché est déjà le suivant.
+  // La couleur tient pendant tout le repos de l'exercice qu'on vient de finir,
+  // et bascule à la fin de ce repos, avec le nom et les dessins.
   // En fin de séance, c'est l'encre : l'écran de fin ne peint pas le fond lui-même.
   useFond(fini ? 'var(--encre)' : ex ? (COULEUR_PROGRAMME[ex.programme] ?? 'var(--papier)') : 'var(--papier)')
+
+  const demarrerRepos = (secondes: number) => {
+    setReposTotal(Math.max(1, secondes))
+    setRepos(secondes)
+  }
+
+  /** Fin du repos, qu'il soit arrivé à zéro ou passé : c'est là qu'on avance. */
+  const finirRepos = () => {
+    setRepos(null)
+    if (!enchaine) return
+    setEnchaine(false)
+    setSlotIndex((i) => i + 1)
+  }
 
   useEffect(() => {
     if (repos === null) return
     if (repos <= 0) {
       biper(d.reglages.sons)
       vibrer(d.reglages.vibration, [80, 60, 80])
-      setRepos(null)
+      finirRepos()
       return
     }
     const id = setTimeout(() => setRepos((r) => (r === null ? null : r - 1)), 1000)
@@ -110,6 +125,8 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
   const couleur = COULEUR_PROGRAMME[ex.programme]
   const totalSeries = seriesDeLaSemaine(slot.series, semaine)
   const dernierSlot = slotIndex >= t.slots.length - 1
+  const slotSuivant = t.slots[slotIndex + 1]
+  const exerciceSuivant = slotSuivant ? exerciceDuSlot(slotSuivant, venue)?.nom : undefined
   const derniereSerie = serieIndex >= totalSeries - 1
 
   const valider = () => {
@@ -138,16 +155,14 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
       // comme un échec.
       if (!decharge) appliquerProgression(ex.id, slot, suivant, echelle, echelonInitial)
       if (dernierSlot) return terminer(suivant, true)
-      setSlotIndex(slotIndex + 1)
+      // L'exercice reste à l'écran pendant son propre repos. Il changeait ici,
+      // donc on se reposait d'un exercice en lisant le nom, la couleur et les
+      // dessins du suivant.
+      setEnchaine(true)
       demarrerRepos(slot.reposSec)
       return
     }
     demarrerRepos(slot.reposSec)
-  }
-
-  const demarrerRepos = (secondes: number) => {
-    setReposTotal(Math.max(1, secondes))
-    setRepos(secondes)
   }
 
   const appliquerProgression = (
@@ -285,6 +300,12 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             « La fiche » ; réparti dans les compteurs, il les faisait enfler. */}
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', paddingTop: '14px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* Le dernier repos d'un exercice n'a plus de série où se loger : la
+                liste est finie. Il se pose dessous et annonce l'exercice suivant,
+                qui ne s'affiche plus, lui, avant la fin du repos. */}
+            {repos !== null && serieIndex >= totalSeries && (
+              <BlocRepos restant={repos} total={reposTotal} texteProchain={`À venir · ${exerciceSuivant ?? 'la suite'}`} />
+            )}
             {Array.from({ length: totalSeries }, (_, i) => {
               const faite = faitesDuSlot[i]
               const active = i === serieIndex && repos === null
@@ -344,7 +365,7 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
 
       <div class="pied-lecteur">
         {repos !== null ? (
-          <button class="principal" style={{ justifyContent: 'center' }} onClick={() => setRepos(null)}>
+          <button class="principal" style={{ justifyContent: 'center' }} onClick={finirRepos}>
             <span>Passer le repos</span>
           </button>
         ) : !demarree ? (
@@ -452,7 +473,20 @@ const BLOC_ACTIF = {
  * principal de l'écran au lieu d'un libellé glissé dans le bouton, et la barre
  * se vide pour qu'il se lise sans lire les chiffres.
  */
-function BlocRepos({ restant, total, prochaine, sur }: { restant: number; total: number; prochaine: number; sur: number }) {
+function BlocRepos({
+  restant,
+  total,
+  prochaine,
+  sur,
+  texteProchain,
+}: {
+  restant: number
+  total: number
+  prochaine?: number
+  sur?: number
+  /** Ce qui vient après, quand ce n'est pas une série du même exercice. */
+  texteProchain?: string
+}) {
   const part = Math.max(0, Math.min(1, restant / total))
   return (
     <div style={BLOC_ACTIF} role="timer" aria-live="off" aria-label={`Repos, ${restant} secondes restantes`}>
@@ -477,7 +511,7 @@ function BlocRepos({ restant, total, prochaine, sur }: { restant: number; total:
       </div>
 
       <span style={{ fontSize: '14px' }}>
-        À venir · série {prochaine} sur {sur}
+        {texteProchain ?? `À venir · série ${prochaine} sur ${sur}`}
       </span>
     </div>
   )
