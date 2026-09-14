@@ -60,11 +60,11 @@ const CHAPITRES: Chapitre[] = [
     titre: "Savoir ce qui est prouvé, et ce qui ne l'est pas.",
     paragraphes: [
       "Aucun exercice ne fait fondre le ventre. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille, et treize études réunies donnent un effet nul. L'alimentation découvre les abdominaux ; l'entraînement les épaissit.",
-      "La plupart des exercices de mobilité courants n'ont jamais été testés. Chaque fiche te le dit par un point :",
+      "Tu n'as pas à deviner sur quoi tu t'appuies. Le renforcement a des essais cliniques derrière lui, et pour le reste, chaque fiche porte un point qui le dit :",
     ],
     legendePoints: true,
     dansLappli:
-      "Aucun exercice à point creux n'est présenté comme de la prévention. Tu sais, exercice par exercice, sur quoi tu t'appuies.",
+      "Aucun exercice à point creux n'est présenté comme de la prévention.",
     sources: ['vispute2011', 'ramirez2022', 'delphi2025', 'fifa11plus', 'pep', 'nordic'],
   },
 ]
@@ -143,7 +143,7 @@ function Section({ chapitre, numero, id }: { chapitre: Chapitre; numero: number;
           </span>
           <span style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
             <PointPreuve plein={false} />
-            <span>Personne ne l'a testé. Il repose sur l'anatomie et l'usage en cabinet.</span>
+            <span>Aucun essai à ce jour. L'anatomie et l'usage en cabinet le soutiennent.</span>
           </span>
         </div>
       )}
