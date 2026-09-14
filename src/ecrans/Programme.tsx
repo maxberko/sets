@@ -1,9 +1,10 @@
 import { useState } from 'preact/hooks'
+import { BandeSemaine } from '../composants/bandeSemaine'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, Coche, PointPreuve } from '../composants/icones'
-import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe } from '../data'
-import { JOURS, NOM_JOUR, descriptionFormule, type Jour } from '../data/seances'
-import { useDonnees } from '../lib/etat'
+import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe, seriesParProgramme } from '../data'
+import { FORMULES, JOURS, NOM_JOUR, descriptionFormule, type Jour } from '../data/seances'
+import { modifier, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 import { jourDe, lundiDe } from '../lib/semaine'
 
@@ -36,10 +37,57 @@ export function Programme() {
       <div class="contenu">
         <Titre
           titre="Programme"
-          apres={`Formule ${formule.nom.toLowerCase()} · ${force} séances de force, ${mobilite} de mobilité`}
+          apres={`${force} séances de force, ${mobilite} de mobilité · ${formule.minutes >= 60 ? `${Math.floor(formule.minutes / 60)} h${formule.minutes % 60 ? ` ${formule.minutes % 60}` : ''}` : `${formule.minutes} min`} par semaine`}
         />
 
+        {/* Le rythme se choisit ici, sur l'écran qui parle du programme, et pas
+            seulement au fond des réglages. Le changement prend effet tout de
+            suite : le bloc continue, les charges et les échelons sont gardés —
+            changer de rythme n'est pas changer d'entraînement. */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <h3>Ta formule</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '8px' }}>
+            {FORMULES.map((f) => {
+              const choisie = d.reglages.formule === f.id
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => modifier((data) => void (data.reglages.formule = f.id))}
+                  aria-pressed={choisie}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '3px',
+                    padding: '10px 11px',
+                    border: '1.5px solid var(--encre)',
+                    borderRadius: 'var(--r)',
+                    background: choisie ? 'var(--encre)' : 'transparent',
+                    color: choisie ? 'var(--papier)' : 'var(--encre)',
+                    minHeight: 'var(--cible)',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ fontWeight: 600, fontSize: '14px' }}>{f.nom}</span>
+                  <span style={{ fontSize: '12px', opacity: 0.8 }}>{f.seances} séances</span>
+                </button>
+              )
+            })}
+          </div>
+          {/* La semaine de la formule choisie, dessinée comme sur l'accueil : on
+              voit d'un coup quels jours changent quand on passe de l'une à
+              l'autre. Le paragraphe qui tenait cette place parlait de séries
+              efficaces et de temps de maintien — juste, mais illisible au moment
+              de choisir un rythme. */}
+          <BandeSemaine
+            plan={plan}
+            jourActuel={jourActuel}
+            faites={faites.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))}
+          />
+        </section>
+
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
+          <h3>Tes séances</h3>
           {SEANCES.map((t) => {
             const jours = joursDe(t.id)
             const prevues = jours.length
@@ -67,8 +115,19 @@ export function Programme() {
                 class="rangee"
                 style={{ borderBottom: '1px solid var(--filet)', opacity: toutFait ? 0.55 : 1 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                  <span class="pastille" style={{ background: COULEUR_PROGRAMME[t.programme] }} />
+                <span style={{ display: 'flex', alignItems: 'stretch', gap: '12px', minWidth: 0 }}>
+                  {/* Un filet par programme réellement travaillé, selon la
+                      règle de la bande de semaine : les séances de force portent
+                      autant d'abdominaux que de pectoraux, et la pastille unique
+                      de `programme` les taisait — les deux écrans se
+                      contredisaient sur la même séance. Le filet court sur toute
+                      la hauteur : posées en pastilles, les couleurs flottaient au
+                      milieu d'une carte de trois lignes, alignées sur rien. */}
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', flex: 'none', alignSelf: 'stretch', width: '5px' }}>
+                    {Object.keys(seriesParProgramme(t, 'salle')).map((p) => (
+                      <span key={p} style={{ flex: 1, background: COULEUR_PROGRAMME[p], borderRadius: '1px' }} />
+                    ))}
+                  </span>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0 }}>
                     <span style={{ fontWeight: 600 }}>{t.nom}</span>
                     <span style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>

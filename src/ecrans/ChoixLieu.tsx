@@ -27,7 +27,7 @@ export function ChoixLieu({ templateId }: { templateId: string }) {
 
   return (
     <div class="ecran">
-      <Entete gauche={<BoutonRetour label={t.sousTitre} />} />
+      <Entete gauche={<BoutonRetour label={t.nom} />} />
       <div class="contenu">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h1 style={{ fontSize: '40px', lineHeight: 0.95 }}>Tu t'entraînes où aujourd'hui ?</h1>
