@@ -115,15 +115,17 @@ export function Programme() {
                 class="rangee"
                 style={{ borderBottom: '1px solid var(--filet)', opacity: toutFait ? 0.55 : 1 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                  {/* Une pastille par programme réellement travaillé, selon la
+                <span style={{ display: 'flex', alignItems: 'stretch', gap: '12px', minWidth: 0 }}>
+                  {/* Un filet par programme réellement travaillé, selon la
                       règle de la bande de semaine : les séances de force portent
                       autant d'abdominaux que de pectoraux, et la pastille unique
                       de `programme` les taisait — les deux écrans se
-                      contredisaient sur la même séance. */}
-                  <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', flex: 'none' }}>
+                      contredisaient sur la même séance. Le filet court sur toute
+                      la hauteur : posées en pastilles, les couleurs flottaient au
+                      milieu d'une carte de trois lignes, alignées sur rien. */}
+                  <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', flex: 'none', alignSelf: 'stretch', width: '5px' }}>
                     {Object.keys(seriesParProgramme(t, 'salle')).map((p) => (
-                      <span key={p} class="pastille" style={{ background: COULEUR_PROGRAMME[p] }} />
+                      <span key={p} style={{ flex: 1, background: COULEUR_PROGRAMME[p], borderRadius: '1px' }} />
                     ))}
                   </span>
                   <span style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0 }}>
