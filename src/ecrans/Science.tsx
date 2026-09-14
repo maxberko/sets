@@ -16,12 +16,25 @@ interface Chapitre {
  * mêlait abdominaux, pectoraux et mobilité : tout était vrai, rien ne se tenait,
  * et aucun ne disait ce qu'il changeait dans l'appli.
  *
- * Six chapitres, dans l'ordre où le programme se conçoit : ce qu'on ne promet
- * pas, comment la semaine est bâtie, pourquoi ces exercices-là, ce qui compte
- * vraiment dans une série, pourquoi la mobilité vise les genoux, et ce qu'on ne
+ * Sept chapitres, dans l'ordre où le programme se conçoit. Le premier pose d'où
+ * il vient — quelqu'un qui surfe déjà plusieurs fois par semaine, et à qui le
+ * surf laisse une dette articulaire et une envie esthétique. Viennent ensuite ce
+ * qu'on ne promet pas, comment la semaine est bâtie, pourquoi ces exercices-là,
+ * ce qui compte vraiment dans une série, ce que le surf abîme, et ce qu'on ne
  * sait pas. Chacun se termine sur ce qu'il change, puis ses sources.
  */
 const CHAPITRES: Chapitre[] = [
+  {
+    titre: 'Ce programme est fait pour quelqu\'un qui surfe déjà',
+    paragraphes: [
+      "Tu passes plusieurs séances par semaine à l'eau. Le surf s'occupe déjà du cardio, de l'équilibre et des heures de rame ; ce n'est pas ce qui manque. Ce qu'il ne fait pas, c'est te charger assez pour épaissir un muscle, et il laisse deux dettes derrière lui.",
+      "La première est articulaire. Chez les surfeurs professionnels, le genou est la première articulation blessée, et les deux tiers des blessures de hanche viennent d'un conflit. L'épaule suit, avec un déficit de rotation externe mesuré chez les surfeurs de compétition et une mobilité thoracique qui manque.",
+      "La seconde est esthétique, et l'appli l'assume : des pectoraux plus épais et des abdominaux visibles, ça ne vient pas de la rame. Ce sont deux moitiés distinctes du programme, et elles ne se justifient pas de la même façon — la mobilité répond aux blessures documentées du surf, la force répond au corps que tu veux.",
+    ],
+    dansLappli:
+      "Deux séances de force par semaine seulement, parce que tes sessions à l'eau occupent déjà la semaine, et trois séances de mobilité de quatorze minutes, jamais programmées autour de tes sessions : l'appli ne te demande pas quand tu surfes.",
+    sources: ['hohn2018', 'surf-genou-hanche', 'furness2018', 'langenberg2021'],
+  },
   {
     titre: 'Aucun exercice ne fait fondre le ventre',
     paragraphes: [
@@ -41,7 +54,7 @@ const CHAPITRES: Chapitre[] = [
       "Au-delà de vingt séries, chaque série supplémentaire rapporte un peu moins, sans jamais nuire. Tu le paies surtout en temps et en récupération.",
     ],
     dansLappli:
-      "Deux séances de force par semaine, et la jauge de l'accueil compte tes séries efficaces contre la fourchette 12–20. La formule Soutenue passe volontairement au-dessus, et l'écran Programme le dit.",
+      "Deux séances de force par semaine, et la jauge de l'accueil compte tes séries efficaces contre la fourchette 12–20. C'est le minimum qui tienne la cible sans empiéter sur l'eau ; la formule Soutenue en ajoute une, et l'écran Programme dit ce qu'elle coûte.",
     sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017vol'],
   },
   {
@@ -71,11 +84,12 @@ const CHAPITRES: Chapitre[] = [
       "Chez les professionnels suivis par un même centre orthopédique, le genou est la première articulation blessée, devant la cheville et l'épaule : une moitié d'entorses du ligament collatéral médial, un tiers de lésions méniscales. Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception est le mécanisme le plus souvent cité.",
       "Sur 25 essais et 26 000 personnes, l'étirement n'a réduit les blessures en rien. L'entraînement en force les a divisées par trois. Les étirements après l'effort ne réduisent pas non plus les courbatures — ils ne sont pas inutiles, ils ne servent simplement pas à ça.",
       "Ce qui protège un genou se travaille au-dessus et en dessous de lui : ajouter du renforcement des abducteurs et rotateurs externes de hanche bat le travail du genou seul, et à la cheville, chaque tranche de 10 % de dorsiflexion non utilisée à la réception ajoute 3,2 degrés d'abduction au genou.",
+      "L'épaule relève du même raisonnement : les surfeurs de compétition montrent un déficit de rotation externe et une mobilité thoracique réduite, deux choses qui se travaillent à terre, en force et en amplitude, pas en ramant davantage.",
       "L'amplitude, elle, se gagne autrement : ce qui la prédit, c'est le temps cumulé par muscle et par semaine — au moins cinq minutes, réparties sur plusieurs séances, en maintiens de trente à soixante secondes.",
     ],
     dansLappli:
-      "La séance de mobilité est à moitié du renforcement — moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe. Trois séances de quatorze minutes suffisent au total hebdomadaire, et les maintiens montent d'un palier quand tu les trouves faciles.",
-    sources: ['hohn2018', 'surf-genou-hanche', 'hanchard2021', 'lauersen2014', 'cochrane2011', 'halabchi2025', 'jospt2018', 'cheville-genou', 'thomas2018', 'behm2016'],
+      "La séance de mobilité est à moitié du renforcement — moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe — et l'épaule y a ses deux exercices, l'open book et la rotation externe. Trois séances de quatorze minutes suffisent au total hebdomadaire, et les maintiens montent d'un palier quand tu les trouves faciles.",
+    sources: ['hohn2018', 'surf-genou-hanche', 'hanchard2021', 'lauersen2014', 'cochrane2011', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'furness2018', 'thomas2018', 'behm2016'],
   },
   {
     titre: 'Ce qu\'on ne sait pas, l\'appli le dit',
@@ -96,8 +110,8 @@ export function Science() {
       <div class="contenu">
         <Titre titre="Science" apres={`${CHAPITRES.length} chapitres`} />
         <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
-          Pourquoi le programme est fait comme ça, dans l'ordre où il se conçoit. Chaque chapitre finit par ce qu'il change dans
-          l'appli, puis par ses sources — tu peux vérifier chaque affirmation.
+          Pourquoi ce programme, pour un surfeur qui s'entraîne à terre, est fait comme ça. Chaque chapitre finit par ce qu'il
+          change dans l'appli, puis par ses sources — tu peux vérifier chaque affirmation.
         </p>
 
         {CHAPITRES.map((c, i) => (
