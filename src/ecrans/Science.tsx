@@ -43,7 +43,7 @@ const CHAPITRES: Chapitre[] = [
       "L'étirement, lui, n'a réduit aucune blessure dans les essais. Il sert à gagner de l'amplitude, ce qui demande cinq minutes par muscle et par semaine.",
     ],
     dansLappli:
-      "La séance de mobilité est à moitié du renforcement : moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe. L'épaule a l'open book et la rotation externe. Les maintiens s'allongent quand tu les trouves faciles.",
+      "La séance de mobilité est à moitié du renforcement : moyen fessier, descente latérale, curl ischios, Copenhague, réception sur une jambe. L'épaule a l'open book et la rotation externe. Les maintiens s'allongent quand tu les trouves faciles.",
     sources: ['hanchard2021', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'cochrane2011', 'thomas2018', 'behm2016'],
   },
   {

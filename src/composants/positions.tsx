@@ -19,14 +19,15 @@ import type { Exercise } from '../data/types'
  *    tombe du côté annoncé — comme dans un miroir de salle. Absent là où « côté »
  *    ne désigne pas un membre : sur le bird dog, c'est une diagonale bras-jambe.
  *
- * Les six exercices absents de cette table n'ont pas de dessin juste dans la
+ * Les sept exercices absents de cette table n'ont pas de dessin juste dans la
  * bibliothèque : roulade sur les avant-bras, cheville au mur, hanche 90/90,
- * rotation thoracique, réception sur une jambe, rotation externe. Les dessins
+ * rotation thoracique, réception sur une jambe, rotation externe, et le curl sur
+ * serviette — dont le dessin le plus proche montre un banc à chevilles. Les dessins
  * voisins montrent un autre mouvement, mieux vaut rien qu'à peu près.
  */
 type Image = { n: number; legende: string }
 type Cote = 'gauche' | 'droit'
-type Dessin = { dossier: string; images: Image[]; coteDessine?: Cote }
+type Dessin = { dossier: string; images: Image[]; coteDessine?: Cote; sansBoucle?: string }
 
 const DESSINS: Record<string, Dessin> = {
   // Pecs
@@ -50,8 +51,8 @@ const DESSINS: Record<string, Dessin> = {
     dossier: 'decline-push-up',
     images: [{ n: 3, legende: 'En bas' }, { n: 1, legende: 'En haut' }],
   },
-  'pompes-lestees': {
-    dossier: 'weighted-push-up',
+  'pompes-archer': {
+    dossier: 'archer-push-up',
     images: [{ n: 3, legende: 'En bas' }, { n: 1, legende: 'En haut' }],
   },
   'pompes-lentes': {
@@ -78,6 +79,7 @@ const DESSINS: Record<string, Dessin> = {
   },
   'pallof-poulie': {
     dossier: 'pallof-press',
+    sansBoucle: 'les deux poses partagent près de la moitié de leur encre : en boucle, rien ne semble bouger',
     images: [{ n: 1, legende: 'Au buste' }, { n: 3, legende: 'Bras tendus' }],
   },
   'gainage-lateral-leste': { dossier: 'side-plank', images: [{ n: 1, legende: 'La position' }] },
@@ -107,10 +109,6 @@ const DESSINS: Record<string, Dessin> = {
     coteDessine: 'droit', // jambe d'appui sur la marche, à droite de l'image
     images: [{ n: 3, legende: 'Sur la marche' }, { n: 1, legende: 'En descente' }],
   },
-  'nordic-ischios': {
-    dossier: 'nordic-hamstring-curl',
-    images: [{ n: 3, legende: 'À genoux' }, { n: 1, legende: 'Descente' }],
-  },
   copenhague: {
     dossier: 'copenhagen-plank',
     coteDessine: 'gauche', // jambe du dessus, celle qui travaille, vers la gauche
@@ -118,6 +116,7 @@ const DESSINS: Record<string, Dessin> = {
   },
   'bird-dog-gainage': {
     dossier: 'bird-dog',
+    sansBoucle: "les deux dessins sont deux côtés, pas deux bouts d'un mouvement : les enchaîner inventerait un geste",
     images: [{ n: 1, legende: 'Un côté' }, { n: 3, legende: "L'autre côté" }],
   },
 }
@@ -148,12 +147,105 @@ function masque(url: string, teinte: string, retourne = false) {
   }
 }
 
+/**
+ * La boucle entre les deux bouts du mouvement : c'est ce qu'on affiche partout
+ * où les deux poses se distinguent, la paire fixe ne restant que pour les
+ * exercices marqués `sansBoucle`.
+ *
+ * L'image 2 a été essayée comme pose intermédiaire et écartée pour la raison
+ * déjà donnée en tête de fichier : son trait est plus épais, et en boucle ça
+ * devient un battement d'épaisseur à chaque cycle. Deux poses, un seul trait.
+ *
+ * Les dessins sont empilés et leur opacité enchaînée : le masque reste
+ * vectoriel, donc la teinte suit toujours le thème et rien ne s'alourdit.
+ * `recouvrement` est la part du cycle où deux poses se croisent — à 0 on aurait
+ * un diaporama, trop haut le dessin devient flou. Le réglage se sent surtout
+ * quand les deux poses se recouvrent peu (la roulette abdominale : 3 % d'encre
+ * commune), où un fondu long laisse voir deux corps au lieu d'un.
+ */
+function Boucle({
+  ex,
+  dossier,
+  sequence,
+  retourne,
+  duree = 2.4,
+  recouvrement = 6,
+}: {
+  ex: Exercise
+  dossier: string
+  sequence: number[]
+  retourne: boolean
+  duree?: number
+  recouvrement?: number
+}) {
+  const base = import.meta.env.BASE_URL
+  const cadres = [...new Set(sequence)]
+  const n = sequence.length
+  const pas = 100 / n
+  const nom = (f: number) => `boucle-${dossier}-${f}`
+
+  // À chaque frontière de pas, la pose sortante vaut encore 1 et l'entrante 0 ;
+  // `recouvrement` plus loin, l'inverse. Entre les deux, CSS interpole — c'est
+  // tout le fondu.
+  const css =
+    cadres
+      .map((f) => {
+        const v = (i: number) => (sequence[i] === f ? 1 : 0)
+        const arrets = [`0%{opacity:${v(n - 1)}}`]
+        for (let i = 0; i < n; i++) {
+          arrets.push(`${(i * pas + recouvrement).toFixed(2)}%{opacity:${v(i)}}`)
+          arrets.push(`${((i + 1) * pas).toFixed(2)}%{opacity:${v(i)}}`)
+        }
+        return `@keyframes ${nom(f)}{${arrets.join('')}}`
+      })
+      .join('') +
+    // Mouvement réduit : on s'arrête sur la première pose de la séquence.
+    `@media (prefers-reduced-motion:reduce){.boucle-${dossier}>*{animation:none!important;opacity:0}` +
+    `.boucle-${dossier}>:first-child{opacity:1}}`
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <style>{css}</style>
+      <figure style={{ margin: 0, flex: '0 0 calc(50% - 6px)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div
+          class={`boucle-${dossier}`}
+          role="img"
+          aria-label={`${ex.nom}, le mouvement`}
+          style={{ position: 'relative', aspectRatio: '1' }}
+        >
+          {cadres.map((f) => (
+            <div
+              key={f}
+              style={{
+                ...masque(`${base}illustrations/${dossier}/frame-${f}.svg`, 'var(--encre)', retourne),
+                position: 'absolute',
+                inset: 0,
+                aspectRatio: undefined,
+                animation: `${nom(f)} ${duree}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+        <figcaption class="discret" style={{ fontSize: '13px', textAlign: 'center' }}>
+          Le mouvement
+        </figcaption>
+      </figure>
+    </div>
+  )
+}
+
 export function Positions({ ex, couleur, cote }: { ex: Exercise; couleur?: string; cote?: Cote | null }) {
   const d = DESSINS[ex.id]
   if (!d) return null
   const base = import.meta.env.BASE_URL
   const seul = d.images.length === 1
   const retourne = !!cote && !!d.coteDessine && cote !== d.coteDessine
+
+  // La boucle est la règle dès qu'il y a deux poses : `sansBoucle` dit pourquoi
+  // un exercice y échappe. L'ordre des poses est celui de `images`, qui va déjà
+  // du début à la fin du mouvement.
+  if (!seul && !d.sansBoucle)
+    return <Boucle ex={ex} dossier={d.dossier} sequence={d.images.map((i) => i.n)} retourne={retourne} />
 
   return (
     // Un dessin seul est centré, à la largeur qu'il aurait dans une paire : d'une

@@ -35,7 +35,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "C'est le haut du pectoral qui donne au muscle sa ligne supérieure. Un banc à 30° le sollicite plus qu'un banc plat ou qu'un banc à 45°, et les haltères laissent chaque bras aller au bout de son amplitude.",
     sources: ['rodriguez2020', 'chaves2020', 'acsm2026'],
-    video: { url: 'https://www.youtube.com/watch?v=-iWjdKWNpNg', creator: 'Jeff Nippard', youtubeId: '-iWjdKWNpNg' },
+    video: { url: 'https://www.youtube.com/watch?v=-iWjdKWNpNg', creator: 'Jeff Nippard', youtubeId: '5CECBjd7HLQ', videoCreator: 'Renaissance Periodization' },
   },
   {
     id: 'developpe-couche-halteres',
@@ -140,7 +140,7 @@ export const EXERCICES: Exercise[] = [
       'Pompes au sol',
       'Pieds sur une marche basse',
       'Pieds sur une chaise',
-      'Pieds sur une chaise, sac à dos lesté',
+      'Pieds sur une chaise, poitrine sous les mains',
     ],
     etapes: [
       'Pose les pieds sur une chaise, mains un peu plus larges que les épaules.',
@@ -165,40 +165,43 @@ export const EXERCICES: Exercise[] = [
     video: { url: 'https://exrx.net/WeightExercises/PectoralClavicular/BWDeclinePushup', creator: 'ExRx', youtubeId: 'wU6mtZV8Jnc', videoCreator: 'John Rusin, DPT' },
   },
   {
-    id: 'pompes-lestees',
-    nom: 'Pompes lestées',
+    id: 'pompes-archer',
+    nom: 'Pompe archer',
     programme: 'pecs',
-    resume: 'Milieu des pectoraux · sac à dos chargé',
+    resume: 'Milieu des pectoraux · rien d\'autre que le sol',
     venues: ['tapis'],
+    // Sans charge à ajouter, la seule façon de dépasser 74 % du poids de corps —
+    // le plafond mesuré des variantes à deux bras — est de reporter le poids sur
+    // un seul bras. La progression unilatérale a été suivie dans un essai ; la
+    // charge exacte de chaque échelon, elle, n'a jamais été mesurée.
     echelle: [
-      'Pompes sur les genoux',
       'Pompes au sol',
       'Pompes au sol, tempo lent',
-      'Sac à dos léger',
-      'Sac à dos chargé',
-      'Sac à dos chargé, pieds surélevés',
+      'Archer, bras tendu posé large',
+      'Archer complet, alterné',
+      'Une main, main libre sur une chaise',
+      'Une main, main libre sur une marche basse',
     ],
     etapes: [
-      'Charge un sac à dos et serre bien les sangles pour qu\'il ne glisse pas.',
-      'Mains un peu plus larges que les épaules, corps gréé d\'un bloc.',
-      'Descends en deux secondes jusqu\'à frôler le sol.',
-      'Pousse sans laisser le bassin partir en premier.',
+      'Pose-toi en pompe, mains nettement plus larges que les épaules.',
+      'Descends en pliant un seul bras ; l\'autre reste tendu et glisse sur le côté.',
+      'Garde le bassin face au sol, sans rotation.',
+      'Remonte en poussant sur le bras plié, puis alterne à chaque répétition.',
     ],
     points: [
-      'Le sac reste haut dans le dos, entre les omoplates',
-      'Coudes à 45° du buste',
-      'Le corps monte et descend d\'un seul bloc',
+      'Le bassin ne tourne pas : les deux hanches restent à la même hauteur',
+      'Le bras tendu accompagne, il ne pousse pas',
+      'Descente complète du côté qui travaille',
     ],
-    ressenti: 'Le pectoral qui travaille au milieu, et les abdominaux qui tiennent la planche. Rien ne doit tirer dans le bas du dos.',
+    ressenti: 'Le pectoral du côté plié, à fond. Le bras tendu ne doit presque rien sentir : s\'il pousse, le poids est reparti au milieu.',
     erreurs: [
-      'Sac trop bas, qui bascule vers les lombaires.',
-      'Bassin qui monte en premier à la poussée.',
-      'Ajouter des reps au lieu de charge une fois au-dessus de 30 reps.',
+      'Le bassin qui pivote pour soulager le bras qui travaille.',
+      'Descendre à moitié parce que la charge monte vite.',
+      'Ajouter des répétitions au lieu de passer à l\'échelon suivant.',
     ],
     pourquoi:
-      'Deux essais courts ont montré que des pompes progressives ou lestées produisent des gains comparables au développé couché. Au-delà de 30 reps propres, on ajoute de la charge plutôt que des répétitions.',
-    sources: ['kikuchi2017', 'kotarsky2018', 'schoenfeld2017charge'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/WtPushup', creator: 'ExRx', youtubeId: 'jDvuRh9nYD4', videoCreator: 'Horton Barbell' },
+      'Un essai de huit semaines a trouvé les mêmes gains entre des pompes menées à l\'échec et un développé couché, et un autre a validé une progression vers les variantes à un bras. Les pompes à deux bras plafonnent à 74 % du poids de corps, pieds surélevés compris : passer sur un bras est le seul moyen d\'aller plus haut sans matériel.',
+    sources: ['kikuchi2017', 'kotarsky2018', 'ebben2011', 'schoenfeld2017charge'],
   },
   {
     id: 'pompes-lentes',
@@ -227,7 +230,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Sans poulie, la façon de charger le pectoral en position allongée est de ralentir la descente et d'aller chercher l'amplitude complète. La charge compte peu tant que la série finit près de l'échec.",
     sources: ['schoenfeld2017charge', 'ebben2011'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx', youtubeId: 'dHeMPgul4A0', videoCreator: 'Champion PT and Performance' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWPushup', creator: 'ExRx', youtubeId: 'dHeMPgul4A0', videoCreator: 'Champion Physical Therapy and Performance' },
   },
   {
     id: 'dips-chaises',
@@ -247,7 +250,7 @@ export const EXERCICES: Exercise[] = [
     erreurs: ['Chaises instables.', 'Descendre trop bas.', 'Rester vertical, ce qui bascule le travail sur les triceps.'],
     pourquoi: 'La version sans matériel du dip, pour couvrir la portion basse du pectoral les jours de tapis.',
     sources: ['ace2012pecs'],
-    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDipBenches', creator: 'ExRx', youtubeId: 'xJLFsFUWRAQ', videoCreator: 'All Strength Training' },
+    video: { url: 'https://exrx.net/WeightExercises/PectoralSternal/BWChestDipBenches', creator: 'ExRx', youtubeId: 'PNTB_BeqiMs', videoCreator: 'Bee Brown Universal' },
   },
 
   // ---------------------------------------------------------------- ABDOMINAUX, SALLE
@@ -279,7 +282,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Premier ou deuxième du classement EMG de l'ACE pour le grand droit et les obliques, et le meilleur moyen de charger la portion basse. Le recrutement se fait près de la charge : jambes qui montent, bas du ventre qui travaille.",
     sources: ['ace2001abdos', 'escamilla2006', 'gomirato2023'],
-    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/hanging-leg-raise-how-to', creator: 'Athlean-X', youtubeId: 'Pr1ieGZ5atk', videoCreator: 'Athlean-X' },
+    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/hanging-leg-raise-how-to', creator: 'Athlean-X', youtubeId: '7FwGZ8qY5OU', videoCreator: 'Renaissance Periodization' },
   },
   {
     id: 'crunch-poulie',
@@ -330,7 +333,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Dans les travaux d'Escamilla, la roulade est en tête pour le grand droit et les obliques, avec une charge lombaire faible. Elle entraîne la fonction réelle de la sangle : empêcher le dos de se creuser.",
     sources: ['escamilla2006', 'escamilla2010'],
-    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/total-body-ab-wheel-workout', creator: 'Athlean-X', youtubeId: 'A3uK5TPzHq8', videoCreator: 'Athlean-X' },
+    video: { url: 'https://learn.athleanx.com/articles/abs-for-men/total-body-ab-wheel-workout', creator: 'Athlean-X', youtubeId: 'LxWhR-k5NGU', videoCreator: 'E3 Rehab Exercise Library' },
   },
   {
     id: 'pallof-poulie',
@@ -350,7 +353,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "Le tronc sert autant à empêcher un mouvement qu'à en produire un. L'anti-rotation complète la flexion chargée et couvre les obliques sans les faire grossir en volume.",
     sources: ['sbs-core'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/332/standing-anti-rotation-press/', creator: 'ACE', youtubeId: 'p3WA3yiEo-k', videoCreator: 'E3 Rehab' },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/332/standing-anti-rotation-press/', creator: 'ACE', youtubeId: '-0N2xTi69t8', videoCreator: 'Synergy Strength and Sports Therapy' },
   },
   {
     id: 'gainage-lateral-leste',
@@ -397,7 +400,7 @@ export const EXERCICES: Exercise[] = [
     pourquoi:
       "C'est le mouvement qui charge le bas du grand droit, l'autre moitié du travail à côté du crunch. Le recrutement se fait près de la charge : bassin qui monte, bas du ventre qui travaille.",
     sources: ['gomirato2023', 'escamilla2006', 'ace2001abdos'],
-    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/', creator: 'ACE', youtubeId: 'fhrkw1aaP8k', videoCreator: 'Athlean-X', start: 0, end: 153 },
+    video: { url: 'https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/', creator: 'ACE', youtubeId: 'JYcEtoxn8Nc', videoCreator: 'Theory of Motion Exercise Library' },
   },
   {
     id: 'roulade-avant-bras',
@@ -432,7 +435,7 @@ export const EXERCICES: Exercise[] = [
       "Touches d'épaule sur les genoux",
       "Touches d'épaule, pieds écartés",
       "Touches d'épaule, pieds serrés",
-      'Pieds serrés, sac à dos lesté',
+      'Coudes avancés, bassin rentré',
     ],
     etapes: [
       'En position de pompe haute, mains sous les épaules, pieds écartés.',

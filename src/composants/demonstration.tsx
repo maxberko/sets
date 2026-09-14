@@ -95,7 +95,7 @@ export function Demonstration({
   return (
     <div style={cadre}>
       <iframe
-        src={lienBoucleMuette(v)}
+        src={lienBoucleMuette(v, false, true)}
         title={`Démonstration : ${ex.nom}`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
@@ -113,21 +113,28 @@ export function Demonstration({
 /**
  * Boucle muette sans habillage : une référence visuelle, pas une vidéo à regarder.
  * cc_load_policy=0 coupe les sous-titres automatiques — ils s'affichaient en anglais
- * approximatif par-dessus l'image dans une appli française. controls=0 retire au
- * passage le bouton « Watch on YouTube », donc plus rien qui sorte d'ici.
+ * approximatif par-dessus l'image dans une appli française.
+ *
+ * `controles` sépare les deux usages, et c'est une correction : sans barre, on ne
+ * peut pas revenir en arrière sur un geste qu'on vient de manquer, ce qui est
+ * précisément ce qu'on fait d'une démonstration en pleine séance. Donc barre dès
+ * que quelqu'un a ouvert la vidéo exprès ; pas de barre pour le fond de fin de
+ * séance, qui n'est là que pour l'ambiance. La barre ramène le bouton « Watch on
+ * YouTube » : c'est le prix à payer pour pouvoir se déplacer dans la vidéo.
  *
  * Partagée par les démonstrations et la vidéo de fin de séance.
  */
-export function lienBoucleMuette(v: VideoRef, jsapi = false): string {
+export function lienBoucleMuette(v: VideoRef, jsapi = false, controles = false): string {
   if (!v.youtubeId) return ''
   const p = new URLSearchParams({
     autoplay: '1',
     mute: '1',
     loop: '1',
     playlist: v.youtubeId,
-    controls: '0',
+    controls: controles ? '1' : '0',
     cc_load_policy: '0',
-    disablekb: '1',
+    // Le clavier ne sert à rien sans barre ; avec la barre, il doit suivre.
+    disablekb: controles ? '0' : '1',
     rel: '0',
     modestbranding: '1',
     playsinline: '1',

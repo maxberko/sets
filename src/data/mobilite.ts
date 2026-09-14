@@ -26,7 +26,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La cheville alimente le genou. À la réception, pour chaque tranche de 10 % de dorsiflexion non utilisée, l'abduction du genou augmente de 3,2 degrés. Le drill lui-même n'a pas été testé, mais le lien entre cheville et genou, si.",
     sources: ['cheville-genou'],
-    video: { url: 'https://theprehabguys.com/unlock-ankle-mobility/', creator: 'The Prehab Guys', youtubeId: 'NqgwyM9hXMI', videoCreator: 'Victoria Park Osteopaths' },
+    video: { url: 'https://theprehabguys.com/unlock-ankle-mobility/', creator: 'The Prehab Guys', youtubeId: 'YH7xjrkq7ic', videoCreator: 'The Basketball Doctors' },
   },
   {
     id: 'hanche-90-90',
@@ -51,7 +51,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Les virages demandent de la rotation interne et externe de hanche, et le conflit fémoro-acétabulaire représente environ deux tiers des blessures de hanche en surf. Aucun essai n'a testé ce drill : il repose sur l'anatomie et l'usage clinique.",
     sources: ['surf-genou-hanche', 'fai-squat'],
-    video: { url: 'https://library.theprehabguys.com/vimeo-video/90-90-hip-stretch/', creator: 'The Prehab Guys', youtubeId: '6Vm24G-koYU', videoCreator: 'John Rusin, DPT' },
+    video: { url: 'https://library.theprehabguys.com/vimeo-video/90-90-hip-stretch/', creator: 'The Prehab Guys', youtubeId: 'Y-L0s5uSQ-E', videoCreator: 'E3 Rehab Exercise Library' },
   },
   {
     id: 'psoas-demi-genou',
@@ -80,7 +80,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La rame maintient les hanches en position raccourcie pendant la moitié d'une session. La durée de maintien vient de la littérature sur l'amplitude, mais l'exercice lui-même relève de l'usage clinique.",
     sources: ['thomas2018', 'delphi2025'],
-    video: { url: 'https://squatuniversity.com/active-hip-flexor-stretch/', creator: 'Squat University', youtubeId: 'gqoPYLUgP48', videoCreator: 'The Prehab Guys' },
+    video: { url: 'https://squatuniversity.com/active-hip-flexor-stretch/', creator: 'Squat University', youtubeId: 'vIDzsqJiAIo', videoCreator: 'E3 Rehab Exercise Library' },
   },
   {
     id: 'rotation-thoracique',
@@ -154,30 +154,37 @@ export const MOBILITE: Exercise[] = [
     video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys', youtubeId: 'AO6lZFFrBdg', videoCreator: 'The Strength Guys' },
   },
   {
-    id: 'nordic-ischios',
-    nom: 'Nordic, ischio-jambiers',
+    id: 'curl-serviette',
+    nom: 'Curl ischios sur serviette',
     programme: 'mobilite',
-    resume: 'Chaîne postérieure en excentrique',
+    resume: 'Chaîne postérieure en excentrique · une serviette',
     venues: ['tapis'],
-    evidence: 'pleine',
-    echelle: ['Curl sur serviette glissante', 'Nordic avec appui des mains', 'Nordic complet'],
+    // Le point passe de plein à creux en même temps que l'exercice change : le
+    // Nordic avait des essais de prévention derrière lui, le curl glissé n'a que
+    // de l'EMG. Personne n'a comparé les deux dans un essai d'entraînement.
+    evidence: 'creuse',
+    echelle: [
+      'Pont ischios, talons sur la serviette',
+      'Curl deux jambes, descente lente',
+      'Curl deux jambes, descente une jambe',
+      'Curl une jambe, complet',
+    ],
     etapes: [
-      'À genoux, chevilles bloquées sous un meuble lourd ou tenues par quelqu\'un.',
-      'Corps gréé du genou à la tête, fessiers serrés.',
-      'Penche-toi vers l\'avant le plus lentement possible, en résistant.',
-      'Rattrape-toi avec les mains, puis pousse pour revenir. Cinq répétitions.',
+      'Allonge-toi sur le dos, talons posés sur une serviette, sur un sol lisse.',
+      'Monte le bassin jusqu\'à aligner genoux, hanches et épaules.',
+      'Laisse glisser les talons loin de toi, le plus lentement possible, sans que le bassin ne tombe.',
+      'Ramène les talons en tirant avec l\'arrière des cuisses. Cinq répétitions.',
     ],
     points: [
-      'Le corps reste droit, la cassure ne se fait pas à la hanche',
-      'On résiste le plus longtemps possible',
-      'Les mains sont là pour rattraper, pas pour aider',
+      'Le bassin reste haut du début à la fin',
+      'La descente est lente, c\'est elle qui fait le travail',
+      'On s\'arrête avant que le bas du dos ne creuse',
     ],
-    ressenti: "L'arrière des cuisses qui travaille très fort en s'allongeant. Des courbatures marquées les premières fois sont normales.",
-    erreurs: ['Casser à la hanche pour tricher.', 'Se laisser tomber sans résister.', 'En faire trop la première semaine.'],
+    ressenti: "L'arrière des cuisses qui travaille en s'allongeant, et les fessiers qui tiennent le bassin en l'air.",
+    erreurs: ['Laisser le bassin retomber pendant la descente.', 'Glisser trop loin dès la première séance.', 'Tirer avec le bas du dos pour revenir.'],
     pourquoi:
-      "Le Nordic divise par environ deux le risque de blessure aux ischio-jambiers dans les méta-analyses, même si une réévaluation méthodologique en 2021 a jugé l'effet moins certain qu'annoncé. C'est un des rares exercices avec une preuve directe de prévention.",
-    sources: ['nordic', 'lauersen2014'],
-    video: { url: 'https://e3rehab.com/how-to-perform-copenhagen-planks/', creator: 'E3 Rehab', youtubeId: '_e9vFU9-tkc', videoCreator: 'E3 Rehab', start: 56, end: 228 },
+      "Le curl glissé dépasse 90 % de la contraction maximale sur les deux chefs des ischio-jambiers, au même rang que le Nordic — mais c'est de l'EMG, pas un essai. Il remplace ici le Nordic, qui demandait quelqu'un pour tenir les chevilles : la méta-analyse 2026 ne distingue aucun programme des autres et montre que tout se joue sur l'observance, or un exercice qu'on saute ne protège personne.",
+    sources: ['tsaklis2015', 'observance2026', 'impellizzeri2021'],
   },
   {
     id: 'copenhague',
@@ -199,7 +206,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le renforcement des adducteurs fait partie des programmes neuromusculaires qui réduisent les blessures. Sur une planche, ce sont eux qui tiennent l'écart entre les deux appuis.",
     sources: ['fifa11plus', 'lauersen2014'],
-    video: { url: 'https://theprehabguys.com/why-you-should-do-copenhagen-planks/', creator: 'The Prehab Guys', youtubeId: 'YRRnnZsRs9U', videoCreator: 'E3 Rehab', start: 71, end: 172 },
+    video: { url: 'https://theprehabguys.com/why-you-should-do-copenhagen-planks/', creator: 'The Prehab Guys', youtubeId: 'aDsaGBnvDQo', videoCreator: 'E3 Rehab Exercise Library' },
   },
   {
     id: 'reception-unipodale',
@@ -228,7 +235,7 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "La réception est le mécanisme le plus souvent cité pour les blessures de genou en surf, et le genou est la première articulation blessée chez les professionnels. Les drills de réception sont au cœur des programmes 11+ et PEP.",
     sources: ['hohn2018', 'fifa11plus', 'pep'],
-    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys', youtubeId: '6RCOGM5tZRM', videoCreator: 'The Prehab Guys' },
+    video: { url: 'https://library.theprehabguys.com/vimeo-video/lateral-step-down-to-single-leg-balance-2/', creator: 'The Prehab Guys', youtubeId: 'cFJcld7hS8Y', videoCreator: 'Next Level Physical Therapy' },
   },
   {
     id: 'bird-dog-gainage',
@@ -249,18 +256,18 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le bas du dos est le premier site de blessure chronique chez les surfeurs, devant l'épaule, et le mécanisme le plus cité est la rame prolongée. Ces deux exercices viennent du protocole de McGill et entraînent la stabilité sans charger le disque en flexion.",
     sources: ['hanchard2021', 'mcgill', 'fifa11plus'],
-    video: { url: 'https://squatuniversity.com/2018/06/21/the-mcgill-big-3-for-core-stability/', creator: 'Squat University', youtubeId: 'S1QbyYZaXIg', videoCreator: 'Northern Nevada Chiropractic' },
+    video: { url: 'https://squatuniversity.com/2018/06/21/the-mcgill-big-3-for-core-stability/', creator: 'Squat University', youtubeId: 'egKWoMZ6cXM', videoCreator: 'E3 Rehab Exercise Library' },
   },
   {
     id: 'rotation-externe',
     nom: 'Rotation externe d\'épaule',
     programme: 'mobilite',
-    resume: 'Rotateurs externes · élastique ou sans charge',
+    resume: 'Rotateurs externes · un élastique léger',
     venues: ['tapis'],
     evidence: 'creuse',
     etapes: [
       'Coude au corps, plié à 90 degrés, avant-bras devant le ventre.',
-      'Avec un élastique ou simplement contre une résistance imaginaire, ouvre l\'avant-bras vers l\'extérieur.',
+      'Élastique léger accroché à hauteur de coude, ouvre l\'avant-bras vers l\'extérieur.',
       'Le coude reste collé au buste pendant tout le mouvement.',
       'Douze répétitions de chaque côté, lentement.',
     ],
@@ -268,8 +275,8 @@ export const MOBILITE: Exercise[] = [
     ressenti: "L'arrière de l'épaule qui travaille. Rien ne doit pincer sur le dessus.",
     erreurs: ['Décoller le coude.', 'Faire pivoter tout le buste.', 'Utiliser un élastique trop dur.'],
     pourquoi:
-      "La rame est propulsée par les rotateurs internes, et les surfeurs présentent un déficit de rotation externe. Les revues recommandent de renforcer les rotateurs externes, mais aucun essai n'a testé ce programme chez des surfeurs, donc le point reste creux.",
+      "La rame est propulsée par les rotateurs internes, et les surfeurs présentent un déficit de rotation externe. Les revues recommandent de renforcer les rotateurs externes, mais aucun essai n'a testé ce programme chez des surfeurs, donc le point reste creux. C'est le seul exercice de l'appli qui demande du matériel à la maison : sans élastique, il ne reste que le poids de l'avant-bras, trop peu pour charger une épaule entraînée.",
     sources: ['langenberg2021', 'furness2018'],
-    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys', youtubeId: '_UvmPNGtlPM', videoCreator: 'AskDoctorJo, DPT' },
+    video: { url: 'https://theprehabguys.com/shoulder-strengthening-exercises-for-surfers/', creator: 'The Prehab Guys', youtubeId: 'UyBb2-bP0CU', videoCreator: 'E3 Rehab Exercise Library' },
   },
 ]

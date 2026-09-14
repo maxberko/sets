@@ -54,6 +54,12 @@ export const SOURCES: Source[] = [
   { id: 'femoro-patellaire', texte: 'Charge fémoro-patellaire sur 35 exercices. Base de la limite a 90 degrés de flexion.', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10315869/' },
   { id: 'fai-squat', texte: 'Biomécanique du squat après traitement d\'un conflit femoro-acetabulaire. Base de l\'evitement de la flexion profonde.', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11210460/' },
   { id: 'mcgill', texte: 'McGill. Flexion lombaire : mythes, vérités et précautions.', url: 'https://www.backfitpro.com/spine-flexion-exercise-myths-truths-issues-affecting-health-performance/' },
+  { id: 'tsaklis2015', texte: 'Tsaklis et al. 2015. Le curl glissé dépasse 90 % de la contraction maximale sur les deux chefs des ischio-jambiers.', url: 'https://www.tandfonline.com/doi/full/10.2147/OAJSM.S79189' },
+  { id: 'impellizzeri2021', texte: 'Impellizzeri et al. 2021. Réanalyse du Nordic : 5 essais sur 15 le randomisaient, effet non concluant.', url: 'https://pubmed.ncbi.nlm.nih.gov/34520846/' },
+  { id: 'observance2026', texte: "Méta-analyse 2026, 15 essais, 7 465 joueurs. Aucun programme ne se distingue ; c'est l'observance qui porte l'effet.", url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13059038/' },
+  { id: 'schoenfeld2014gainage', texte: 'Schoenfeld et al. 2014. Levier long et bassin rétroversé : le grand droit passe de 27 à 110 % de la contraction maximale.', url: 'https://www.tandfonline.com/doi/abs/10.1080/14763141.2014.942355' },
+  { id: 'suprak2011', texte: 'Suprak, Dawes, Stephenson 2011. La charge de la pompe est la plus élevée en bas du mouvement.', url: 'https://pubmed.ncbi.nlm.nih.gov/20179649/' },
+  { id: 'sl-rdl2024', texte: 'Cohorte en athlétisme. Soulevé de terre roumain une jambe au poids du corps : lésions légères à modérées divisées par trois.', url: 'https://ijspt.scholasticahq.com/article/136803-the-effect-of-single-leg-romanian-deadlift-on-the-risk-of-hamstring-strain-injuries-in-track-and-field-athletes-a-cohort-study' },
   { id: 'basicfit-appareils', texte: 'Basic-Fit. ABC des appareils de fitness, noms français officiels des machines.', url: 'https://www.basic-fit.com/fr-fr/blog/abc-des-appareils-de-fitness' },
 ]
 

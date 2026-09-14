@@ -24,7 +24,7 @@ export const SEANCES: SessionTemplate[] = [
       },
       {
         id: 'a2', role: 'Presse horizontale', mode: 'reps', series: 3, reps: [6, 10], reposSec: 150, rir: 2,
-        salle: 'developpe-couche-halteres', tapis: 'pompes-lestees',
+        salle: 'developpe-couche-halteres', tapis: 'pompes-archer',
       },
       {
         id: 'a3', role: 'Pectoraux en étirement', mode: 'reps', series: 2, reps: [10, 15], reposSec: 90, rir: 1,
@@ -56,7 +56,7 @@ export const SEANCES: SessionTemplate[] = [
     slots: [
       {
         id: 'b1', role: 'Presse horizontale', mode: 'reps', series: 3, reps: [6, 10], reposSec: 150, rir: 2,
-        salle: 'developpe-couche-halteres', tapis: 'pompes-lestees',
+        salle: 'developpe-couche-halteres', tapis: 'pompes-archer',
       },
       {
         id: 'b2', role: 'Haut des pectoraux', mode: 'reps', series: 2, reps: [8, 12], reposSec: 120, rir: 2,
@@ -94,7 +94,7 @@ export const SEANCES: SessionTemplate[] = [
       { id: 'm4', role: 'Haut du dos', mode: 'reps-par-cote', series: 1, repsParCote: 10, reposSec: 10, salle: 'rotation-thoracique', tapis: 'rotation-thoracique' },
       { id: 'm5', role: 'Moyen fessier', mode: 'reps-par-cote', series: 2, repsParCote: 12, reposSec: 30, salle: 'abduction-hanche', tapis: 'abduction-hanche' },
       { id: 'm6', role: 'Contrôle du genou', mode: 'reps-par-cote', series: 2, repsParCote: 8, reposSec: 45, salle: 'descente-laterale', tapis: 'descente-laterale' },
-      { id: 'm7', role: 'Ischio-jambiers', mode: 'reps', series: 2, reps: [5, 5], reposSec: 60, salle: 'nordic-ischios', tapis: 'nordic-ischios' },
+      { id: 'm7', role: 'Ischio-jambiers', mode: 'reps', series: 2, reps: [5, 5], reposSec: 60, salle: 'curl-serviette', tapis: 'curl-serviette' },
       { id: 'm8', role: 'Adducteurs', mode: 'temps-par-cote', series: 2, secondes: 20, reposSec: 30, salle: 'copenhague', tapis: 'copenhague' },
       { id: 'm9', role: 'Réception', mode: 'reps-par-cote', series: 1, repsParCote: 5, reposSec: 30, salle: 'reception-unipodale', tapis: 'reception-unipodale' },
       { id: 'm10', role: 'Tronc', mode: 'reps-par-cote', series: 1, repsParCote: 8, reposSec: 30, salle: 'bird-dog-gainage', tapis: 'bird-dog-gainage' },
