@@ -97,11 +97,20 @@ export function Aujourdhui() {
   )
 }
 
+/**
+ * Le lendemain se dit « demain », pas par son nom : un lundi soir, « prochaine
+ * séance mardi » oblige à compter les jours pour comprendre que c'est demain.
+ * De même, une semaine plus tard se dit « lundi prochain » et non « lundi »,
+ * qui se confondrait avec aujourd'hui.
+ */
 function prochainJourAvecSeance(plan: Record<Jour, string[]>, jour: Jour): string {
   const i = JOURS.indexOf(jour)
   for (let n = 1; n <= 7; n++) {
     const j = JOURS[(i + n) % 7]!
-    if ((plan[j] ?? []).length > 0) return NOM_JOUR[j].toLowerCase()
+    if ((plan[j] ?? []).length === 0) continue
+    if (n === 1) return 'demain'
+    const nom = NOM_JOUR[j].toLowerCase()
+    return n === 7 ? `${nom} prochain` : nom
   }
   return 'bientôt'
 }
