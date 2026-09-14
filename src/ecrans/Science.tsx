@@ -17,8 +17,7 @@ interface Chapitre {
  * Quatre chapitres courts, tenus par un fil : quelqu'un qui surfe déjà, et qui
  * s'entraîne à terre pour durer.
  *
- * Chaque titre dit à l'infinitif ce que le programme permet de faire, sans point
- * final, et tient sur une ligne : au-delà d'une trentaine de signes il se coupe
+ * Les titres tiennent sur une ligne, sans point final : au-delà d'une trentaine de signes il se coupe
  * en deux, et un titre plié se lit comme deux idées. La nuance qu'il perd est
  * dans le texte juste dessous.
  *
@@ -58,7 +57,7 @@ const CHAPITRES: Chapitre[] = [
     sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017charge', 'robinson2024'],
   },
   {
-    titre: 'Ne rien te cacher',
+    titre: 'La transparence au cœur',
     paragraphes: [
       "Aucun exercice ne fait fondre le ventre. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille, et treize études réunies donnent un effet nul. L'alimentation découvre les abdominaux ; l'entraînement les épaissit.",
       "Tu n'as pas à deviner sur quoi tu t'appuies. Le renforcement a des essais cliniques derrière lui, et pour le reste, chaque fiche porte un point qui le dit :",
@@ -77,7 +76,7 @@ export function Science() {
     <div class="ecran">
       <Entete />
       <div class="contenu">
-        <Titre titre="Science" apres="La philosophie qui guide cette appli" />
+        <Titre titre="Science" apres="Nos partis pris, et ce qui les fonde" />
 
         {/* Le sommaire remplace le paragraphe qui annonçait le texte : il montre
             les quatre titres et mène droit au chapitre cherché. */}
