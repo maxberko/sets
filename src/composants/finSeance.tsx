@@ -1,4 +1,5 @@
 import type { ComponentChildren } from 'preact'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { FIN_SURF } from '../data/surf'
 import { lienBoucleMuette } from './demonstration'
 
@@ -30,6 +31,46 @@ export function FinSeance({
   const calme = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
   const v = FIN_SURF.video
 
+  // L'image fixe reste posée sur l'iframe tant que la lecture n'a pas démarré :
+  // sinon on voit d'abord l'habillage de YouTube, gros bouton « play » au milieu,
+  // le temps que la vidéo se lance. On ne la retire pas sur un simple délai mais
+  // sur l'état du lecteur — si l'autoplay est refusé par le navigateur, l'écran
+  // garde la photo de la vague plutôt que d'afficher ce bouton.
+  const cadre = useRef<HTMLIFrameElement>(null)
+  const [joue, setJoue] = useState(false)
+
+  useEffect(() => {
+    if (calme) return
+    const recoit = (e: MessageEvent) => {
+      if (!e.origin.endsWith('youtube-nocookie.com') && !e.origin.endsWith('youtube.com')) return
+      try {
+        const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+        // 1 = en lecture, dans la convention du lecteur YouTube.
+        if (d?.info?.playerState === 1 || d?.info === 1) setJoue(true)
+      } catch {
+        /* message qui ne nous concerne pas */
+      }
+    }
+    addEventListener('message', recoit)
+
+    // Le lecteur n'envoie rien tant qu'on ne s'est pas annoncé. On réessaie le
+    // temps que l'iframe se charge, puis on arrête.
+    let essais = 0
+    const id = setInterval(() => {
+      essais += 1
+      if (essais > 40) return clearInterval(id)
+      cadre.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }),
+        '*',
+      )
+    }, 250)
+
+    return () => {
+      removeEventListener('message', recoit)
+      clearInterval(id)
+    }
+  }, [calme])
+
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'var(--encre)', color: 'var(--papier)', overflow: 'hidden' }}>
       {calme ? (
@@ -44,7 +85,8 @@ export function FinSeance({
         // centre. En portrait, les bords coupés emportent le titre et le logo que
         // YouTube pose dans les coins au chargement.
         <iframe
-          src={lienBoucleMuette(v)}
+          ref={cadre}
+          src={lienBoucleMuette(v, true)}
           title={`Surf à ${FIN_SURF.lieu}`}
           aria-hidden="true"
           tabIndex={-1}
@@ -59,6 +101,23 @@ export function FinSeance({
             height: 'max(var(--hauteur-fenetre, 100dvh), calc(100vw * 9 / 16))',
             transform: 'translate(-50%, -50%)',
             border: 'none',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Un aplat d'encre, pas la vignette de la vidéo : celle-ci porte un « 4K »
+          jaune en travers de l'image, et de toute façon la vague qu'on montre est
+          à dix-sept minutes du début. */}
+      {!calme && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'var(--encre)',
+            opacity: joue ? 0 : 1,
+            transition: 'opacity 600ms ease',
             pointerEvents: 'none',
           }}
         />

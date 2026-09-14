@@ -118,7 +118,7 @@ export function Demonstration({
  *
  * Partagée par les démonstrations et la vidéo de fin de séance.
  */
-export function lienBoucleMuette(v: VideoRef): string {
+export function lienBoucleMuette(v: VideoRef, jsapi = false): string {
   if (!v.youtubeId) return ''
   const p = new URLSearchParams({
     autoplay: '1',
@@ -135,5 +135,12 @@ export function lienBoucleMuette(v: VideoRef): string {
   })
   if (v.start !== undefined) p.set('start', String(v.start))
   if (v.end !== undefined) p.set('end', String(v.end))
+  // `jsapi` ouvre le canal de messages du lecteur : c'est ce qui permet à la fin
+  // de séance de savoir que l'image bouge enfin, et de retirer alors seulement
+  // l'image fixe posée par-dessus.
+  if (jsapi) {
+    p.set('enablejsapi', '1')
+    if (typeof location !== 'undefined') p.set('origin', location.origin)
+  }
   return `https://www.youtube-nocookie.com/embed/${v.youtubeId}?${p.toString()}`
 }
