@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks'
+import { BandeSemaine } from '../composants/bandeSemaine'
 import { BarreOnglets, Entete, Titre } from '../composants/communs'
 import { Chevron, Coche, PointPreuve } from '../composants/icones'
 import { COULEUR_PROGRAMME, NOM_PROGRAMME, SEANCES, TOUS_EXERCICES, exerciceDuSlot, planDe } from '../data'
@@ -73,7 +74,16 @@ export function Programme() {
               )
             })}
           </div>
-          <p class="discret" style={{ fontSize: '14px', lineHeight: 1.45 }}>{formule.compromis}</p>
+          {/* La semaine de la formule choisie, dessinée comme sur l'accueil : on
+              voit d'un coup quels jours changent quand on passe de l'une à
+              l'autre. Le paragraphe qui tenait cette place parlait de séries
+              efficaces et de temps de maintien — juste, mais illisible au moment
+              de choisir un rythme. */}
+          <BandeSemaine
+            plan={plan}
+            jourActuel={jourActuel}
+            faites={faites.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))}
+          />
         </section>
 
         <section style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '8px', borderTop: '1.5px solid var(--encre)' }}>
