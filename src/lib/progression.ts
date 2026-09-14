@@ -179,8 +179,3 @@ export function seriesApresDeload(series: number, semaine: number, semaineDeload
   return Math.max(1, Math.round(series * ratio))
 }
 
-/** Epley, uniquement pour la courbe de tendance. */
-export function repMax(kg: number, reps: number): number {
-  if (kg <= 0 || reps <= 0) return 0
-  return Math.round(kg * (1 + reps / 30))
-}

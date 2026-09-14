@@ -4,7 +4,6 @@ import {
   prochaineCharge,
   prochainEchelon,
   prochainMaintien,
-  repMax,
   seriesApresDeload,
   estSerieEfficace,
 } from './progression'
@@ -144,10 +143,3 @@ describe('volume et deload', () => {
   })
 })
 
-describe('repMax', () => {
-  it('applique Epley', () => {
-    expect(repMax(22, 11)).toBe(30)
-    expect(repMax(0, 10)).toBe(0)
-    expect(repMax(50, 0)).toBe(0)
-  })
-})

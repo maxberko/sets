@@ -1,7 +1,7 @@
 import type { Jour } from '../data/seances'
 import { JOURS, SEMAINES_BLOC } from '../data/seances'
 import { exercice } from '../data'
-import { estSerieEfficace, repMax } from './progression'
+import { estSerieEfficace } from './progression'
 import type { SessionLog } from './db'
 
 export function jourDe(d: Date): Jour {
@@ -57,27 +57,6 @@ export function seriesCetteSemaine(seances: SessionLog[], programme: string, mai
   return semaine?.parProgramme[programme] ?? 0
 }
 
-export interface PointTendance {
-  date: number
-  kg: number
-  reps: number
-  rm: number
-}
-
-/** Meilleure série par séance pour un exercice, pour la courbe de tendance. */
-export function tendance(seances: SessionLog[], exerciceId: string): PointTendance[] {
-  const points: PointTendance[] = []
-  for (const s of seances) {
-    let meilleur: PointTendance | undefined
-    for (const serie of s.series) {
-      if (serie.exerciceId !== exerciceId || !serie.kg || !serie.reps) continue
-      const rm = repMax(serie.kg, serie.reps)
-      if (!meilleur || rm > meilleur.rm) meilleur = { date: s.debut, kg: serie.kg, reps: serie.reps, rm }
-    }
-    if (meilleur) points.push(meilleur)
-  }
-  return points.sort((a, b) => a.date - b.date)
-}
 
 export function seancesFaitesLe(seances: SessionLog[], jour: string): SessionLog[] {
   return seances.filter((s) => new Date(s.debut).toISOString().slice(0, 10) === jour && s.fin)
