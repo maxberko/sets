@@ -45,9 +45,12 @@ export function Aujourdhui() {
         <BandeSemaine plan={plan} jourActuel={jour} faites={faitesCetteSemaine.map((s) => ({ jour: jourDe(new Date(s.debut)), id: s.templateId }))} />
 
         {restantes.length === 0 && prevues.length > 0 && (
-          <p style={{ padding: '18px 0', borderTop: '1.5px solid var(--encre)' }}>
-            Tout est fait pour aujourd'hui. Prochaine séance {prochainJourAvecSeance(plan, jour)}.
-          </p>
+          <div style={{ padding: '18px 0', borderTop: '1.5px solid var(--encre)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <p style={{ fontSize: '19px', fontWeight: 600 }}>Tout est fait pour aujourd'hui.</p>
+            <p class="discret" style={{ fontSize: '15px' }}>
+              Prochaine séance {prochainJourAvecSeance(plan, jour)}.
+            </p>
+          </div>
         )}
 
         {prevues.length === 0 && (
@@ -82,7 +85,10 @@ export function Aujourdhui() {
           <CarteSeance key={id} templateId={id} principale={i === 0} semaine={semaine} mobiliteFaites={mobiliteFaites} mobilitePrevues={mobilitePrevues} />
         ))}
 
-        {faitesAujourdhui.length > 0 && (
+        {/* Seulement quand il reste quelque chose à faire : ça situe la séance
+            qui suit. Une fois la journée finie, « Tout est fait » le dit déjà, et
+            le compte n'apprenait plus rien. */}
+        {faitesAujourdhui.length > 0 && restantes.length > 0 && (
           <p class="discret" style={{ fontSize: '14px', paddingTop: '4px' }}>
             {faitesAujourdhui.length === 1 ? 'Une séance déjà faite aujourd\'hui.' : `${faitesAujourdhui.length} séances déjà faites aujourd'hui.`}
           </p>

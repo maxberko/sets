@@ -99,13 +99,17 @@ function Barres({
 }) {
   const cible = CIBLES_HEBDO[programme]!
   const max = 24
-  const h = 66
+  const h = 88
   const largeur = 342
   const n = SEMAINES_BLOC
   const pas = largeur / n
-  const barre = pas - 18
-  const y = (v: number) => h - 2 - (Math.min(v, max) / max) * (h - 8)
+  // Des barres larges, séparées par une simple gouttière : à 18 px d'écart elles
+  // ressemblaient à des traits posés sur un fond, et on ne voyait pas qu'il y
+  // avait huit semaines.
+  const barre = pas - 8
+  const y = (v: number) => h - 2 - (Math.min(v, max) / max) * (h - 14)
   const derniers = volumes.slice(-n)
+  const semaineCourante = Math.min(derniers.length, n)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -116,17 +120,62 @@ function Barres({
           {actuel} cette semaine · cible {cible[0]}–{cible[1]}
         </span>
       </div>
-      <svg viewBox={`0 0 ${largeur} ${h + 4}`} width="100%" height={h + 4} role="img" aria-label={`Séries efficaces ${NOM_PROGRAMME[programme]} par semaine, cible ${cible[0]} à ${cible[1]}`} style={{ display: 'block', overflow: 'visible' }}>
-        <rect x="0" y={y(cible[1])} width={largeur} height={Math.max(0, y(cible[0]) - y(cible[1]))} fill={COULEUR_PROGRAMME[programme]} opacity="0.12" />
-        <line x1="0" y1={h - 1.5} x2={largeur} y2={h - 1.5} stroke="var(--encre)" stroke-width="1" />
+      <svg viewBox={`0 0 ${largeur} ${h + 16}`} width="100%" height={h + 16} role="img" aria-label={`Séries efficaces ${NOM_PROGRAMME[programme]} par semaine, cible ${cible[0]} à ${cible[1]}`} style={{ display: 'block', overflow: 'visible' }}>
+        {/* La cible est une bande, et elle se nomme : « 24 » seul en haut à droite
+            n'apprenait rien, alors que c'est entre 12 et 20 que tout se joue. */}
+        <rect x="0" y={y(cible[1])} width={largeur} height={Math.max(0, y(cible[0]) - y(cible[1]))} fill={COULEUR_PROGRAMME[programme]} opacity="0.14" />
+        <text x="2" y={y(cible[1]) - 4} font-size="10" fill="var(--sourdine)">
+          cible {cible[0]}–{cible[1]}
+        </text>
+
+        {/* Chaque semaine du bloc a sa colonne, même vide : sans elles, une seule
+            barre en semaine 1 flottait dans du blanc sans dire de quoi elle était
+            la première. */}
         {Array.from({ length: n }, (_, i) => {
           const v = derniers[i]?.parProgramme[programme] ?? 0
-          if (v <= 0) return null
           const x = i * pas + 4
+          const courante = i === semaineCourante - 1
+          if (v <= 0) {
+            return <rect key={i} x={x} y={h - 5} width={barre} height="3" rx="1.5" fill={COULEUR_PROGRAMME[programme]} opacity="0.2" />
+          }
           const haut = y(v)
-          return <rect key={i} x={x} y={haut} width={barre} height={h - 2 - haut} rx="2" fill={COULEUR_PROGRAMME[programme]} />
+          return (
+            <rect
+              key={i}
+              x={x}
+              y={haut}
+              width={barre}
+              height={h - 2 - haut}
+              rx="2"
+              fill={COULEUR_PROGRAMME[programme]}
+              opacity={courante ? 1 : 0.55}
+            />
+          )
         })}
-        <text x={largeur} y="9" font-size="10" fill="var(--sourdine)" text-anchor="end">{max}</text>
+
+        {/* Le compte de la semaine en cours, posé sur sa barre : sous l'axe, il
+            se cognait au repère de la première semaine. */}
+        {actuel > 0 && (
+          <text
+            x={(semaineCourante - 1) * pas + 4 + barre / 2}
+            y={Math.max(9, y(actuel) - 4)}
+            font-size="11"
+            font-weight="600"
+            fill="var(--encre)"
+            text-anchor="middle"
+          >
+            {actuel}
+          </text>
+        )}
+
+        <line x1="0" y1={h - 1.5} x2={largeur} y2={h - 1.5} stroke="var(--encre)" stroke-width="1" />
+        {/* Les deux bouts du bloc, pour que les colonnes se lisent comme des semaines. */}
+        <text x="0" y={h + 13} font-size="10" fill="var(--sourdine)">
+          semaine 1
+        </text>
+        <text x={largeur} y={h + 13} font-size="10" fill="var(--sourdine)" text-anchor="end">
+          {n}
+        </text>
       </svg>
     </div>
   )
