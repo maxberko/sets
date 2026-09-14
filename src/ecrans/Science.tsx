@@ -15,8 +15,11 @@ interface Chapitre {
 
 /**
  * Quatre chapitres courts, tenus par un fil : quelqu'un qui surfe déjà, et qui
- * s'entraîne à terre pour durer. D'où vient le programme, ce que le surf use,
- * comment un muscle pousse, et ce qu'on ne promet pas.
+ * s'entraîne à terre pour durer.
+ *
+ * Chaque titre dit à l'infinitif ce que le programme permet de faire, et se
+ * termine par un point. « Ce qu'on ne promet pas » ou « ce que le surf use »
+ * nommaient un sujet sans rien en dire ; on lisait une table des matières.
  *
  * Deux paragraphes par chapitre, phrases courtes : c'est un écran qu'on lit
  * debout, pas un article. Le sommaire remplace le paragraphe d'introduction, qui
@@ -24,7 +27,7 @@ interface Chapitre {
  */
 const CHAPITRES: Chapitre[] = [
   {
-    titre: 'Tu surfes déjà. Ce programme sert à durer',
+    titre: "T'entraîner à terre pour durer à l'eau.",
     paragraphes: [
       "L'eau te donne des heures de rame et de l'équilibre. Elle ne te charge jamais assez pour épaissir un muscle, et elle laisse des traces. Chez les surfeurs professionnels, le genou est la première articulation blessée. Les deux tiers des blessures de hanche viennent d'un conflit. L'épaule perd de la rotation externe.",
       "En face, l'entraînement en force divise les blessures par trois, sur 25 essais et 26 000 personnes. C'est ce qu'on vient chercher ici : des années de pratique en plus.",
@@ -34,7 +37,7 @@ const CHAPITRES: Chapitre[] = [
     sources: ['hohn2018', 'surf-genou-hanche', 'furness2018', 'lauersen2014'],
   },
   {
-    titre: "Le genou, la hanche, l'épaule : ce que le surf use",
+    titre: 'Renforcer ce que le surf use.',
     paragraphes: [
       "Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception revient le plus souvent. Un genou se protège au-dessus et en dessous de lui : renforcer la hanche bat le travail du genou seul, et chaque tranche de 10 % de dorsiflexion non utilisée à la réception lui ajoute 3,2 degrés d'abduction.",
       "L'étirement, lui, n'a réduit aucune blessure dans les essais. Il sert à gagner de l'amplitude, ce qui demande cinq minutes par muscle et par semaine.",
@@ -44,7 +47,7 @@ const CHAPITRES: Chapitre[] = [
     sources: ['hanchard2021', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'cochrane2011', 'thomas2018', 'behm2016'],
   },
   {
-    titre: 'Un muscle pousse au volume, pas au matériel',
+    titre: 'Progresser par le volume, pas par le matériel.',
     paragraphes: [
       "Dix séries par muscle et par semaine suffisent à progresser, douze à vingt chez quelqu'un d'entraîné. Au-delà, chaque série rapporte moins. La fréquence ne fait que répartir ce volume : deux séances servent à le caser.",
       "La charge compte moins que la proximité de l'échec. Léger et lourd donnent la même hypertrophie quand la série finit près de la limite. Un jour de tapis vaut un jour de salle.",
@@ -54,7 +57,7 @@ const CHAPITRES: Chapitre[] = [
     sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017charge', 'robinson2024'],
   },
   {
-    titre: "Ce qu'on ne promet pas",
+    titre: "Savoir ce qui est prouvé, et ce qui ne l'est pas.",
     paragraphes: [
       "Aucun exercice ne fait fondre le ventre. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille, et treize études réunies donnent un effet nul. L'alimentation découvre les abdominaux ; l'entraînement les épaissit.",
       "La plupart des exercices de mobilité courants n'ont jamais été testés. Chaque fiche te le dit par un point :",
@@ -73,7 +76,7 @@ export function Science() {
     <div class="ecran">
       <Entete />
       <div class="contenu">
-        <Titre titre="Science" apres="S'entraîner à terre pour durer à l'eau" />
+        <Titre titre="Science" apres="Ce que le programme fait pour toi, et sur quoi il s'appuie" />
 
         {/* Le sommaire remplace le paragraphe qui annonçait le texte : il montre
             les quatre titres et mène droit au chapitre cherché. */}
