@@ -91,6 +91,47 @@ export function aDesDessins(id: string) {
   return id in DESSINS
 }
 
+/**
+ * La même paire de dessins, réduite en bandeau pour le lecteur de force : pas de
+ * légendes (illisibles à cette hauteur), et la teinte suit le texte de l'écran,
+ * donc l'encre sur le fond coloré. Le bandeau remplace la vignette YouTube, qui
+ * posait un rectangle noir en travers de la couleur — et allait chercher son
+ * image chez i.ytimg.com avant le moindre appui.
+ */
+export function BandeauPositions({ ex }: { ex: Exercise }) {
+  const d = DESSINS[ex.id]
+  if (!d) return null
+  const base = import.meta.env.BASE_URL
+
+  return (
+    <div style={{ display: 'flex', gap: '10px', height: '100%', alignItems: 'stretch' }}>
+      {d.images.map(([n, legende]) => {
+        const url = `url(${base}illustrations/${d.dossier}/frame-${n}.svg)`
+        return (
+          <div
+            key={n}
+            role="img"
+            aria-label={`${ex.nom}, ${legende.toLowerCase()}`}
+            style={{
+              aspectRatio: '1',
+              height: '100%',
+              background: 'currentColor',
+              maskImage: url,
+              WebkitMaskImage: url,
+              maskSize: 'contain',
+              WebkitMaskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              maskPosition: 'center',
+              WebkitMaskPosition: 'center',
+            }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
 export function Positions({ ex, couleur }: { ex: Exercise; couleur?: string }) {
   const d = DESSINS[ex.id]
   if (!d) return null

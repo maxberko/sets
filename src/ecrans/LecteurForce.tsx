@@ -5,6 +5,7 @@ import { Entete } from '../composants/communs'
 import { Demonstration } from '../composants/demonstration'
 import { FinSeance, bilanDeSeance } from '../composants/finSeance'
 import { Chevron, Coche, Croix, Lecture, Moins, Plus } from '../composants/icones'
+import { BandeauPositions, aDesDessins } from '../composants/positions'
 import { COULEUR_PROGRAMME, estSemaineDeDecharge, exerciceDuSlot, seance, seriesDeLaSemaine } from '../data'
 import type { Exercise, Slot, Venue } from '../data/types'
 import { biper, garderEcranAllume, vibrer } from '../lib/appareil'
@@ -231,14 +232,10 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             court faisait remonter la dose et « La fiche ». */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '4px' }}>
           <h2 style={{ fontWeight: 700, fontSize: '26px', minHeight: '50px' }}>{ex.nom}</h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '12px', fontSize: '14px' }}>
-            <span>{doseLisible(slot, totalSeries, decharge, echelle, echelonInitial)}</span>
-            <button
-              onClick={() => aller(`/exercice/${ex.id}`)}
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', fontWeight: 600, whiteSpace: 'nowrap', minHeight: 'var(--cible)' }}
-            >
-              La fiche <Chevron taille={14} />
-            </button>
+          {/* Plus de hauteur de cible à réserver ici : « La fiche » est descendu
+              sous les dessins, la ligne n'est plus qu'un texte. */}
+          <div style={{ fontSize: '14px' }}>
+            {doseLisible(slot, totalSeries, decharge, echelle, echelonInitial)}
           </div>
         </div>
 
@@ -248,11 +245,40 @@ export function LecteurForce({ templateId, venue }: { templateId: string; venue:
             sous 150 px l'iframe YouTube recouvre l'image de son habillage. Un
             appui ouvre la lecture en plein écran, sans quitter la séance. Absente
             pendant le repos, comme demandé. */}
-        {repos === null && ex.video?.youtubeId && (
-          <div class="vignette-demo" style={{ display: 'flex', flex: 'none', marginTop: '8px', height: 'clamp(64px, calc(var(--hauteur-fenetre, 100dvh) * 0.1), 120px)' }}>
-            <Demonstration ex={ex} cle={`${ex.id}-${slotIndex}`} hauteurMini="0" surOuvrir={() => setDemoOuverte(true)} />
+        {repos === null && (aDesDessins(ex.id) || ex.video?.youtubeId) && (
+          <div class="vignette-demo" style={{ display: 'flex', flex: 'none', marginTop: '8px', height: aDesDessins(ex.id)
+              // Les dessins prennent le mou du bas, et rien de plus : 86 px à
+              // 700 px de haut, puis 0,55 px gagné par pixel d'écran en plus.
+              // Mesuré après l'allègement des compteurs : il reste 44 px sous la
+              // dernière série à 812 px, 16 px à 700 px. Un simple pourcentage de
+              // la hauteur passait la troisième série sous le bouton.
+              ? 'clamp(64px, calc((var(--hauteur-fenetre, 100dvh) - 700px) * 0.55 + 86px), 150px)'
+              : 'clamp(64px, calc(var(--hauteur-fenetre, 100dvh) * 0.1), 120px)' }}>
+            {aDesDessins(ex.id) ? (
+              // Les dessins passent devant la vignette vidéo : ils tiennent la
+              // couleur de l'écran et disent la position d'un coup d'œil, ce
+              // qu'une image figée de vidéo ne fait pas. Ils ne s'appuient pas :
+              // rien ne l'annoncerait, et un appui de travers pendant une série
+              // lancerait une vidéo. La démonstration est sur la fiche, dessous.
+              <BandeauPositions ex={ex} />
+            ) : (
+              <Demonstration ex={ex} cle={`${ex.id}-${slotIndex}`} hauteurMini="0" surOuvrir={() => setDemoOuverte(true)} />
+            )}
           </div>
         )}
+
+        {/* « La fiche » sous les dessins et calé à droite : le renvoi suit ce qu'il
+            prolonge — on regarde la position, puis on va chercher le détail. En
+            haut, contre la dose, il concurrençait le nom de l'exercice. Il reste
+            là pendant le repos, quand les dessins s'effacent. */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2px' }}>
+          <button
+            onClick={() => aller(`/exercice/${ex.id}`)}
+            style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', minHeight: 'var(--cible)' }}
+          >
+            La fiche <Chevron taille={14} />
+          </button>
+        </div>
 
         {/* Ancré sous l'en-tête, à sa taille naturelle : le mou se ramasse en bas,
             au-dessus du bouton. Centré, il ouvrait un vide de 100 px juste sous
@@ -516,26 +542,23 @@ function Compteur({
     <div
       style={{
         display: 'grid',
-        // 52 px : à 68 les deux commandes pesaient autant que le chiffre, qui doit
-        // rester l'objet principal. La cible tactile reste large, la cellule est
-        // haute de 58 à 148 px.
-        gridTemplateColumns: '52px minmax(0, 1fr) 52px',
+        // 46 px : à 52 les deux commandes pesaient autant que le chiffre, qui doit
+        // rester l'objet principal. La cible tactile garde ses 44 px.
+        gridTemplateColumns: '46px minmax(0, 1fr) 46px',
         border: '1.5px solid var(--encre)',
         borderRadius: 'var(--r)',
-        // Le compteur prend le mou du bloc plutôt que de le laisser en marge, avec
-        // un plancher tactile et un plafond pour ne pas devenir un panneau.
-        // Taille mesurée sur la fenêtre, pas sur le mou disponible : le bloc
-        // qu'on regarde n'a pas à enfler parce que l'écran est grand. 10,3 % et
-        // non plus 11,8 : c'est ce qui laisse sa place à la vignette de
-        // démonstration sous le titre, jusqu'à 680 px de haut.
-        height: 'clamp(58px, calc(var(--hauteur-fenetre, 100dvh) * 0.103), 148px)',
+        // Deux réglages avant la série ne sont pas le sujet de l'écran : ils
+        // portaient l'œil avant le nom de l'exercice et avant les dessins. 7,4 %
+        // de la fenêtre au lieu de 10,3, plafond ramené de 148 à 96 px — de quoi
+        // lire et corriger un chiffre, pas de quoi ouvrir un panneau de contrôle.
+        height: 'clamp(52px, calc(var(--hauteur-fenetre, 100dvh) * 0.074), 96px)',
         // Le chiffre suit la boîte, ce qui le garde proportionné à toute hauteur.
         containerType: 'size',
         overflow: 'hidden',
       }}
     >
       <button onClick={() => ajuste(-pas)} aria-label={`Moins ${pas} ${unite}`} style={{ borderRight: '1.5px solid var(--encre)', display: 'grid', placeItems: 'center' }}>
-        <Moins taille={20} />
+        <Moins taille={18} />
       </button>
       {saisie === null ? (
         <button
@@ -547,10 +570,10 @@ function Compteur({
              l'ensemble quel que soit l'axe retenu. */
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1px' }}
         >
-          <span class="chiffre" style={{ fontSize: 'clamp(28px, 52cqh, 76px)', lineHeight: 0.9 }}>
+          <span class="chiffre" style={{ fontSize: 'clamp(24px, 48cqh, 46px)', lineHeight: 0.9 }}>
             {valeur}
           </span>
-          <span style={{ fontSize: '13px', fontWeight: 500, opacity: 0.8, lineHeight: 1.1 }}>{unite}</span>
+          <span style={{ fontSize: '12px', fontWeight: 500, opacity: 0.8, lineHeight: 1.1 }}>{unite}</span>
         </button>
       ) : (
         <input
@@ -567,7 +590,7 @@ function Compteur({
             font: 'inherit',
             fontFamily: 'var(--titre)',
             fontWeight: 800,
-            fontSize: 'clamp(28px, 52cqh, 76px)',
+            fontSize: 'clamp(24px, 48cqh, 46px)',
             textAlign: 'center',
             border: 'none',
             background: 'transparent',
@@ -578,7 +601,7 @@ function Compteur({
         />
       )}
       <button onClick={() => ajuste(pas)} aria-label={`Plus ${pas} ${unite}`} style={{ borderLeft: '1.5px solid var(--encre)', display: 'grid', placeItems: 'center' }}>
-        <Plus taille={20} />
+        <Plus taille={18} />
       </button>
     </div>
   )
