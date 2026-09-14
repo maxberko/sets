@@ -16,90 +16,64 @@ interface Chapitre {
  * mêlait abdominaux, pectoraux et mobilité : tout était vrai, rien ne se tenait,
  * et aucun ne disait ce qu'il changeait dans l'appli.
  *
- * Sept chapitres, dans l'ordre où le programme se conçoit. Le premier pose d'où
- * il vient — quelqu'un qui surfe déjà plusieurs fois par semaine, et à qui le
- * surf laisse une dette articulaire et une envie esthétique. Viennent ensuite ce
- * qu'on ne promet pas, comment la semaine est bâtie, pourquoi ces exercices-là,
- * ce qui compte vraiment dans une série, ce que le surf abîme, et ce qu'on ne
- * sait pas. Chacun se termine sur ce qu'il change, puis ses sources.
+ * Cinq chapitres courts, tenus par un fil : quelqu'un qui surfe déjà, et qui
+ * s'entraîne à terre pour durer. D'où il vient, ce que le surf use, comment un
+ * muscle pousse, pourquoi ces exercices-là, et ce qu'on ne promet pas. Chacun se
+ * termine sur ce qu'il change dans l'appli, puis sur ses sources.
+ *
+ * Deux paragraphes par chapitre au maximum : c'est un écran qu'on lit debout,
+ * pas un article.
  */
 const CHAPITRES: Chapitre[] = [
   {
-    titre: 'Ce programme est fait pour quelqu\'un qui surfe déjà',
+    titre: 'Tu surfes déjà — ce programme sert à tenir dans la durée',
     paragraphes: [
-      "Tu passes plusieurs séances par semaine à l'eau. Le surf s'occupe déjà du cardio, de l'équilibre et des heures de rame ; ce n'est pas ce qui manque. Ce qu'il ne fait pas, c'est te charger assez pour épaissir un muscle, et il laisse deux dettes derrière lui.",
-      "La première est articulaire. Chez les surfeurs professionnels, le genou est la première articulation blessée, et les deux tiers des blessures de hanche viennent d'un conflit. L'épaule suit, avec un déficit de rotation externe mesuré chez les surfeurs de compétition et une mobilité thoracique qui manque.",
-      "La seconde est esthétique, et l'appli l'assume : des pectoraux plus épais et des abdominaux visibles, ça ne vient pas de la rame. Ce sont deux moitiés distinctes du programme, et elles ne se justifient pas de la même façon — la mobilité répond aux blessures documentées du surf, la force répond au corps que tu veux.",
+      "L'eau te donne le cardio, l'équilibre et les heures de rame. Elle ne te charge pas assez pour épaissir un muscle, et elle laisse une dette : chez les surfeurs professionnels, le genou est la première articulation blessée, les deux tiers des blessures de hanche viennent d'un conflit, et l'épaule montre un déficit de rotation externe.",
+      "Ce qu'on met en face n'est pas un programme de plage : sur 25 essais et 26 000 personnes, l'entraînement en force divise les blessures par trois. Un corps plus solide, c'est d'abord plus d'années de pratique.",
     ],
     dansLappli:
-      "Deux séances de force par semaine seulement, parce que tes sessions à l'eau occupent déjà la semaine, et trois séances de mobilité de quatorze minutes, jamais programmées autour de tes sessions : l'appli ne te demande pas quand tu surfes.",
-    sources: ['hohn2018', 'surf-genou-hanche', 'furness2018', 'langenberg2021'],
+      "Deux séances de force par semaine, parce que l'eau occupe déjà ta semaine, et trois séances de mobilité de quatorze minutes. L'appli ne te demande jamais quand tu surfes : elle s'ajoute à ta pratique, elle ne la réorganise pas.",
+    sources: ['hohn2018', 'surf-genou-hanche', 'furness2018', 'lauersen2014'],
   },
   {
-    titre: 'Aucun exercice ne fait fondre le ventre',
+    titre: 'Le genou, la hanche, l\'épaule : ce que le surf use',
     paragraphes: [
-      "C'est la promesse la plus répandue de la salle de sport, et c'est la mieux réfutée. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille ni au pli cutané dans un essai contrôlé. Douze semaines de travail sur une seule jambe ont fait perdre du gras au tronc et aux bras, mais pas à la jambe entraînée. Une méta-analyse de treize études conclut à un effet nul.",
-      "Travailler un muscle le fait grossir et l'endurcit ; ça ne vide pas la graisse posée dessus. Ce qui découvre les abdominaux, c'est le déficit calorique — une affaire d'alimentation, pas de répétitions.",
-      "Ce n'est pas une raison pour s'en passer : un abdominal entraîné est plus épais, donc plus visible à niveau de gras égal, et c'est lui qui tient le tronc pendant le reste.",
+      "Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception est le mécanisme le plus cité. Ce qui protège un genou se travaille au-dessus et en dessous de lui : renforcer les abducteurs et rotateurs de hanche bat le travail du genou seul, et à la cheville, chaque tranche de 10 % de dorsiflexion non utilisée ajoute 3,2 degrés d'abduction au genou.",
+      "L'étirement, lui, n'a réduit aucune blessure dans les essais. Il garde son rôle — l'amplitude se gagne par le temps cumulé, au moins cinq minutes par muscle et par semaine — mais ce n'est pas lui qui te protège.",
     ],
     dansLappli:
-      "Tu ne trouveras ici ni programme minceur, ni exercice vendu comme brûleur. L'appli compte des séries, pas des calories, et ne te demande ni ton poids ni ton tour de taille.",
-    sources: ['vispute2011', 'ramirez2013', 'ramirez2022'],
+      "La séance de mobilité est à moitié du renforcement : moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe. L'épaule a ses deux exercices, l'open book et la rotation externe. Les maintiens montent d'un palier quand tu les trouves faciles.",
+    sources: ['hanchard2021', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'cochrane2011', 'thomas2018', 'behm2016'],
   },
   {
-    titre: 'Le volume fait le travail, la fréquence le répartit',
+    titre: 'Un muscle pousse au volume, pas au matériel',
     paragraphes: [
-      "La prise de position de l'ACSM parue en 2026, bâtie sur 137 revues systématiques, situe la cible autour de dix séries par muscle et par semaine, avec au moins deux séances. Chez un homme déjà entraîné, la fourchette utile monte à douze à vingt séries.",
-      "Une fois ce volume atteint, la fréquence n'apporte plus rien par elle-même : deux séances ne valent pas mieux qu'une par magie, elles servent à caser le volume sans faire des séances interminables. C'est la quantité de travail qui décide, la répartition n'est qu'un moyen.",
-      "Au-delà de vingt séries, chaque série supplémentaire rapporte un peu moins, sans jamais nuire. Tu le paies surtout en temps et en récupération.",
+      "La prise de position de l'ACSM parue en 2026, bâtie sur 137 revues systématiques, situe la cible autour de dix séries par muscle et par semaine, douze à vingt chez un homme entraîné. Une fois ce volume atteint, la fréquence n'ajoute rien par elle-même : deux séances servent à le caser, pas à faire mieux.",
+      "Et ce n'est pas la charge qui décide, c'est la proximité de l'échec : charges légères et lourdes donnent la même hypertrophie quand la série finit près de la limite. Un jour de tapis vaut donc un jour de salle.",
     ],
     dansLappli:
-      "Deux séances de force par semaine, et la jauge de l'accueil compte tes séries efficaces contre la fourchette 12–20. C'est le minimum qui tienne la cible sans empiéter sur l'eau ; la formule Soutenue en ajoute une, et l'écran Programme dit ce qu'elle coûte.",
-    sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017vol'],
+      "La jauge de l'accueil compte tes séries efficaces contre la fourchette 12–20. Chaque créneau annonce les répétitions à garder en réserve, et sur tapis la progression passe par une échelle de difficulté au lieu des kilos.",
+    sources: ['acsm2026', 'bazvalle2022', 'schoenfeld2019freq', 'schoenfeld2017charge', 'robinson2024'],
   },
   {
-    titre: "L'abdominal est un muscle comme un autre — on l'oriente, on ne l'isole pas",
+    titre: 'Pourquoi ces exercices-là',
     paragraphes: [
-      "Il n'existe pas de recherche sur le volume propre aux abdominaux, donc on leur applique ce qui vaut pour les autres muscles : plus de séries hebdomadaires, plus de croissance jusqu'à un plateau. Les squats et les soulevés de terre laissent l'activation abdominale bien en dessous du maximum : le travail direct et chargé reste nécessaire.",
-      "Le recrutement se fait près de la charge. Un crunch sollicite davantage les segments hauts, un relevé de jambes les segments bas. C'est une orientation, pas une isolation : personne ne contracte la moitié d'un muscle à volonté.",
-      "Côté pectoraux, le même raisonnement mène aux trente degrés. L'activation du haut du pectoral culmine à cette inclinaison et glisse vers le deltoïde antérieur au-delà ; la seule étude qui a comparé la croissance selon l'angle a trouvé que l'incliné épaissit davantage le haut du pectoral que le banc plat.",
+      "L'activation du haut du pectoral culmine à trente degrés d'inclinaison et glisse vers l'épaule au-delà ; la seule étude comparant la croissance selon l'angle donne l'avantage à l'incliné. Côté tronc, le recrutement se fait près de la charge : un crunch sollicite les segments hauts, un relevé de jambes les segments bas. C'est une orientation, pas une isolation.",
+      "Les squats et les soulevés de terre laissent l'activation abdominale loin du maximum : un tronc solide demande du travail direct et chargé, pas seulement des exercices globaux.",
     ],
     dansLappli:
-      "Chaque séance de force porte autant de séries d'abdominaux que de pectoraux, et associe un mouvement qui amène les côtes vers le bassin à un mouvement qui amène le bassin vers les côtes. Le banc se règle à 30°, et la fiche te le redit à l'étape 1.",
-    sources: ['schoenfeld2016freq', 'sbs-core', 'gomirato2023', 'ace2001abdos', 'escamilla2006', 'rodriguez2020', 'chaves2020'],
+      "Le banc se règle à 30°, et la fiche te le redit à l'étape 1. Chaque séance associe un mouvement qui amène les côtes vers le bassin à un mouvement qui amène le bassin vers les côtes.",
+    sources: ['rodriguez2020', 'chaves2020', 'gomirato2023', 'ace2001abdos', 'escamilla2006', 'sbs-core'],
   },
   {
-    titre: 'Ce qui compte, c\'est la dernière répétition',
+    titre: 'Ce qu\'on ne promet pas',
     paragraphes: [
-      "Charges légères et charges lourdes produisent une hypertrophie comparable quand les séries finissent près de l'échec, et la croissance augmente à mesure qu'on s'en approche. Le poids sur la barre n'est pas le signal : l'effort réel des dernières répétitions l'est.",
-      "C'est ce qui rend un jour de tapis aussi valable qu'un jour de salle. Sans haltères, on charge autrement — en ralentissant la descente, en creusant l'amplitude, en rapprochant les appuis — et la série finit au même endroit.",
+      "Aucun exercice ne fait fondre le ventre. Six semaines d'abdominaux quotidiens n'ont rien changé au tour de taille dans un essai contrôlé, et une méta-analyse de treize études conclut à un effet nul. Ce qui découvre les abdominaux, c'est l'alimentation ; l'entraînement, lui, épaissit le muscle dessous.",
+      "Et les exercices de mobilité les plus répandus n'ont, pour la plupart, jamais été testés dans un essai. Plutôt que de gommer la différence, chaque fiche porte un point : plein quand un essai soutient l'exercice, creux quand il ne repose que sur la convention clinique.",
     ],
     dansLappli:
-      "Chaque créneau annonce combien de répétitions tu dois garder en réserve. Les jours de tapis, la progression passe par une échelle de difficulté au lieu des kilos, et les deux comptent pareil dans ta semaine.",
-    sources: ['schoenfeld2017charge', 'robinson2024', 'acsm2026'],
-  },
-  {
-    titre: 'En surf, le genou se blesse avant le reste — et c\'est la force qui le protège',
-    paragraphes: [
-      "Chez les professionnels suivis par un même centre orthopédique, le genou est la première articulation blessée, devant la cheville et l'épaule : une moitié d'entorses du ligament collatéral médial, un tiers de lésions méniscales. Près des trois quarts des blessures du membre inférieur touchent la jambe arrière, et la réception est le mécanisme le plus souvent cité.",
-      "Sur 25 essais et 26 000 personnes, l'étirement n'a réduit les blessures en rien. L'entraînement en force les a divisées par trois. Les étirements après l'effort ne réduisent pas non plus les courbatures — ils ne sont pas inutiles, ils ne servent simplement pas à ça.",
-      "Ce qui protège un genou se travaille au-dessus et en dessous de lui : ajouter du renforcement des abducteurs et rotateurs externes de hanche bat le travail du genou seul, et à la cheville, chaque tranche de 10 % de dorsiflexion non utilisée à la réception ajoute 3,2 degrés d'abduction au genou.",
-      "L'épaule relève du même raisonnement : les surfeurs de compétition montrent un déficit de rotation externe et une mobilité thoracique réduite, deux choses qui se travaillent à terre, en force et en amplitude, pas en ramant davantage.",
-      "L'amplitude, elle, se gagne autrement : ce qui la prédit, c'est le temps cumulé par muscle et par semaine — au moins cinq minutes, réparties sur plusieurs séances, en maintiens de trente à soixante secondes.",
-    ],
-    dansLappli:
-      "La séance de mobilité est à moitié du renforcement — moyen fessier, descente latérale, Nordic, Copenhague, réception sur une jambe — et l'épaule y a ses deux exercices, l'open book et la rotation externe. Trois séances de quatorze minutes suffisent au total hebdomadaire, et les maintiens montent d'un palier quand tu les trouves faciles.",
-    sources: ['hohn2018', 'surf-genou-hanche', 'hanchard2021', 'lauersen2014', 'cochrane2011', 'halabchi2025', 'jospt2018', 'cheville-genou', 'langenberg2021', 'furness2018', 'thomas2018', 'behm2016'],
-  },
-  {
-    titre: 'Ce qu\'on ne sait pas, l\'appli le dit',
-    paragraphes: [
-      "Les exercices de mobilité les plus répandus n'ont, pour la plupart, jamais été testés dans un essai clinique. Ils reposent sur l'anatomie et sur l'usage en cabinet, ce qui n'est pas rien, mais ce n'est pas une preuve. Le renforcement, lui, a des essais derrière lui.",
-      "Plutôt que de gommer la différence, chaque fiche la porte : un point plein quand au moins un essai clinique soutient le fait de faire cet exercice, un point creux quand il ne repose que sur la convention clinique. Aucun exercice à point creux n'est présenté comme de la prévention.",
-    ],
-    dansLappli:
-      "Le point est sur chaque fiche de mobilité, et le même code se retrouve dans le lecteur. Tu peux donc savoir, exercice par exercice, sur quoi tu t'appuies.",
-    sources: ['delphi2025', 'fifa11plus', 'pep', 'nordic', 'mcgill'],
+      "Aucun exercice à point creux n'est présenté comme de la prévention, et l'appli ne suit ni ton poids ni ton tour de taille.",
+    sources: ['vispute2011', 'ramirez2022', 'delphi2025', 'fifa11plus', 'pep', 'nordic'],
   },
 ]
 
@@ -110,8 +84,7 @@ export function Science() {
       <div class="contenu">
         <Titre titre="Science" apres={`${CHAPITRES.length} chapitres`} />
         <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
-          Pourquoi ce programme, pour un surfeur qui s'entraîne à terre, est fait comme ça. Chaque chapitre finit par ce qu'il
-          change dans l'appli, puis par ses sources — tu peux vérifier chaque affirmation.
+          S'entraîner à terre pour durer à l'eau. Chaque chapitre finit par ce qu'il change dans l'appli, puis par ses sources.
         </p>
 
         {CHAPITRES.map((c, i) => (
