@@ -5,16 +5,17 @@ Source : Workout Guide (https://github.com/bryllim/workout-guide)
 Auteur : Bryl Lim (https://bryllim.com)
 Licence : CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
 
-developpe-incline-halteres/frame-1..3.svg
-  Repris de workout-guide, dossier assets/incline-dumbbell-press/.
-  L'image d'origine de la frame 1 vient d'Everkinetic
-  (https://github.com/everkinetic/data/blob/main/dist/svg/0061-tension.svg,
-  CC BY-SA 4.0), rastérisée puis vectorisée par Bryl Lim.
+Chaque dossier porte le nom de l'exercice chez workout-guide
+(assets/<nom>/frame-N.svg). Une partie des poses vient d'Everkinetic,
+rastérisée puis vectorisée par Bryl Lim ; le manifeste de workout-guide
+donne la source exacte, image par image.
 
 Modifications apportées ici
-  - Aucune modification du tracé.
+  - Le tracé n'est pas modifié.
+  - Le viewBox est recadré sur un carré centré autour du dessin, pour que
+    tous les exercices s'affichent à la même échelle.
   - La couleur de remplissage est appliquée à l'affichage (masque CSS),
-    le fichier reste tel quel.
+    et certaines images sont retournées horizontalement à l'affichage.
 
 Partage à l'identique
   Toute version modifiée de ces dessins doit être publiée sous CC BY-SA 4.0,

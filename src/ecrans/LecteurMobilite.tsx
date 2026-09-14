@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import { Entete } from '../composants/communs'
 import { Chevron, Coche, Croix, Lecture, Pause } from '../composants/icones'
 import { Demonstration } from '../composants/demonstration'
+import { BandeauPositions, aDesDessins } from '../composants/positions'
 import { BOUTON_CERNE, BOUTON_PLEIN, FinSeance, bilanDeSeance } from '../composants/finSeance'
 import { COULEUR_PROGRAMME, exerciceDuSlot, seance } from '../data'
 import type { Slot } from '../data/types'
@@ -158,10 +159,19 @@ export function LecteurMobilite({ templateId }: { templateId: string }) {
             La fiche de l'exercice
             <Chevron taille={16} />
           </button>
-          {ex.video?.youtubeId && (
-            <div style={{ flex: 1, minHeight: '150px', display: 'flex' }}>
-              <Demonstration ex={ex} cle={cle} />
+          {/* Les dessins passent devant la vidéo, comme au lecteur de force. Ici
+              ils savent en plus de quel côté on travaille : quand l'écran annonce
+              « côté droit », le membre qui travaille est dessiné à droite. */}
+          {aDesDessins(ex.id) ? (
+            <div style={{ flex: 1, minHeight: '120px', display: 'flex', alignItems: 'center' }}>
+              <BandeauPositions ex={ex} cote={cote} />
             </div>
+          ) : (
+            ex.video?.youtubeId && (
+              <div style={{ flex: 1, minHeight: '150px', display: 'flex' }}>
+                <Demonstration ex={ex} cle={cle} />
+              </div>
+            )
           )}
         </div>
 
