@@ -176,17 +176,24 @@ function CarteSeance({
           style={{
             background: COULEUR_PROGRAMME[b.programme],
             // Champs inégaux, et volontairement pas au prorata des séries : le
-            // premier ouvre la séance et porte son nom, il a droit à plus de
-            // place. C'est une hiérarchie de lecture, pas une mesure — d'ailleurs
-            // les deux blocs font huit séries chacun ici. Le compte est écrit,
-            // c'est le canal fiable.
+            // dernier porte le pied « Commencer », c'est là que la carte se
+            // termine et qu'on appuie, donc il prend la place. Les premiers
+            // annoncent. C'est une hiérarchie de lecture, pas une mesure —
+            // d'ailleurs les deux blocs font huit séries chacun ici. Le compte
+            // est écrit, c'est le canal fiable.
             //
             // Base zéro pour que le rapport porte sur la hauteur entière et pas
             // sur le seul mou : le contenu des deux champs a trop peu d'écart
             // depuis qu'ils sont titrés pareil, et le partage du mou les rendait
             // presque égaux. `min-height: auto` protège du débordement si la
             // carte tombe à ses 300 px.
-            flex: i === 0 ? '1.25 1 0' : '1 1 0',
+            //
+            // 1,45 et non 1,25 : le navigateur ajoute les marges intérieures
+            // par-dessus une base nulle, et le dernier champ n'en a pas en bas
+            // (le pied porte la sienne). Les 18 px d'écart faussent le rapport,
+            // donc le facteur est calé sur la mesure — 166 px contre 205 sur un
+            // écran de 844 — et pas sur le calcul.
+            flex: i === blocs.length - 1 ? '1.45 1 0' : '1 1 0',
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
