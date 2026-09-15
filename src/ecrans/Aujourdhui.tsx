@@ -23,6 +23,12 @@ export function Aujourdhui() {
   const plan = planDe(d.reglages.formule)
   const prevues = plan[jour] ?? []
   const restantes = prevues.filter((id) => !faitesAujourdhui.some((s) => s.templateId === id))
+  // Peu importe le jour de l'inscription, le premier jour doit offrir une séance.
+  // Sans ça, s'inscrire un mardi en formule légère ouvre sur « jour de repos » :
+  // on referme l'appli sans avoir rien essayé, le jour où on avait le plus envie.
+  // Le plan garde ses jours habituels — c'est une porte d'entrée, pas un décalage.
+  const jamaisFait = !d.seances.some((s) => s.fin)
+  const bienvenue = jamaisFait && prevues.length === 0 ? JOURS.flatMap((j) => plan[j] ?? [])[0] : undefined
   const mobiliteFaites = faitesCetteSemaine.filter((s) => s.templateId === 'mobilite').length
   const mobilitePrevues = JOURS.reduce((n, j) => n + (plan[j] ?? []).filter((x) => x === 'mobilite').length, 0)
 
@@ -54,7 +60,17 @@ export function Aujourdhui() {
           </div>
         )}
 
-        {prevues.length === 0 && (
+        {bienvenue && (
+          <div style={{ padding: '18px 0', borderTop: '1.5px solid var(--encre)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <p style={{ fontSize: '19px', fontWeight: 600 }}>Pour commencer</p>
+            <p class="discret" style={{ fontSize: '15px' }}>
+              Ta formule ne prévoit rien un {NOM_JOUR[jour].toLowerCase()}. Commence quand même par celle-ci — le plan reprend
+              son cours {prochainJourAvecSeance(plan, jour)}.
+            </p>
+          </div>
+        )}
+
+        {prevues.length === 0 && !bienvenue && (
           <div style={{ padding: '18px 0', borderTop: '1.5px solid var(--encre)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <p>Jour de repos. Rien de prévu, et c'est voulu.</p>
             <button class="secondaire" onClick={() => aller('/programme')}>
@@ -80,6 +96,16 @@ export function Aujourdhui() {
             </span>
             <span style={{ fontSize: '14px', fontWeight: 600 }}>Reprendre où tu en étais</span>
           </button>
+        )}
+
+        {bienvenue && (
+          <CarteSeance
+            templateId={bienvenue}
+            principale
+            semaine={semaine}
+            mobiliteFaites={mobiliteFaites}
+            mobilitePrevues={mobilitePrevues}
+          />
         )}
 
         {restantes.map((id, i) => (
