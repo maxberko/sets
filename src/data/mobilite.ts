@@ -185,6 +185,11 @@ export const MOBILITE: Exercise[] = [
     pourquoi:
       "Le curl glissé dépasse 90 % de la contraction maximale sur les deux chefs des ischio-jambiers, au même rang que le Nordic — mais c'est de l'EMG, pas un essai. Il remplace ici le Nordic, qui demandait quelqu'un pour tenir les chevilles : la méta-analyse 2026 ne distingue aucun programme des autres et montre que tout se joue sur l'observance, or un exercice qu'on saute ne protège personne.",
     sources: ['tsaklis2015', 'observance2026', 'impellizzeri2021'],
+    // Cet exercice n'avait aucun visuel : ni dessin — la bibliothèque n'a qu'un
+    // banc à chevilles — ni vidéo. `creator` désigne ici la vidéo elle-même et
+    // non une page de référence : les étapes n'ont pas été vérifiées contre elle,
+    // et la fiche n'affiche donc pas « étapes vérifiées contre ».
+    video: { url: 'https://www.youtube.com/watch?v=6tUMNj1S-rg', creator: 'Alex Bunt', youtubeId: '6tUMNj1S-rg' },
   },
   {
     id: 'copenhague',

@@ -28,9 +28,10 @@ import type { Exercise } from '../data/types'
  *    clignote au lieu de bouger. Celles-là gardent la paire fixe. C'est un
  *    défaut des dessins, pas du fondu.
  *
- * 2. Deux dessins partout où les deux bouts du mouvement se distinguent. Seul le
- *    gainage latéral n'en garde qu'un : ses deux images montrent la même chose,
- *    une paire y ferait croire à un mouvement qui n'existe pas.
+ * 2. Deux dessins partout où les deux bouts du mouvement se distinguent, un seul
+ *    partout ailleurs : le gainage latéral et le copenhague, dont les deux images
+ *    montrent la même chose, et le bird dog, dont elles montrent la même pose
+ *    retournée. Une paire y ferait croire à un mouvement qui n'existe pas.
  * 3. `coteDessine` dit de quel côté de l'image se trouve le membre qui travaille.
  *    Quand le lecteur annonce un côté, le dessin est retourné pour que ce membre
  *    tombe du côté annoncé — comme dans un miroir de salle. Absent là où « côté »
@@ -131,12 +132,20 @@ const DESSINS: Record<string, Dessin> = {
   copenhague: {
     dossier: 'copenhagen-plank',
     coteDessine: 'gauche', // jambe du dessus, celle qui travaille, vers la gauche
-    images: [{ n: 1, legende: 'Jambe pliée' }, { n: 3, legende: 'Jambe tendue' }],
+    // Un seul dessin : les images 1 et 3 montrent la même position jambe tendue —
+    // la légende « jambe pliée » de l'image 1 ne correspondait à rien de dessiné.
+    // Et le copenhague est un maintien, pas un aller-retour : une paire promettait
+    // un mouvement que l'exercice n'a pas. On garde l'image 3, la seule dont la
+    // légende disait vrai.
+    images: [{ n: 3, legende: 'La position' }],
   },
   'bird-dog-gainage': {
     dossier: 'bird-dog',
-    sansBoucle: "les deux dessins sont deux côtés, pas deux bouts d'un mouvement : les enchaîner inventerait un geste",
-    images: [{ n: 1, legende: 'Un côté' }, { n: 3, legende: "L'autre côté" }],
+    // Un seul dessin : les deux images sont la même pose retournée (23 % d'encre
+    // commune une fois l'une miroitée, contre 11 % telles quelles). Côte à côte
+    // sans légende — c'est le cas dans les lecteurs — ça donnait deux bonshommes
+    // face à face. Le lecteur annonce déjà le côté travaillé.
+    images: [{ n: 1, legende: 'La position' }],
   },
 }
 
