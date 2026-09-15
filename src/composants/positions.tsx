@@ -8,9 +8,26 @@ import type { Exercise } from '../data/types'
  *
  * Trois choix valent explication, tirés d'une relecture image par image :
  *
- * 1. On n'utilise jamais l'image 2. Dans presque toute la bibliothèque elle est
- *    tracée plus épais que les images 1 et 3 — et sur le Pallof elle est
- *    carrément abîmée. Les images 1 et 3 vont ensemble.
+ * 1. On n'utilise jamais l'image 2 : dans presque toute la bibliothèque elle est
+ *    tracée plus épais que les images 1 et 3, et sur le Pallof elle est carrément
+ *    abîmée. Mais les images 1 et 3 ne vont pas toujours ensemble non plus. En
+ *    mesurant la largeur de trait (2 × aire d'encre / longueur de contour, rendu
+ *    à 512 px), quatre paires s'écartent de plus de 20 % : pompes archer 1,89×,
+ *    Pallof 1,47×, touches d'épaule 1,30×, psoas 1,26×. C'est un
+ *    défaut du dessin d'origine, pas de l'affichage — et on l'assume : la boucle
+ *    reste partout où les deux poses sont les deux bouts d'un même mouvement.
+ *    Amincir le trait épais a été essayé (feMorphology erode) et écarté : le
+ *    rayon se quantifie au pixel entier, donc tout ce qui était déjà fin
+ *    disparaît — sur les pompes archer l'encre tombait de 8005 à 2993 px et le
+ *    dessin partait en morceaux.
+ * 1 bis. Une boucle ne se lit que si les deux poses diffèrent assez. Mesuré en
+ *    encre commune (intersection / union des pixels, rendu à 256 px), la
+ *    bibliothèque se sépare nettement : quatorze paires partagent 3 à 18 % de
+ *    leur encre et se lisent comme un mouvement ; trois en partagent plus de
+ *    40 % — abduction 44 %, Pallof 49 %, relevé de jambes 58 % — et leur boucle
+ *    clignote au lieu de bouger. Celles-là gardent la paire fixe. C'est un
+ *    défaut des dessins, pas du fondu.
+ *
  * 2. Deux dessins partout où les deux bouts du mouvement se distinguent. Seul le
  *    gainage latéral n'en garde qu'un : ses deux images montrent la même chose,
  *    une paire y ferait croire à un mouvement qui n'existe pas.
@@ -19,11 +36,15 @@ import type { Exercise } from '../data/types'
  *    tombe du côté annoncé — comme dans un miroir de salle. Absent là où « côté »
  *    ne désigne pas un membre : sur le bird dog, c'est une diagonale bras-jambe.
  *
- * Les sept exercices absents de cette table n'ont pas de dessin juste dans la
+ * Les huit exercices absents de cette table n'ont pas de dessin juste dans la
  * bibliothèque : roulade sur les avant-bras, cheville au mur, hanche 90/90,
- * rotation thoracique, réception sur une jambe, rotation externe, et le curl sur
- * serviette — dont le dessin le plus proche montre un banc à chevilles. Les dessins
- * voisins montrent un autre mouvement, mieux vaut rien qu'à peu près.
+ * rotation thoracique, réception sur une jambe, rotation externe, le curl sur
+ * serviette — dont le dessin le plus proche montre un banc à chevilles — et les
+ * dips entre deux chaises : les trois images de `chair-dip` montrent un homme
+ * assis sur une seule chaise, une main sur le dossier, alors que l'exercice se
+ * fait entre deux chaises dos à dos, mains sur les assises et buste penché en
+ * avant. Ce n'est pas le même geste, et aucune paire de ces images ne le montre.
+ * Les dessins voisins montrent un autre mouvement, mieux vaut rien qu'à peu près.
  */
 type Image = { n: number; legende: string }
 type Cote = 'gauche' | 'droit'
@@ -59,14 +80,11 @@ const DESSINS: Record<string, Dessin> = {
     dossier: 'push-up',
     images: [{ n: 3, legende: 'En bas' }, { n: 1, legende: 'En haut' }],
   },
-  'dips-chaises': {
-    dossier: 'chair-dip',
-    images: [{ n: 3, legende: 'En bas' }, { n: 1, legende: 'En haut' }],
-  },
 
   // Abdos
   'releve-jambes-suspendu': {
     dossier: 'hanging-leg-raise',
+    sansBoucle: "les deux poses partagent 58 % de leur encre : la boucle clignote au lieu de montrer un geste",
     images: [{ n: 3, legende: 'Suspendu' }, { n: 1, legende: 'Jambes levées' }],
   },
   'crunch-poulie': {
@@ -79,7 +97,7 @@ const DESSINS: Record<string, Dessin> = {
   },
   'pallof-poulie': {
     dossier: 'pallof-press',
-    sansBoucle: 'les deux poses partagent près de la moitié de leur encre : en boucle, rien ne semble bouger',
+    sansBoucle: "les deux poses partagent 49 % de leur encre : la boucle clignote au lieu de montrer un geste",
     images: [{ n: 1, legende: 'Au buste' }, { n: 3, legende: 'Bras tendus' }],
   },
   'gainage-lateral-leste': { dossier: 'side-plank', images: [{ n: 1, legende: 'La position' }] },
@@ -101,6 +119,7 @@ const DESSINS: Record<string, Dessin> = {
   },
   'abduction-hanche': {
     dossier: 'side-lying-hip-abduction',
+    sansBoucle: "les deux poses partagent 44 % de leur encre : la boucle clignote au lieu de montrer un geste",
     coteDessine: 'droit', // jambe du dessus vers la droite de l'image
     images: [{ n: 3, legende: 'Jambe basse' }, { n: 1, legende: 'Jambe levée' }],
   },
