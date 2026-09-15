@@ -128,6 +128,10 @@ export interface DescriptionFormule {
   seances: number
   minutes: number
   resume: string
+  /** Ce que la formule coûte ou tient, en une ligne : c'est ce qu'on lit au moment de choisir. */
+  impact: string
+  /** La formule mise en avant. Une seule, sinon le conseil n'en est plus un. */
+  conseillee?: boolean
   compromis: string
 }
 
@@ -138,6 +142,7 @@ export const FORMULES: DescriptionFormule[] = [
     seances: 3,
     minutes: 90,
     resume: 'Deux séances de force, une de mobilité.',
+    impact: 'Le muscle a son minimum, la mobilité reste sous la cible.',
     compromis:
       "Le muscle garde ses deux séances hebdomadaires, ce que la recherche demande au minimum. La mobilité passe en dessous de la cible d'amplitude, qui veut cinq minutes par muscle et par semaine.",
   },
@@ -147,6 +152,8 @@ export const FORMULES: DescriptionFormule[] = [
     seances: 5,
     minutes: 120,
     resume: 'Deux séances de force, trois de mobilité.',
+    impact: 'Les deux cibles sont tenues : muscle et amplitude.',
+    conseillee: true,
     compromis:
       'Les deux cibles sont tenues : 12 à 20 séries efficaces pour les pectoraux, et assez de temps de maintien pour gagner en amplitude.',
   },
@@ -156,6 +163,7 @@ export const FORMULES: DescriptionFormule[] = [
     seances: 6,
     minutes: 160,
     resume: 'Trois séances de force, trois de mobilité.',
+    impact: 'Au-dessus des cibles : le gain se paie en temps.',
     // L'ancien texte affirmait rester dans la fourchette utile alors que la formule
     // la dépasse : 23 séries de pectoraux et 24 d'abdominaux par semaine.
     compromis:

@@ -7,10 +7,21 @@ import { INITIALE_JOUR, JOURS, type Jour } from '../data/seances'
  * venir. Partagée par l'accueil, qui montre la semaine en cours, et par l'écran
  * Programme, où elle montre ce que chaque formule change.
  */
-export function BandeSemaine({ plan, jourActuel, faites }: { plan: Record<Jour, string[]>; jourActuel: Jour; faites: { jour: Jour; id: string }[] }) {
+export function BandeSemaine({
+  plan,
+  jourActuel,
+  faites,
+  jours = JOURS,
+}: {
+  plan: Record<Jour, string[]>
+  jourActuel: Jour
+  faites: { jour: Jour; id: string }[]
+  /** Restreindre les colonnes : l'onboarding coupe le dimanche, vide dans les trois formules. */
+  jours?: Jour[]
+}) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gap: '6px' }}>
-      {JOURS.map((j) => {
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${jours.length}, minmax(0, 1fr))`, gap: '6px' }}>
+      {jours.map((j) => {
         const prevues = plan[j] ?? []
         const actuel = j === jourActuel
         return (

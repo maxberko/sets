@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'preact/hooks'
 import type { ComponentChildren } from 'preact'
 import { Coche, Fleche } from '../composants/icones'
-import { FORMULES } from '../data'
-import type { Formule } from '../data/seances'
+import { BandeSemaine } from '../composants/bandeSemaine'
+import { COULEUR_PROGRAMME, FORMULES, NOM_PROGRAMME, planDe, seance, seriesParProgramme } from '../data'
+import { JOURS, type Formule } from '../data/seances'
+import { jourDe } from '../lib/semaine'
 import { modifier, useDonnees } from '../lib/etat'
 import { aller } from '../lib/routeur'
 
@@ -76,10 +78,7 @@ export function Installation() {
           </>
         ) : (
           <>
-            <p style={{ fontSize: '15px', lineHeight: 1.5 }}>
-              Elles ne changent pas le contenu des séances, seulement combien tu en fais par semaine. Un plan qu’on ne tient pas
-              ne vaut rien, donc prends la plus honnête.
-            </p>
+            <SemaineFormule formule={d.reglages.formule} />
 
             {FORMULES.map((f) => (
               <ChoixFormule key={f.id} id={f.id} choisie={d.reglages.formule === f.id} />
@@ -130,7 +129,28 @@ function ChoixFormule({ id, choisie }: { id: Formule; choisie: boolean }) {
         color: choisie ? 'var(--papier)' : 'var(--encre)',
       }}
     >
-      <span style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '12px', width: '100%' }}>
+      {/* Sur sa propre ligne : la mettre à côté du nom débordait l'en-tête sur un
+          téléphone étroit, et rognait la durée. En bandeau, elle donne en plus à la
+          formule conseillée la hauteur qui la distingue des deux autres. */}
+      {f.conseillee && (
+        <span
+          class="etiquette"
+          style={{
+            alignSelf: 'flex-start',
+            border: '1px solid currentColor',
+            borderRadius: '999px',
+            padding: '2px 8px 1px',
+            fontSize: '10px',
+            letterSpacing: '0.06em',
+            opacity: 0.75,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Conseillée
+        </span>
+      )}
+
+      <span style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '4px 12px', width: '100%', flexWrap: 'wrap' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontFamily: 'var(--titre)', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>{f.nom}</span>
           {choisie && <Coche taille={18} couleur="var(--papier)" />}
@@ -140,8 +160,59 @@ function ChoixFormule({ id, choisie }: { id: Formule; choisie: boolean }) {
         </span>
       </span>
       <span style={{ fontSize: '15px' }}>{f.resume}</span>
-      <span style={{ fontSize: '13px', lineHeight: 1.45, opacity: choisie ? 0.85 : 0.7 }}>{f.compromis}</span>
+      {/* Une ligne, pas un paragraphe : de quoi comparer trois choix d'un coup
+          d'œil. Le détail chiffré reste dans `compromis`, pour un écran qui a la
+          place de le porter. */}
+      <span style={{ fontSize: '13px', lineHeight: 1.4, opacity: choisie ? 0.8 : 0.62 }}>{f.impact}</span>
     </button>
+  )
+}
+
+/**
+ * La semaine de la formule choisie, du lundi au samedi. Le dimanche est écarté :
+ * il est vide dans les trois formules, et une colonne toujours grise n'apprend
+ * rien à quelqu'un qui découvre l'appli.
+ *
+ * C'est la seule chose de cet écran qui bouge quand on change de formule. Les
+ * trois cartes disent un nombre de séances ; le calendrier montre à quoi
+ * ressemble la semaine, ce qui est la vraie question qu'on se pose là.
+ *
+ * Elle ouvre l'écran, avant les trois cartes : on vient y choisir un rythme, et
+ * une semaine dessinée répond à ça plus vite qu'une phrase.
+ */
+function SemaineFormule({ formule }: { formule: Formule }) {
+  const plan = planDe(formule)
+  const jours = JOURS.slice(0, 6)
+
+  // Une séance de force travaille deux programmes : le haut des pectoraux compte
+  // aussi ses abdominaux. La légende les liste tous, sinon la bande montre deux
+  // traits le lundi sans dire que le second est l'abdo.
+  const programmes: string[] = []
+  for (const j of jours) {
+    for (const id of plan[j] ?? []) {
+      const t = seance(id)
+      if (!t) continue
+      for (const p of Object.keys(seriesParProgramme(t, 'salle'))) if (!programmes.includes(p)) programmes.push(p)
+    }
+  }
+
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {/* La même bande que l'accueil : un trait fin par programme. Des pastilles
+          nommées, essayées d'abord, écrasaient l'écran — à trois formules et deux
+          programmes par séance de force, ça faisait un mur de couleur. */}
+      <BandeSemaine plan={plan} jourActuel={jourDe(new Date())} faites={[]} jours={jours} />
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px' }}>
+        {programmes.map((p) => (
+          <span key={p} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px' }}>
+            <span style={{ width: '9px', height: '9px', borderRadius: '1px', background: COULEUR_PROGRAMME[p], flex: 'none' }} />
+            {NOM_PROGRAMME[p]}
+          </span>
+        ))}
+      </div>
+
+    </section>
   )
 }
 
