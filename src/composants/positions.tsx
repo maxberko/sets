@@ -8,7 +8,8 @@ import type { Exercise } from '../data/types'
  *
  * Trois choix valent explication, tirés d'une relecture image par image :
  *
- * 1. On n'utilise jamais l'image 2 : dans presque toute la bibliothèque elle est
+ * 1. L'image 2 est écartée presque partout, mais pas partout : dans la plupart
+ *    de la bibliothèque elle est
  *    tracée plus épais que les images 1 et 3, et sur le Pallof elle est carrément
  *    abîmée. Mais les images 1 et 3 ne vont pas toujours ensemble non plus. En
  *    mesurant la largeur de trait (2 × aire d'encre / longueur de contour, rendu
@@ -20,13 +21,18 @@ import type { Exercise } from '../data/types'
  *    rayon se quantifie au pixel entier, donc tout ce qui était déjà fin
  *    disparaît — sur les pompes archer l'encre tombait de 8005 à 2993 px et le
  *    dessin partait en morceaux.
- * 1 bis. Une boucle ne se lit que si les deux poses diffèrent assez. Mesuré en
- *    encre commune (intersection / union des pixels, rendu à 256 px), la
- *    bibliothèque se sépare nettement : quatorze paires partagent 3 à 18 % de
- *    leur encre et se lisent comme un mouvement ; trois en partagent plus de
- *    40 % — abduction 44 %, Pallof 49 %, relevé de jambes 58 % — et leur boucle
- *    clignote au lieu de bouger. Celles-là gardent la paire fixe. C'est un
- *    défaut des dessins, pas du fondu.
+ * 1 bis. Une boucle ne se lit que si les deux poses montrent vraiment deux
+ *    moments du geste. Ça se regarde, ça ne se mesure pas : une première version
+ *    de ce fichier écartait les paires dont les pixels se recouvraient trop, et
+ *    cette règle a sorti le relevé de jambes suspendu (jambes à l'horizontale
+ *    contre jambes pendantes) et l'abduction de hanche (jambe levée contre jambes
+ *    jointes) — deux des animations les plus lisibles de la bibliothèque. Leur
+ *    encre se recouvre beaucoup parce que le buste et la barre ne bougent pas ;
+ *    c'est justement ce qui rend le mouvement du membre lisible.
+ *
+ *    Le seul cas écarté à l'œil est le Pallof : avant-bras pliés contre tendus,
+ *    devant une machine qui occupe la moitié du dessin, on ne voit presque rien
+ *    bouger.
  *
  * 2. Deux dessins partout où les deux bouts du mouvement se distinguent, un seul
  *    partout ailleurs : le gainage latéral et le copenhague, dont les deux images
@@ -49,7 +55,7 @@ import type { Exercise } from '../data/types'
  */
 type Image = { n: number; legende: string }
 type Cote = 'gauche' | 'droit'
-type Dessin = { dossier: string; images: Image[]; coteDessine?: Cote; sansBoucle?: string }
+type Dessin = { dossier: string; images: Image[]; coteDessine?: Cote }
 
 const DESSINS: Record<string, Dessin> = {
   // Pecs
@@ -85,7 +91,6 @@ const DESSINS: Record<string, Dessin> = {
   // Abdos
   'releve-jambes-suspendu': {
     dossier: 'hanging-leg-raise',
-    sansBoucle: "les deux poses partagent 58 % de leur encre : la boucle clignote au lieu de montrer un geste",
     images: [{ n: 3, legende: 'Suspendu' }, { n: 1, legende: 'Jambes levées' }],
   },
   'crunch-poulie': {
@@ -98,10 +103,12 @@ const DESSINS: Record<string, Dessin> = {
   },
   'pallof-poulie': {
     dossier: 'pallof-press',
-    sansBoucle: "les deux poses partagent 49 % de leur encre : la boucle clignote au lieu de montrer un geste",
     images: [{ n: 1, legende: 'Au buste' }, { n: 3, legende: 'Bras tendus' }],
   },
-  'gainage-lateral-leste': { dossier: 'side-plank', images: [{ n: 1, legende: 'La position' }] },
+  'gainage-lateral-leste': {
+    dossier: 'side-plank',
+    images: [{ n: 2, legende: 'Bassin bas' }, { n: 1, legende: 'Bassin haut' }],
+  },
   'crunch-inverse': {
     dossier: 'reverse-crunch',
     images: [{ n: 3, legende: 'Jambes basses' }, { n: 1, legende: 'Hanches décollées' }],
@@ -110,7 +117,10 @@ const DESSINS: Record<string, Dessin> = {
     dossier: 'plank-shoulder-tap',
     images: [{ n: 1, legende: 'Gainage' }, { n: 3, legende: 'Touche' }],
   },
-  'gainage-lateral': { dossier: 'side-plank', images: [{ n: 1, legende: 'La position' }] },
+  'gainage-lateral': {
+    dossier: 'side-plank',
+    images: [{ n: 2, legende: 'Bassin bas' }, { n: 1, legende: 'Bassin haut' }],
+  },
 
   // Mobilité
   'psoas-demi-genou': {
@@ -120,7 +130,6 @@ const DESSINS: Record<string, Dessin> = {
   },
   'abduction-hanche': {
     dossier: 'side-lying-hip-abduction',
-    sansBoucle: "les deux poses partagent 44 % de leur encre : la boucle clignote au lieu de montrer un geste",
     coteDessine: 'droit', // jambe du dessus vers la droite de l'image
     images: [{ n: 3, legende: 'Jambe basse' }, { n: 1, legende: 'Jambe levée' }],
   },
@@ -132,20 +141,11 @@ const DESSINS: Record<string, Dessin> = {
   copenhague: {
     dossier: 'copenhagen-plank',
     coteDessine: 'gauche', // jambe du dessus, celle qui travaille, vers la gauche
-    // Un seul dessin : les images 1 et 3 montrent la même position jambe tendue —
-    // la légende « jambe pliée » de l'image 1 ne correspondait à rien de dessiné.
-    // Et le copenhague est un maintien, pas un aller-retour : une paire promettait
-    // un mouvement que l'exercice n'a pas. On garde l'image 3, la seule dont la
-    // légende disait vrai.
-    images: [{ n: 3, legende: 'La position' }],
+    images: [{ n: 2, legende: 'Bassin bas' }, { n: 3, legende: 'Bassin haut' }],
   },
   'bird-dog-gainage': {
     dossier: 'bird-dog',
-    // Un seul dessin : les deux images sont la même pose retournée (23 % d'encre
-    // commune une fois l'une miroitée, contre 11 % telles quelles). Côte à côte
-    // sans légende — c'est le cas dans les lecteurs — ça donnait deux bonshommes
-    // face à face. Le lecteur annonce déjà le côté travaillé.
-    images: [{ n: 1, legende: 'La position' }],
+    images: [{ n: 2, legende: 'Ramené' }, { n: 1, legende: 'Tendu' }],
   },
 }
 
@@ -178,7 +178,7 @@ function masque(url: string, teinte: string, retourne = false) {
 /**
  * La boucle entre les deux bouts du mouvement : c'est ce qu'on affiche partout
  * où les deux poses se distinguent, la paire fixe ne restant que pour les
- * exercices marqués `sansBoucle`.
+ * exercices qui n'ont qu'un seul dessin.
  *
  * L'image 2 a été essayée comme pose intermédiaire et écartée pour la raison
  * déjà donnée en tête de fichier : son trait est plus épais, et en boucle ça
@@ -186,6 +186,11 @@ function masque(url: string, teinte: string, retourne = false) {
  *
  * Les dessins sont empilés et leur opacité enchaînée : le masque reste
  * vectoriel, donc la teinte suit toujours le thème et rien ne s'alourdit.
+ *
+ * Pas de garde `prefers-reduced-motion`, et c'est délibéré : ailleurs le
+ * mouvement décore, ici il est l'information. La version précédente figeait la
+ * boucle sur une seule pose, ce qui rendait la fonctionnalité invisible, et sans
+ * recours, pour qui a « réduire les animations » activé sur son téléphone.
  * `recouvrement` est la part du cycle où deux poses se croisent — à 0 on aurait
  * un diaporama, trop haut le dessin devient flou. Le réglage se sent surtout
  * quand les deux poses se recouvrent peu (la roulette abdominale : 3 % d'encre
@@ -227,9 +232,7 @@ function Boucle({
         return `@keyframes ${nom(f)}{${arrets.join('')}}`
       })
       .join('') +
-    // Mouvement réduit : on s'arrête sur la première pose de la séquence.
-    `@media (prefers-reduced-motion:reduce){.boucle-${dossier}>*{animation:none!important;opacity:0}` +
-    `.boucle-${dossier}>:first-child{opacity:1}}`
+    ''
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -269,10 +272,10 @@ export function Positions({ ex, couleur, cote }: { ex: Exercise; couleur?: strin
   const seul = d.images.length === 1
   const retourne = !!cote && !!d.coteDessine && cote !== d.coteDessine
 
-  // La boucle est la règle dès qu'il y a deux poses : `sansBoucle` dit pourquoi
-  // un exercice y échappe. L'ordre des poses est celui de `images`, qui va déjà
-  // du début à la fin du mouvement.
-  if (!seul && !d.sansBoucle)
+  // Deux poses, donc une boucle : sans exception. L'ordre est celui de `images`,
+  // qui va déjà du début à la fin du mouvement. Les seuls exercices fixes sont
+  // ceux qui n'ont qu'un dessin, chacun pour une raison dite plus haut.
+  if (!seul)
     return <Boucle ex={ex} dossier={d.dossier} sequence={d.images.map((i) => i.n)} retourne={retourne} />
 
   return (
